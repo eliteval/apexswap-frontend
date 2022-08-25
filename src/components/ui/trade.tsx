@@ -69,7 +69,7 @@ export default function Trade({ children }: React.PropsWithChildren<{}>) {
   return (
     <div className="pt-8 text-sm xl:pt-10">
       <div className="mx-auto w-full max-w-lg rounded-lg bg-white p-5 pt-4 shadow-card dark:bg-light-dark xs:p-6 xs:pt-5">
-        <nav className="mb-5 min-h-[40px] border-b border-dashed border-gray-200 pb-4 uppercase tracking-wider dark:border-gray-700 xs:mb-6 xs:pb-5 xs:tracking-wide">
+        {/* <nav className="mb-5 min-h-[40px] border-b border-dashed border-gray-200 pb-4 uppercase tracking-wider dark:border-gray-700 xs:mb-6 xs:pb-5 xs:tracking-wide">
           {isMounted && ['xs'].indexOf(breakpoint) !== -1 && (
             <Listbox
               options={tradeMenu}
@@ -116,7 +116,7 @@ export default function Trade({ children }: React.PropsWithChildren<{}>) {
               <RangeIcon />
             </Button>
           </div>
-        </nav>
+        </nav> */}
         <AnimatePresence exitBeforeEnter>
           <motion.div
             initial="exit"

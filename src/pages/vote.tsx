@@ -18,7 +18,7 @@ const VotePage: NextPageWithLayout = () => {
     <>
       <NextSeo
         title="Vote"
-        description="Criptic - React Next Web3 NFT Crypto Dashboard Template"
+        description="Vix - Avalanche DEX"
       />
       <div className="mx-auto w-full max-w-[1160px] text-sm md:pt-14 4xl:pt-24">
         <div className="grid grid-cols-1 gap-6 xs:grid-cols-2 lg:grid-cols-3">

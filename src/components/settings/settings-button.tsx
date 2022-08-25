@@ -10,11 +10,11 @@ export default function SettingsButton() {
   const [themeColor] = useLocalStorage<string>('criptic-color');
 
   useDirection(layout ? layout : 'ltr');
-  useThemeColor(themeColor ? themeColor : '#323743');
+  useThemeColor(themeColor ? themeColor : '#2a52be');
 
   return (
     <>
-      <div className="fixed top-1/2 z-40 -translate-y-1/2 ltr:right-0 rtl:left-0">
+      {/* <div className="fixed top-1/2 z-40 -translate-y-1/2 ltr:right-0 rtl:left-0">
         <button
           className="flex h-12 w-12 items-center justify-center bg-white/80 text-gray-600 shadow-large backdrop-blur ltr:rounded-l-lg rtl:rounded-r-lg dark:bg-brand/80 dark:text-gray-200"
           onClick={opeSettings}
@@ -26,7 +26,7 @@ export default function SettingsButton() {
             <span className="relative inline-flex h-2 w-2 rounded-full bg-red-500"></span>
           </span>
         </button>
-      </div>
+      </div> */}
     </>
   );
 }

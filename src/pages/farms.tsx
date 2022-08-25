@@ -167,7 +167,7 @@ const FarmsPage: NextPageWithLayout = () => {
     <>
       <NextSeo
         title="Farms"
-        description="Criptic - React Next Web3 NFT Crypto Dashboard Template"
+        description="Vix - Avalanche DEX"
       />
       <div className="mx-auto w-full sm:pt-8">
         <div className="relative z-10 mb-6 flex flex-col justify-between gap-4 md:flex-row md:items-center md:gap-6">

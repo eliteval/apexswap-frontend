@@ -21,7 +21,7 @@ import { InfoCircle } from '@/components/icons/info-circle';
 //images
 import AuthorImage from '@/assets/images/author.jpg';
 
-export const menuItems = [
+export const menuItemsOld = [
   {
     name: 'Home',
     icon: <HomeIcon />,
@@ -96,6 +96,19 @@ export const menuItems = [
     ],
   },
 ];
+
+export const menuItems = [
+  {
+    name: 'Swap',
+    icon: <ExchangeIcon />,
+    href: routes.swap,
+  },
+  // {
+  //   name: 'Farm',
+  //   icon: <FarmIcon />,
+  //   href: routes.farms,
+  // },
+]
 
 type SidebarProps = {
   className?: string;

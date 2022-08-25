@@ -18,7 +18,7 @@ const NFTDetailsPage: NextPageWithLayout<
     <>
       <NextSeo
         title="NFT details"
-        description="Criptic - React Next Web3 NFT Crypto Dashboard Template"
+        description="Vix - Avalanche DEX"
       />
       <NftDetails product={nftData} />
     </>

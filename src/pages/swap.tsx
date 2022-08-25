@@ -6,18 +6,22 @@ import Button from '@/components/ui/button';
 import CoinInput from '@/components/ui/coin-input';
 import TransactionInfo from '@/components/ui/transaction-info';
 import { SwapIcon } from '@/components/icons/swap-icon';
+import { OptionIcon } from '@/components/icons/option';
 import DashboardLayout from '@/layouts/_dashboard';
+import Layout from '@/layouts/_layout';
 import Trade from '@/components/ui/trade';
-
-import styles from './swap.module.css';
+import { useModal } from '@/components/modal-views/context';
 
 const SwapPage: NextPageWithLayout = () => {
+  const { openModal } = useModal();
   let [toggleCoin, setToggleCoin] = useState(false);
+  let [mode, setMode] = useState(0);
+
   return (
     <>
       <NextSeo
-        title="Farms"
-        description="Criptic - React Next Web3 NFT Crypto Dashboard Template"
+        title="Vix Swap"
+        description="Vix - Avalanche DEX"
       />
       <Trade>
         <div className="mb-5 border-b border-dashed border-gray-200 pb-5 dark:border-gray-800 xs:mb-7 xs:pb-6">
@@ -43,6 +47,21 @@ const SwapPage: NextPageWithLayout = () => {
               >
                 <SwapIcon className="h-auto w-3" />
               </Button>
+              <Button
+                size="mini"
+                color="gray"
+                shape="circle"
+                variant="transparent"
+                onClick={() => {openModal('SETTINGS')}}
+              >
+                <OptionIcon className="h-auto w-3" />
+              </Button>
+              {/* <Button
+                onClick={() => openModal('WALLET_CONNECT_VIEW')}
+                className="shadow-main hover:shadow-large"
+              >
+                CONNECT
+              </Button> */}
             </div>
             <CoinInput
               label={'To'}
@@ -58,30 +77,23 @@ const SwapPage: NextPageWithLayout = () => {
           <TransactionInfo label={'Offered by'} />
           <TransactionInfo label={'Price Slippage'} value={'1%'} />
           <TransactionInfo label={'Network Fee'} />
-          <TransactionInfo label={'Criptic Fee'} />
         </div>
-        {/* <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3 gap-3"
-        >
-          <div><Button size="small" className='w-full mt-6 uppercase xs:mt-8 xs:tracking-wides'>aas</Button></div>
-          <div><Button size="small" className='w-full mt-6 uppercase xs:mt-8 xs:tracking-wides'>123</Button></div>
-          <div><Button size="small" className='w-full mt-6 uppercase xs:mt-8 xs:tracking-wides'>123</Button></div>
-        </div> */}
         <Button
           size="large"
           shape="rounded"
           fullWidth={true}
           className="mt-6 uppercase xs:mt-8 xs:tracking-widest"
+          onClick={() => {openModal('ROUTING')}}
         >
           SWAP
         </Button>
-
       </Trade>
     </>
   );
 };
 
 SwapPage.getLayout = function getLayout(page) {
-  return <DashboardLayout>{page}</DashboardLayout>;
+  return <Layout>{page}</Layout>;
 };
 
 export default SwapPage;

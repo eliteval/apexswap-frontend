@@ -58,7 +58,7 @@ export function MenuItems() {
             <ActiveLink
               key={index}
               href={item.href}
-              className="mx-4 text-sm font-medium uppercase text-gray-600 transition first:ml-0 last:mr-0 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
+              className="mx-4 text-xl font-medium uppercase text-gray-600 transition first:ml-0 last:mr-0 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
               activeClassName="text-gray-900"
             >
               {item.name}

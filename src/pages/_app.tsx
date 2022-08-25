@@ -39,7 +39,7 @@ function CustomApp({ Component, pageProps }: AppPropsWithLayout) {
           <ThemeProvider
             attribute="class"
             enableSystem={false}
-            defaultTheme="light"
+            defaultTheme="dark"
           >
             <WalletProvider>
               {getLayout(<Component {...pageProps} />)}

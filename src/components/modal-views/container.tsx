@@ -10,6 +10,8 @@ import { useModal, MODAL_VIEW } from '@/components/modal-views/context';
 const SearchView = dynamic(() => import('@/components/search/view'));
 const ShareView = dynamic(() => import('@/components/nft/share-view'));
 const SelectWallet = dynamic(() => import('@/components/nft/select-wallet'));
+const Settings = dynamic(() => import('@/components/nft/settings'));
+const Routing = dynamic(() => import('@/components/nft/routing'));
 
 function renderModalContent(view: MODAL_VIEW | string) {
   switch (view) {
@@ -19,6 +21,10 @@ function renderModalContent(view: MODAL_VIEW | string) {
       return <ShareView />;
     case 'WALLET_CONNECT_VIEW':
       return <SelectWallet />;
+    case 'SETTINGS':
+      return <Settings />;
+    case 'ROUTING':
+      return <Routing />;
     default:
       return null;
   }
