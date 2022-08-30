@@ -14,6 +14,7 @@ import { SearchIcon } from '@/components/icons/search';
 import FarmList from '@/components/farms/list';
 import ActiveLink from '@/components/ui/links/active-link';
 import { FarmsData } from '@/data/static/farms-data';
+import Layout from '@/layouts/_layout';
 
 const sort = [
   { id: 1, name: 'Hot' },
@@ -242,7 +243,7 @@ const FarmsPage: NextPageWithLayout = () => {
 };
 
 FarmsPage.getLayout = function getLayout(page) {
-  return <DashboardLayout>{page}</DashboardLayout>;
+  return <Layout>{page}</Layout>;
 };
 
 export default FarmsPage;

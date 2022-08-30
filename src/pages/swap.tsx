@@ -15,8 +15,12 @@ import { useModal } from '@/components/modal-views/context';
 const SwapPage: NextPageWithLayout = () => {
   const { openModal } = useModal();
   let [toggleCoin, setToggleCoin] = useState(false);
-  let [mode, setMode] = useState(0);
-
+  let [baseToken, setBaseToken] = useState({});
+  let [targetToken, setTargetToken] = useState({});
+  const getBaseToken = () => {
+    // setBaseToken(data);
+    console.log(baseToken);
+  }
   return (
     <>
       <NextSeo
@@ -35,7 +39,10 @@ const SwapPage: NextPageWithLayout = () => {
               label={'From'}
               exchangeRate={0.0}
               defaultCoinIndex={0}
-              getCoinValue={(data) => console.log('From coin value:', data)}
+              getCoinValue={(data) => {
+                console.log('From coin value:', data);
+                setBaseToken(data);
+              }}
             />
             <div className="absolute top-1/2 left-1/2 z-[1] -mt-4 -ml-4 rounded-full bg-white shadow-large dark:bg-gray-600">
               <Button
@@ -67,7 +74,10 @@ const SwapPage: NextPageWithLayout = () => {
               label={'To'}
               exchangeRate={0.0}
               defaultCoinIndex={1}
-              getCoinValue={(data) => console.log('To coin value:', data)}
+              getCoinValue={(data) => {
+                console.log('To coin value:', data);
+                setTargetToken(data);
+              }}
             />
           </div>
         </div>
@@ -77,6 +87,7 @@ const SwapPage: NextPageWithLayout = () => {
           <TransactionInfo label={'Offered by'} />
           <TransactionInfo label={'Price Slippage'} value={'1%'} />
           <TransactionInfo label={'Network Fee'} />
+          <TransactionInfo label={'Criptic Fee'} />
         </div>
         <Button
           size="large"

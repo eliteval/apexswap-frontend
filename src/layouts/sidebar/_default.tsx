@@ -103,11 +103,11 @@ export const menuItems = [
     icon: <ExchangeIcon />,
     href: routes.swap,
   },
-  // {
-  //   name: 'Farm',
-  //   icon: <FarmIcon />,
-  //   href: routes.farms,
-  // },
+  {
+    name: 'Farm',
+    icon: <FarmIcon />,
+    href: routes.farms,
+  },
 ]
 
 type SidebarProps = {
