@@ -53,36 +53,40 @@ export default function CoinInput({
     <>
       <div
         className={cn(
-          'group flex min-h-[70px] rounded-lg border border-gray-200 transition-colors duration-200 hover:border-gray-900 dark:border-gray-700 dark:hover:border-gray-600',
+          'group flex min-h-[70px] rounded-lg border border-gray-200 transition-colors duration-200 hover:border-gray-900 dark:border-gray-700 dark:border-blue-400 dark:bg-[#000000]',
           className
         )}
       >
-        <div className="min-w-[80px] border-r border-gray-200 p-3 transition-colors duration-200 group-hover:border-gray-900 dark:border-gray-700 dark:group-hover:border-gray-600">
-          <span className="mb-1.5 block text-xs uppercase text-gray-600 dark:text-gray-400">
+        <div className="grid grid-rows-3 grid-flow-col px-3 transition-colors duration-200 group-hover:border-gray-900">
+          <span className="mt-5 mb-2 max-h-[10px] block text-xs text-gray-600 dark:text-gray-400">
             {label}
           </span>
           <button
             onClick={() => setVisibleCoinList(true)}
-            className="flex items-center font-medium outline-none dark:text-gray-100"
+            className="min-w-[80px] flex items-center font-medium outline-none dark:text-gray-100"
           >
             {selectedCoin?.icon}{' '}
             <span className="ltr:ml-2 rtl:mr-2">{selectedCoin?.code} </span>
             <ChevronDown className="ltr:ml-1.5 rtl:mr-1.5" />
           </button>
+          <div className="pt-2">
+            <span>{selectedCoin?.name} </span>
+          </div>
         </div>
-        <div className="flex flex-1 flex-col text-right">
+        <div className="min-w-[80px] grid grid-rows-3 grid-flow-col px-3 transition-colors duration-200 group-hover:border-gray-900 dark:border-gray-700 dark:group-hover:border-gray-600">
+          <div />
           <input
             type="text"
             value={value}
             placeholder="0.0"
             inputMode="decimal"
             onChange={handleOnChange}
-            className="w-full rounded-tr-lg rounded-br-lg border-0 pb-0.5 text-right text-lg outline-none focus:ring-0 dark:bg-light-dark"
+            className=" w-full rounded-tr-lg rounded-br-lg border-0 text-right text-lg outline-none focus:ring-0 dark:bg-inherit"
             {...rest}
           />
-          <span className="font-xs px-3 text-gray-400">
-            = ${exchangeRate ? exchangeRate : '0.00'}
-          </span>
+          <div className="pt-2 font-xs px-3 text-gray-400 text-right">
+            = ${exchangeRate ? Number(value) * exchangeRate : '0.00'}
+          </div>
         </div>
       </div>
 

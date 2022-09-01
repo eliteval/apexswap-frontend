@@ -67,7 +67,7 @@ const NotificationPage: NextPageWithLayout = () => {
     <>
       <NextSeo
         title="Notifications"
-        description="Vix - Avalanche DEX"
+        description="Apexswap - Avalanche DEX"
       />
       <div className="mx-auto w-[660px] max-w-full">
         <div className="mb-7 flex items-center justify-between gap-6">

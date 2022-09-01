@@ -22,7 +22,7 @@ const ColorPreset = [
   },
   {
     label: 'Blue',
-    value: '#2a52be',
+    value: ' bg-gradient-to-r from-cyan-400 to-blue-500 ',
   },
   {
     label: 'Green',
@@ -178,7 +178,7 @@ function LayoutSwitcher() {
 function ColorSwitcher() {
   const [themeColor, setThemeColor] = useLocalStorage(
     'criptic-color',
-    '#323743'
+    '#2a2a2e'
   );
   useThemeColor(themeColor ? themeColor : '#2a52be');
 

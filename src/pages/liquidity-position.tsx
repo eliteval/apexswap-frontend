@@ -15,7 +15,7 @@ const LiquidityPositionPage: NextPageWithLayout = () => {
     <>
       <NextSeo
         title="Liquidity Position"
-        description="Vix - Avalanche DEX"
+        description="Apexswap - Avalanche DEX"
       />
       <div className="mx-auto w-full max-w-lg text-sm">
         <h3 className="mb-4 text-lg font-medium text-gray-900 dark:text-white sm:mb-6 sm:text-2xl">

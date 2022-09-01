@@ -36,13 +36,10 @@ export default function Routing({ ...props }) {
     [item2, item1, item3],
     [item1, item3],
     [item1],
-    [item2, item1, item3],
-    [item2, item1, item3],
-    [item2, item1, item3],
   ];
-  const percent = [20, 10, 2, 70, 2, 3,];
-  const coin_in = 'BTC';
-  const coin_out = 'ETH';
+  const percent = [20, 10, 20,];
+  const coin_in = 'ETH';
+  const coin_out = 'USDC';
   const coins = coinList;
   const inCoin = coins.filter(ele => ele.code === coin_in);
   const outCoin = coins.filter(ele => ele.code === coin_out);

@@ -18,7 +18,7 @@ const NFTDetailsPage: NextPageWithLayout<
     <>
       <NextSeo
         title="NFT details"
-        description="Vix - Avalanche DEX"
+        description="Apexswap - Avalanche DEX"
       />
       <NftDetails product={nftData} />
     </>

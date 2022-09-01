@@ -42,6 +42,7 @@
     "react-query": "3.39.1",
     "react-share": "4.4.0",
     "react-table": "7.8.0",
+    "react-ts-tradingview-widgets": "^1.0.11",
     "react-use": "17.4.0",
     "recharts": "2.1.9",
     "swiper": "8.2.2",

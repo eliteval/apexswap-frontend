@@ -22,8 +22,8 @@ const Retro: NextPageWithLayout<
   return (
     <>
       <NextSeo
-        title="Vix - Retro"
-        description="Vix - Avalanche DEX"
+        title="Apexswap - Retro"
+        description="Apexswap - Avalanche DEX"
       />
       <div className="retro-container">
         <div>

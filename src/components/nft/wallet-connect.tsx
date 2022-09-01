@@ -82,8 +82,12 @@ export default function WalletConnect() {
         </div>
       ) : (
         <Button
-          onClick={() => openModal('WALLET_CONNECT_VIEW')}
-          className="shadow-main hover:shadow-large"
+          // id="MyElement"
+          size="small"
+          shape="pill"
+          fullWidth={true}
+          className="MyElement mt-1 uppercase xs:tracking-widest"
+          onClick={() => openModal('WALLET_CONNECT_VIEW')}          
         >
           CONNECT
         </Button>

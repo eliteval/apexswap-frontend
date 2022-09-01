@@ -1,6 +1,7 @@
 import type { NextPageWithLayout } from '@/types';
 import { NextSeo } from 'next-seo';
 import DashboardLayout from '@/layouts/_dashboard';
+import Layout from '@/layouts/_layout';
 import Button from '@/components/ui/button';
 import CoinInput from '@/components/ui/coin-input';
 import TransactionInfo from '@/components/ui/transaction-info';
@@ -13,7 +14,7 @@ const LiquidityPage: NextPageWithLayout = () => {
     <>
       <NextSeo
         title="Liquidity"
-        description="Vix - Avalanche DEX"
+        description="Apexswap - Avalanche DEX"
       />
       <Trade>
         <div className="mb-5 border-b border-dashed border-gray-200 pb-5 dark:border-gray-800 xs:mb-7 xs:pb-6">
@@ -77,7 +78,7 @@ const LiquidityPage: NextPageWithLayout = () => {
 };
 
 LiquidityPage.getLayout = function getLayout(page) {
-  return <DashboardLayout>{page}</DashboardLayout>;
+  return <Layout>{page}</Layout>;
 };
 
 export default LiquidityPage;

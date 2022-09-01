@@ -67,10 +67,10 @@ export function Header() {
 
   return (
     <nav
-      className={`fixed top-0 z-30 flex w-full items-center justify-between px-4 transition-all duration-300 ltr:right-0 rtl:left-0 sm:px-6 lg:px-8 xl:px-10 3xl:px-12 ${
-        isMounted && windowScroll.y > 10
-          ? 'h-16 bg-gradient-to-b from-white to-white/80 shadow-card backdrop-blur dark:from-dark dark:to-dark/80 sm:h-20'
-          : 'h-16 bg-body dark:bg-dark sm:h-24'
+      className={`fixed top-0 z-30 myBox flex w-full items-center justify-between px-4 transition-all duration-300 ltr:right-0 rtl:left-0 sm:px-6 lg:px-8 xl:px-10 3xl:px-12 ${
+        // isMounted && windowScroll.y > 10
+           'h-12 bg-gradient-to-b from-white to-white/80 shadow-card backdrop-blur dark:from-dark dark:to-dark/80 sm:h-16'
+          // : 'h-12 bg-body dark:bg-dark sm:h-20'
       }`}
     >
       {/* <div className="w-80 2xl:w-[368px]"></div> */}
@@ -100,11 +100,21 @@ export default function Layout({
   children,
 }: React.PropsWithChildren<LayoutProps>) {
   return (
-    <div className="bg-light-100 dark:bg-dark-100 flex min-h-screen flex-col">
+    <div className="bg-light-100 dark:bg-gradient-to-r dark:from-[#0f0f0e] dark:via-stone-900 dark:to-[#041112] flex min-h-screen flex-col ">
       <Header />
-      <main className="mb-12 flex flex-grow flex-col pt-16 sm:pt-24">
+      <main className="mb-12 pt-16 px-5 sm:pt-24 grid grid-rows-3 grid-cols-1 md:grid-flow-col md:grid-cols-3 gap-4" >
         {children}
       </main>
     </div>
   );
 }
+
+// style={{background: 'linear-gradient(0.25turn, #161617, #19191a, #2a2a2e)'}}
+// bg-gradient-to-r from-sky-700 via-indigo-800 to-indigo-900
+// style={{border-image: 'linear-gradient(0.25turn, #3f87a6, #ebf8e1, #f69d3c)'}}
+// bg-gradient-to-r from-indigo-500 to-purple-500
+// #323743
+//  flex flex-grow flex-col
+
+//? ? 'h-16 bg-gradient-to-b from-white to-white/80 shadow-card backdrop-blur dark:from-dark dark:to-dark/80 sm:h-20'
+//? : 'h-16 bg-body dark:bg-dark sm:h-24'

@@ -17,9 +17,6 @@ export default function Settings({ ...props }) {
       <h2 className="mb-4 text-center text-2xl font-medium uppercase text-gray-900 dark:text-white">
         Settings
       </h2>
-      <p className="flex items-center gap-2 uppercase text-md leading-loose tracking-tight text-gray-600 dark:text-gray-400">
-        <b>Swaps & Liquidity</b>
-      </p>
       <p className="flex items-center gap-2 text-sm leading-loose tracking-tight text-gray-600 dark:text-gray-400">
         Default Transaction Speed(GWEI) <InfoIcon className="h-3 w-3" />
       </p>

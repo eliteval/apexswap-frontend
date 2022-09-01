@@ -298,7 +298,7 @@ const SearchPage: NextPageWithLayout<
     <>
       <NextSeo
         title="Explore NTF"
-        description="Vix - Avalanche DEX"
+        description="Apexswap - Avalanche DEX"
       />
       <div className="grid sm:pt-5 2xl:grid-cols-[280px_minmax(auto,_1fr)] 4xl:grid-cols-[320px_minmax(auto,_1fr)]">
         <div className="hidden border-dashed border-gray-200 ltr:border-r ltr:pr-8 rtl:border-l rtl:pl-8 dark:border-gray-700 2xl:block">

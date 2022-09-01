@@ -99,7 +99,7 @@ export const menuItemsOld = [
 
 export const menuItems = [
   {
-    name: 'Swap',
+    name: 'Trade',
     icon: <ExchangeIcon />,
     href: routes.swap,
   },

@@ -16,13 +16,13 @@ import { menuItems } from './sidebar/_default';
 
 export function MenuItems() {
   return (
-    <div className="flex items-center xl:px-10 2xl:px-14 3xl:px-16">
+    <div className="flex items-center xl:px-10 2xl:px-14 3xl:px-16" style={{fontFamily: 'Mulish, sans-serif'}}>
       {menuItems.map((item, index) => (
         <>
-          {item.dropdownItems ? (
+          {item?.dropdownItems ? (
             <div className="relative mx-4 first:ml-0 last:mr-0" key={index}>
               <Menu>
-                <Menu.Button className="flex items-center text-sm font-medium uppercase text-gray-600 transition hover:text-gray-900 dark:text-gray-300 dark:hover:text-white">
+                <Menu.Button className="flex items-center text-xs font-medium uppercase text-gray-600 transition hover:text-gray-900 dark:text-gray-300 dark:hover:text-white">
                   {item.name}
 
                   <span className="z-[1] transition-transform duration-200 ltr:ml-3 rtl:mr-3">
@@ -58,8 +58,9 @@ export function MenuItems() {
             <ActiveLink
               key={index}
               href={item.href}
-              className="mx-4 text-xl font-medium uppercase text-gray-600 transition first:ml-0 last:mr-0 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
+              className="mx-4 text-base text-gray-600 transition first:ml-0 last:mr-0 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
               activeClassName="text-gray-900"
+              style={{fontSize: '14px', fontWeight: '600'}}
             >
               {item.name}
             </ActiveLink>

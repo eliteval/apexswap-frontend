@@ -166,7 +166,7 @@ const FarmsPage: NextPageWithLayout = () => {
     <>
       <NextSeo
         title="Farms"
-        description="Vix - Avalanche DEX"
+        description="Apexswap - Avalanche DEX"
       />
       <div className="mx-auto w-full sm:pt-8">
         <div className="mb-6 flex flex-col justify-between gap-4 md:flex-row md:items-center md:gap-6">

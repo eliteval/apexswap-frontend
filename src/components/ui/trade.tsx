@@ -10,6 +10,9 @@ import ActiveLink from '@/components/ui/links/active-link';
 import AnchorLink from '@/components/ui/links/anchor-link';
 import { RangeIcon } from '@/components/icons/range-icon';
 import { ExportIcon } from '@/components/icons/export-icon';
+import { OptionIcon } from '@/components/icons/option';
+import { InfoCircle } from '@/components/icons/info-circle';
+import { useModal } from '@/components/modal-views/context';
 import { useBreakpoint } from '@/lib/hooks/use-breakpoint';
 import { useIsMounted } from '@/lib/hooks/use-is-mounted';
 import { fadeInBottom } from '@/lib/framer-motion/fade-in-bottom';
@@ -18,16 +21,12 @@ const Listbox = dynamic(() => import('@/components/ui/list-box'));
 
 const tradeMenu = [
   {
-    name: 'Swap',
+    name: 'Trade',
     value: routes.swap,
   },
   {
     name: 'Liquidity',
     value: routes.liquidity,
-  },
-  {
-    name: 'Vote',
-    value: routes.vote,
   },
 ];
 
@@ -52,7 +51,8 @@ function ActiveNavLink({ href, title, isActive, className }: any) {
   );
 }
 
-export default function Trade({ children }: React.PropsWithChildren<{}>) {
+export default function TradeContainer({ children }: React.PropsWithChildren<{}>) {
+  const { openModal } = useModal();
   const router = useRouter();
   const isMounted = useIsMounted();
   const breakpoint = useBreakpoint();
@@ -67,30 +67,9 @@ export default function Trade({ children }: React.PropsWithChildren<{}>) {
     setSelectedMenuItem(tradeMenu[currentPath]);
   }, [currentPath]);
   return (
-    <div className="pt-8 text-sm xl:pt-10">
-      <div className="mx-auto w-full max-w-lg rounded-lg bg-white p-5 pt-4 shadow-card dark:bg-light-dark xs:p-6 xs:pt-5">
-        {/* <nav className="mb-5 min-h-[40px] border-b border-dashed border-gray-200 pb-4 uppercase tracking-wider dark:border-gray-700 xs:mb-6 xs:pb-5 xs:tracking-wide">
-          {isMounted && ['xs'].indexOf(breakpoint) !== -1 && (
-            <Listbox
-              options={tradeMenu}
-              selectedOption={selectedMenuItem}
-              onChange={setSelectedMenuItem}
-              onSelect={(path) => handleRouteOnSelect(path)}
-              className="w-full"
-            >
-              <AnchorLink
-                href={routes.charts}
-                className="inline-flex items-center justify-between gap-1.5 rounded-md px-3 py-2 text-gray-900 hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-gray-700/70"
-              >
-                Charts
-                <ExportIcon className="h-auto w-2.5" />
-              </AnchorLink>
-              <button className="inline-flex items-center justify-between gap-1.5 rounded-md px-3 py-2 uppercase text-gray-900 hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-gray-700/70">
-                Settings
-                <RangeIcon className="h-auto w-3" />
-              </button>
-            </Listbox>
-          )}
+    <div className="text-sm ">
+      <div className="mx-auto mt-6 w-full max-w-lg rounded-lg border border-[#374151] bg-white p-5 shadow-card dark:bg-[#161B1D] xs:p-6 xs:pt-5">
+        <nav className="mb-5 min-h-[40px] border-b border-dashed border-gray-200 pb-4 uppercase tracking-wider dark:border-gray-700 xs:mb-6 xs:pb-5 xs:tracking-wide">
           <div className="hidden items-center justify-between text-gray-600 dark:text-gray-400 sm:flex">
             {tradeMenu.map((item) => (
               <ActiveNavLink
@@ -107,16 +86,19 @@ export default function Trade({ children }: React.PropsWithChildren<{}>) {
               Charts
               <ExportIcon className="h-auto w-2.5" />
             </AnchorLink>
-            <Button
-              variant="transparent"
-              shape="circle"
-              size="small"
-              className="dark:text-white"
-            >
-              <RangeIcon />
-            </Button>
           </div>
-        </nav> */}
+        </nav>
+        <div className="w-[105%] flex flex-row justify-between">
+          <div className="grid grid-cols-1 place-items-center">
+            <div className="text-lg">
+              Dex Aggregator
+            </div>
+          </div>
+          <div className="pr-5 flex flex-row">
+            <InfoCircle className="mr-3 h-auto w-4" style={{ cursor: "pointer" }} />
+            <OptionIcon className="mr-1 h-auto w-4" onClick={() => { openModal('SETTINGS') }} style={{ cursor: "pointer" }} />
+          </div>
+        </div>
         <AnimatePresence exitBeforeEnter>
           <motion.div
             initial="exit"
