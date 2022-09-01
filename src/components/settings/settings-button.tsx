@@ -10,7 +10,7 @@ export default function SettingsButton() {
   const [themeColor] = useLocalStorage<string>('criptic-color');
 
   useDirection(layout ? layout : 'ltr');
-  useThemeColor(themeColor ? themeColor : '#2a52be');
+  useThemeColor(themeColor ? themeColor : '#2563eb');
 
   return (
     <>

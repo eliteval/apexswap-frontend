@@ -43,6 +43,7 @@ export default function Routing({ ...props }) {
   const coins = coinList;
   const inCoin = coins.filter(ele => ele.code === coin_in);
   const outCoin = coins.filter(ele => ele.code === coin_out);
+  console.log(outCoin[0]?.icon);
   // let [selectedCoin, setSelectedCoin] = useState(inCoin);
 
   return (
@@ -63,8 +64,8 @@ export default function Routing({ ...props }) {
       <div style={{ overflow: "auto" }}>
         <div className="grid grid-cols-12 gap-2 " style={{ display: "table", width: "100%" }}>
 
-          <div className="h-96 max-h-full col-span-1 grid grid-cols-1 place-items-center px-2" style={{ display: "table-cell", minWidth: "50px" }}>
-            <div className="text-sm tracking-tighter text-gray-600 dark:text-blue-400" style={{ position: "absolute", top: "50%" }}>
+          <div className="h-96 max-h-full px-2 col-span-1" style={{ display: "table-cell", minWidth: "50px" }}>
+            <div className="mx-2" style={{ position: "absolute", top: "50%" }}>
               {inCoin[0]?.icon}
             </div>
           </div>
@@ -83,7 +84,7 @@ export default function Routing({ ...props }) {
                 ))}
               </div>
 
-              <div className="col-span-11 text-sm tracking-tighter text-gray-600 dark:text-blue-400 p-10">
+              <div className="col-span-11 text-sm tracking-tighter text-gray-600 dark:text-blue-400 pl-5 pr-2">
                 {route?.map((element, index) => (
                   <div key={index} className="flex items-center gap-4 ">
                     {element.map((item, id) => (
@@ -118,8 +119,8 @@ export default function Routing({ ...props }) {
             </div>
           </div>
 
-          <div className="h-96 max-h-full col-span-1 grid grid-cols-1 place-items-center px-2" style={{ display: "table-cell" }}>
-            <div className="text-sm tracking-tighter text-gray-600 dark:text-blue-400" style={{ position: "absolute", top: "50%" }}>
+          <div className="h-96 max-h-full px-2 col-span-1" style={{ display: "table-cell", minWidth: "50px" }}>
+            <div className="mx-2" style={{ position: "absolute", top: "50%" }}>
               {outCoin[0]?.icon}
             </div>
           </div>

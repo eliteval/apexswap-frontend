@@ -6,7 +6,7 @@ const AnchorLink: React.FC<
 > = ({ href, ...props }) => {
   return (
     <NextLink href={href}>
-      <a {...props} />
+      <a style={{	borderRadius: "0.5rem", marginRight: "0.125rem"}} {...props} />
     </NextLink>
   );
 };

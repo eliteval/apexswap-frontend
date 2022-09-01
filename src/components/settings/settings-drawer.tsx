@@ -180,7 +180,7 @@ function ColorSwitcher() {
     'criptic-color',
     '#2a2a2e'
   );
-  useThemeColor(themeColor ? themeColor : '#2a52be');
+  useThemeColor(themeColor ? themeColor : '#000000');
 
   return (
     <div className="px-6 pt-8">

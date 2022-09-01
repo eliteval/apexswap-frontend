@@ -86,7 +86,7 @@ export default function WalletConnect() {
           size="small"
           shape="pill"
           fullWidth={true}
-          className="MyElement mt-1 uppercase xs:tracking-widest"
+          className=" dark:bg-gradient-to-r dark:from-cyan-400 dark:to-blue-500 mt-1 uppercase xs:tracking-widest"
           onClick={() => openModal('WALLET_CONNECT_VIEW')}          
         >
           CONNECT

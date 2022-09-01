@@ -13,7 +13,8 @@ const ActiveLink: React.FC<
   return (
     <AnchorLink
       href={href}
-      className={cn(className, {
+      // style={{backgroundColor: "#303030"}}
+      className={cn('', className, {
         [activeClassName]: pathname === href,
       })}
       {...props}

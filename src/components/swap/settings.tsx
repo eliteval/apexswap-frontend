@@ -23,7 +23,7 @@ export default function Settings({ ...props }) {
       <div className="grid grid-cols-3 gap-2">
         <Button
           color="gray"
-          className="mb-5 max-h-8 w-full font-normal text-gray-600 hover:text-gray-900 dark:bg-gray-600 dark:text-gray-200 dark:hover:text-white lg:mt-6"
+          className="dark:focus:bg-gradient-to-r dark:focus:from-cyan-400 dark:focus:to-blue-500 mb-5 max-h-8 w-full font-normal text-gray-600 hover:text-gray-900 dark:bg-gray-600 dark:text-gray-200 dark:hover:text-white lg:mt-6"
         >
           <span className="flex items-center gap-2">
             Standard
@@ -31,7 +31,7 @@ export default function Settings({ ...props }) {
         </Button>
         <Button
           color="gray"
-          className="mb-5 max-h-8 w-full font-normal text-gray-600 hover:text-gray-900 dark:bg-gray-600 dark:text-gray-200 dark:hover:text-white lg:mt-6"
+          className="dark:focus:bg-gradient-to-r dark:focus:from-cyan-400 dark:focus:to-blue-500 mb-5 max-h-8 w-full font-normal text-gray-600 hover:text-gray-900 dark:bg-gray-600 dark:text-gray-200 dark:hover:text-white lg:mt-6"
         >
           <span className="flex items-center gap-2">
             Fast
@@ -39,7 +39,7 @@ export default function Settings({ ...props }) {
         </Button>
         <Button
           color="gray"
-          className="mb-5 max-h-8 w-full font-normal text-gray-600 hover:text-gray-900 dark:bg-gray-600 dark:text-gray-200 dark:hover:text-white lg:mt-6"
+          className="dark:focus:bg-gradient-to-r dark:focus:from-cyan-400 dark:focus:to-blue-500 mb-5 max-h-8 w-full font-normal text-gray-600 hover:text-gray-900 dark:bg-gray-600 dark:text-gray-200 dark:hover:text-white lg:mt-6"
         >
           <span className="flex items-center gap-2">
             Instant
@@ -52,7 +52,7 @@ export default function Settings({ ...props }) {
       <div className="grid grid-cols-4 gap-2">
         <Button
           color="gray"
-          className="mb-5 max-h-8 w-full font-normal text-gray-600 hover:text-gray-900 dark:bg-gray-600 dark:text-gray-200 dark:hover:text-white lg:mt-6"
+          className="dark:focus:bg-gradient-to-r dark:focus:from-cyan-400 dark:focus:to-blue-500 mb-5 max-h-8 w-full font-normal text-gray-600 hover:text-gray-900 dark:bg-gray-600 dark:text-gray-200 dark:hover:text-white lg:mt-6"
         >
           <span className="flex items-center gap-2">
             0.1%
@@ -60,7 +60,7 @@ export default function Settings({ ...props }) {
         </Button>
         <Button
           color="gray"
-          className="mb-5 max-h-8 w-full font-normal text-gray-600 hover:text-gray-900 dark:bg-gray-600 dark:text-gray-200 dark:hover:text-white lg:mt-6"
+          className="dark:focus:bg-gradient-to-r dark:focus:from-cyan-400 dark:focus:to-blue-500 mb-5 max-h-8 w-full font-normal text-gray-600 hover:text-gray-900 dark:bg-gray-600 dark:text-gray-200 dark:hover:text-white lg:mt-6"
         >
           <span className="flex items-center gap-2">
             0.5%
@@ -68,7 +68,7 @@ export default function Settings({ ...props }) {
         </Button>
         <Button
           color="gray"
-          className="mb-5 max-h-8 w-full font-normal text-gray-600 hover:text-gray-900 dark:bg-gray-600 dark:text-gray-200 dark:hover:text-white lg:mt-6"
+          className="dark:focus:bg-gradient-to-r dark:focus:from-cyan-400 dark:focus:to-blue-500 mb-5 max-h-8 w-full font-normal text-gray-600 hover:text-gray-900 dark:bg-gray-600 dark:text-gray-200 dark:hover:text-white lg:mt-6"
         >
           <span className="flex items-center gap-2">
             1.0%
@@ -90,7 +90,7 @@ export default function Settings({ ...props }) {
         <Switch checked={swch1} onChange={() => setSwch1(!swch1)}>
           <div
             className={cn(
-              swch1 ? 'bg-brand' : 'bg-gray-200 dark:bg-gray-700',
+              swch1 ? 'bg-brand dark:bg-gradient-to-r dark:from-cyan-400 dark:to-blue-500' : 'bg-gray-200 dark:bg-gray-700',
               'relative inline-flex h-[22px] w-10 items-center rounded-full transition-colors duration-300'
             )}
           >
@@ -112,7 +112,7 @@ export default function Settings({ ...props }) {
         <Switch checked={swch2} onChange={() => setSwch2(!swch2)}>
           <div
             className={cn(
-              swch2 ? 'bg-brand' : 'bg-gray-200 dark:bg-gray-700',
+              swch2 ? 'bg-brand dark:bg-gradient-to-r dark:from-cyan-400 dark:to-blue-500' : 'bg-gray-200 dark:bg-gray-700',
               'relative inline-flex h-[22px] w-10 items-center rounded-full transition-colors duration-300'
             )}
           >
@@ -134,7 +134,7 @@ export default function Settings({ ...props }) {
         <Switch checked={swch3} onChange={() => setSwch3(!swch3)}>
           <div
             className={cn(
-              swch3 ? 'bg-brand' : 'bg-gray-200 dark:bg-gray-700',
+              swch3 ? 'bg-brand dark:bg-gradient-to-r dark:from-cyan-400 dark:to-blue-500' : 'bg-gray-200 dark:bg-gray-700',
               'relative inline-flex h-[22px] w-10 items-center rounded-full transition-colors duration-300'
             )}
           >
