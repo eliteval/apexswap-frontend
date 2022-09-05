@@ -100,9 +100,9 @@ export default function Layout({
   children,
 }: React.PropsWithChildren<LayoutProps>) {
   return (
-    <div className=" bg-light-100 dark:bg-gradient-to-r dark:from-[#0f0f0e] dark:via-stone-900 dark:to-[#041112] flex min-h-screen flex-col ">
+    <div className="min-w-fit w-full min-h-screen bg-light-100 dark:bg-gradient-to-r dark:from-[#0f0f0e] dark:via-stone-900 dark:to-[#041112] flex flex-col">
       <Header />
-      <main className="mx-auto max-w-[1280px] mb-12 pt-16 px-10 sm:pt-24 " >
+      <main className="mx-auto min-w-fit mb-12 pt-16 px-10 sm:pt-24 " >
         {children}
       </main>
     </div>

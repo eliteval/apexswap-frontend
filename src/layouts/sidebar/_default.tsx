@@ -57,6 +57,11 @@ export const menuItemsOld = [
     href: routes.liquidity,
   },
   {
+  //   name: 'Bridge',
+  //   icon: <PoolIcon />,
+  //   href: routes.bridge,
+  // },
+  // {
     name: 'Explore NFTs',
     icon: <CompassIcon />,
     href: routes.search,
@@ -102,11 +107,31 @@ export const menuItems = [
     name: 'Trade',
     icon: <ExchangeIcon />,
     href: routes.swap,
+    dropdownItems: [
+      {
+        name: 'Market',
+        href: routes.swap,
+      },
+      {
+        name: 'Limit',
+        href: routes.swap,
+      },
+    ],
+  },
+  {
+    name: 'Bridge',
+    icon: <ExchangeIcon />,
+    href: routes.bridge,
   },
   {
     name: 'Farm',
     icon: <FarmIcon />,
     href: routes.farms,
+  },
+  {
+    name: 'Liquidity',
+    icon: <FarmIcon />,
+    href: routes.liquidity,
   },
 ]
 

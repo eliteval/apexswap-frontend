@@ -3,7 +3,7 @@ const routes = {
   minimal: '/minimal',
   retro: '/retro',
   swap: '/swap',
-  limit: '/limit',
+  bridge: '/bridge',
   liquidity: '/liquidity',
   liquidityPosition: '/liquidity-position',
   farms: '/farms',

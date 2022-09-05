@@ -38,7 +38,7 @@ const sizes: Record<SizeNames, string[]> = {
   large: ['px-7 sm:px-9 h-11 sm:h-13', 'w-11 h-11 sm:w-13 sm:h-13'],
   medium: ['px-5 sm:px-8 h-10 sm:h-12', 'h-10 w-10 sm:w-12 sm:h-12'],
   small: ['px-7 h-10', 'w-10 h-10'],
-  mini: ['px-4 h-8', 'w-8 h-8'],
+  mini: ['px-2 h-8', 'w-8 h-8'],
 };
 
 export interface ButtonProps
@@ -110,7 +110,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         buttonColorClassNames = `${colorClassNames[0]} ${
           disabled || isLoading
             ? ''
-            : 'border border-gray-800 hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-900 focus:bg-gray-100 dark:focus:bg-gray-800'
+            : 'border border-gray-800 hover:bg-gray-100 dark:bg-gray-900 dark:hover:bg-gray-900 focus:bg-gray-100 dark:focus:bg-gray-800'
         } `;
         buttonDripColor = 'rgba(0, 0, 0, 0.1)';
         break;
@@ -126,7 +126,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ref={buttonRef}
         onClick={clickHandler}
         className={cn(
-          'relative inline-flex shrink-0 items-center justify-center overflow-hidden text-center text-xs font-medium tracking-wider outline-none transition-all sm:text-xs',
+          'relative inline-flex items-center justify-center overflow-hidden text-center text-xs font-medium outline-none transition-all sm:text-xs',
           !disabled
             ? buttonColorClassNames
             : 'cursor-not-allowed bg-gray-100 text-gray-400',

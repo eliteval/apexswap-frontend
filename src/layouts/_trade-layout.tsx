@@ -26,8 +26,8 @@ const tradeMenu = [
     value: routes.liquidity,
   },
   {
-    name: 'Vote',
-    value: routes.vote,
+    name: 'Bridge',
+    value: routes.bridge,
   },
 ];
 

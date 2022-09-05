@@ -162,21 +162,6 @@ Styles for Swiper slider
 .background{
   background-image: linear-gradient(to right, #F9C72D, #F05A2A, #F1573F, #F147A3, #2EEDE0);
 }
-.myCard{
-  background:rgb(88, 26, 26)
-}
-
-.parent {
-  border: 1px solid red;
-}
-
-.child {
-  border: 1px solid green;
-}
-
-.parent:focus-within {
-  background-color: green;
-}
 
 table {
   table-layout: auto;
@@ -184,16 +169,19 @@ table {
   width: 100%;
   text-align: center;
   font-family: Mulish, sans-serif;
+  overflow: auto;
 }
 th, td {
-  padding: 8px;
+  /* padding: auto; */
   text-align: center;  
-  font-size: small;  
 }
 th {
   color: #4b5563;
+  font-size: small;  
 }
 td {
   color: #d1d5db;
   border-bottom: 1px solid #374151;
+  font-size: 12px;
+  padding-top: 1rem; /* 8px */;
 }

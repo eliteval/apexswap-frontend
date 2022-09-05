@@ -12,28 +12,28 @@ const CoinSelectView = dynamic(() =>
   import('@/components/ui/coin-select-view')
 );
 
-interface CoinInputTypes extends React.InputHTMLAttributes<HTMLInputElement> {
+interface BridgeInputTypes extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
   disabled?: boolean;
   exchangeRate?: number;
   defaultCoinIndex?: number;
+  logoSize?: number;
   // className?: string;
   getCoinValue: (param: { coin: string; value: string }) => void;
-  data?: object;
 }
 
 const decimalPattern = /^[0-9]*[.,]?[0-9]*$/;
 
-export default function CoinInput({
+export default function BridgeInput({
   label,
   disabled,
   getCoinValue,
-  data,
   defaultCoinIndex = 0,
+  logoSize,
   exchangeRate,
   // className,
   ...rest
-}: CoinInputTypes) {
+}: BridgeInputTypes) {
   let [focused, setFocused] = useState(false);
   let [value, setValue] = useState('');
   let [selectedCoin, setSelectedCoin] = useState(coinList[defaultCoinIndex]);
@@ -41,7 +41,6 @@ export default function CoinInput({
   let [coinOut, setCoinOut] = useState(coinList[defaultCoinIndex]);
   let [visibleCoinList, setVisibleCoinList] = useState(false);
   const ratio = 12.8;
-  console.log('data=>', data);
   const modalContainerRef = useRef<HTMLDivElement>(null);
   useClickAway(modalContainerRef, () => {
     setVisibleCoinList(false);
@@ -67,11 +66,14 @@ export default function CoinInput({
           className
         )}
       > */}
-      <div className="dark:focus-within:border-blue-600 dark:focus-within:bg-[#0f0f0e] block px-4 min-h-[70px] rounded-lg border border-gray-200  transition-colors duration-200 hover:border-gray-900 dark:border-gray-700 dark:bg-[#0f1112]">
-        <span className="mt-2 mb-0.5 min-h-[10px] block text-xs text-gray-600 dark:text-gray-400">
-          {label}
-        </span>
-        <div className="min-h-[60px] flex flex-row justify-between">
+      <div className="dark:focus-within:border-blue-600 dark:focus-within:bg-[#0f0f0e] block px-4 min-h-[70px] rounded-2xl border border-gray-200  transition-colors duration-200 hover:border-gray-900 dark:border-gray-700 dark:bg-[#0f1112]">
+        <div className="mt-0.5 mb-2 min-h-[10px] flex flex-row justify-between">
+          <span className="mt-2 mb-0.5 min-h-[10px] block text-xs text-gray-600 dark:text-gray-400">{label} </span>
+          <div className="mt-2 mb-0.5 min-h-[10px] block text-xs text-gray-600 text-right dark:text-gray-400 border-b border-b-gray-400">
+            Max:0
+          </div>
+        </div>
+        {/* <div className="min-h-[60px] flex flex-row justify-between">
           <button
             onClick={() => setVisibleCoinList(true)}
             className="min-w-[80px] flex items-center font-medium outline-none dark:text-gray-100"
@@ -95,11 +97,11 @@ export default function CoinInput({
             style={{padding: '0px'}}
             // {...rest}
           />
-        </div>
+        </div> */}
         <div className="mt-0.5 mb-2 min-h-[10px] flex flex-row justify-between">
-          <span>{selectedCoin?.name} </span>
-          <div className="font-xs text-gray-400 text-right">
-            = ${exchangeRate ? Number(value) * exchangeRate : '0.00'}
+          <span className="text-lg font-normal">0.0</span>
+          <div className="font-sm text-gray-400 text-right">
+            {}
           </div>
         </div>
       </div>
@@ -172,4 +174,4 @@ export default function CoinInput({
   );
 }
 
-CoinInput.displayName = 'CoinInput';
+BridgeInput.displayName = 'BridgeInput';

@@ -15,7 +15,7 @@ export function TabItem({
     <Tab
       className={({ selected }) =>
         cn(
-          'relative py-2 uppercase tracking-wider hover:text-gray-900 focus:outline-none dark:hover:text-gray-100 xs:py-2.5 sm:py-3',
+          'relative py-2 tracking-wider hover:text-gray-900 focus:outline-none dark:hover:text-gray-100 xs:py-2.5 sm:py-3',
           {
             'font-medium text-brand dark:text-gray-100': selected,
             'text-gray-600 dark:text-gray-400': !selected,

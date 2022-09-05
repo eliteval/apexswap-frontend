@@ -17,7 +17,7 @@ export const coinList = [
     icon: <Ethereum />,
     code: 'ETH',
     name: 'Ethereum',
-    price: 1580,
+    price: 1053.28,
   },
   {
     icon: <Tether />,
@@ -29,7 +29,7 @@ export const coinList = [
     icon: <Bnb />,
     code: 'BNB',
     name: 'Binance Coin',
-    price: 278,
+    price: 214.96,
   },
   {
     icon: <Usdc />,

@@ -12,67 +12,68 @@ import Trade from '@/components/ui/trade';
 const LiquidityPage: NextPageWithLayout = () => {
   return (
     <>
-      <NextSeo
-        title="Liquidity"
-        description="Apexswap - Avalanche DEX"
-      />
-      <Trade>
-        <div className="mb-5 border-b border-dashed border-gray-200 pb-5 dark:border-gray-800 xs:mb-7 xs:pb-6">
-          <div className="relative flex flex-col gap-3">
-            <CoinInput
-              label={'From'}
-              exchangeRate={0.0}
-              defaultCoinIndex={0}
-              getCoinValue={(data) => console.log('From coin value:', data)}
-            />
-            <div className="absolute top-1/2 left-1/2 z-[1] -mt-4 -ml-4 rounded-full bg-white shadow-large dark:bg-gray-600">
-              <Button
-                size="mini"
-                color="gray"
-                shape="circle"
-                variant="transparent"
-              >
-                <Plus className="h-auto w-3" />
-              </Button>
+      <NextSeo title="Liquidity" description="Apexswap - Avalanche DEX" />
+      {/* <Trade> */}
+      <div className="text-sm ">
+        <div className=" mt-6 w-full max-w-lg rounded-lg border border-[#374151] bg-white  shadow-card dark:bg-[#161b1d] xs:p-4 xs:pt-5">
+          <div className="mb-5 border-b border-dashed border-gray-200 pb-5 dark:border-gray-800 xs:mb-7 xs:pb-6">
+            <div className="relative flex flex-col gap-3">
+              <CoinInput
+                label={'From'}
+                exchangeRate={0.0}
+                defaultCoinIndex={0}
+                getCoinValue={(data) => console.log('From coin value:', data)}
+              />
+              <div className="absolute top-1/2 left-1/2 z-[1] -mt-4 -ml-4 rounded-full bg-white shadow-large dark:bg-gray-600">
+                <Button
+                  size="mini"
+                  color="gray"
+                  shape="circle"
+                  variant="transparent"
+                >
+                  <Plus className="h-auto w-3" />
+                </Button>
+              </div>
+              <CoinInput
+                label={'To'}
+                exchangeRate={0.0}
+                defaultCoinIndex={1}
+                getCoinValue={(data) => console.log('To coin value:', data)}
+              />
             </div>
-            <CoinInput
-              label={'To'}
-              exchangeRate={0.0}
-              defaultCoinIndex={1}
-              getCoinValue={(data) => console.log('To coin value:', data)}
+          </div>
+          <div className="flex flex-col gap-4 xs:gap-[18px]">
+            <TransactionInfo label={'13.77 eth per btc'} value={'0%'} />
+            <TransactionInfo
+              label={'0.072631 Btc per ETH'}
+              value={'Share of Pool'}
             />
           </div>
+          <div className="mt-6 grid grid-cols-2 gap-2.5 xs:mt-8">
+            <ActiveLink href="/liquidity-position">
+              <Button
+                size="large"
+                shape="rounded"
+                fullWidth={true}
+                className="uppercase"
+              >
+                Approve BTC
+              </Button>
+            </ActiveLink>
+            <ActiveLink href="/liquidity-position">
+              <Button
+                size="large"
+                shape="rounded"
+                fullWidth={true}
+                className="uppercase"
+              >
+                Approve ETH
+              </Button>
+            </ActiveLink>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 xs:gap-[18px]">
-          <TransactionInfo label={'13.77 eth per btc'} value={'0%'} />
-          <TransactionInfo
-            label={'0.072631 Btc per ETH'}
-            value={'Share of Pool'}
-          />
-        </div>
-        <div className="mt-6 grid grid-cols-2 gap-2.5 xs:mt-8">
-          <ActiveLink href="/liquidity-position">
-            <Button
-              size="large"
-              shape="rounded"
-              fullWidth={true}
-              className="uppercase"
-            >
-              Approve BTC
-            </Button>
-          </ActiveLink>
-          <ActiveLink href="/liquidity-position">
-            <Button
-              size="large"
-              shape="rounded"
-              fullWidth={true}
-              className="uppercase"
-            >
-              Approve ETH
-            </Button>
-          </ActiveLink>
-        </div>
-      </Trade>
+      </div>
+      {/* </Trade> */}
     </>
   );
 };

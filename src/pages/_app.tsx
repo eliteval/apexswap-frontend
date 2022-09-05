@@ -16,7 +16,6 @@ import '@/assets/css/scrollbar.css';
 import '@/assets/css/globals.css';
 import '@/assets/css/range-slider.css';
 
-
 type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;
 };

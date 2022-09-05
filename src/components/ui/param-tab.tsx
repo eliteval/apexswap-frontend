@@ -53,7 +53,8 @@ export default function ParamTab({ tabMenu, children }: ParamTabTypes) {
       selectedIndex={selectedTabIndex}
       onChange={(index) => handleTabChange(index)}
     >
-      <Tab.List className="relative mb-6 bg-body text-sm uppercase before:absolute before:left-0 before:bottom-0 before:w-full before:rounded-sm before:bg-gray-200 dark:bg-dark dark:before:bg-gray-800 sm:gap-8 sm:rounded-none md:before:h-0.5">
+      <Tab.List className="text-xm relative mb-1 bg-body before:absolute before:left-0 before:bottom-0 before:w-full before:rounded-sm before:bg-gray-200 dark:bg-dark dark:before:bg-gray-800 sm:gap-8 sm:rounded-none md:before:h-0.5">
+        
         {isMounted && ['xs', 'sm'].indexOf(breakpoint) !== -1 ? (
           <div
             ref={dropdownEl}
@@ -61,7 +62,7 @@ export default function ParamTab({ tabMenu, children }: ParamTabTypes) {
           >
             <button
               onClick={() => setVisibleMobileMenu(!visibleMobileMenu)}
-              className="flex w-full items-center justify-between py-2.5 px-4 uppercase text-gray-400 dark:text-gray-300 sm:px-5 sm:py-3.5"
+              className="flex w-full items-center justify-between py-2.5 px-4 text-gray-400 dark:text-gray-300 sm:px-5 sm:py-3.5"
             >
               <span className="font-medium text-gray-900 dark:text-gray-100">
                 {tabMenu[selectedTabIndex].title}
@@ -88,13 +89,28 @@ export default function ParamTab({ tabMenu, children }: ParamTabTypes) {
             </div>
           </div>
         ) : (
-          <div className="flex gap-6 md:gap-8 xl:gap-10 3xl:gap-12">
+          <div className="flex gap-2 px-2 md:gap-4 xl:gap-6 3xl:gap-8">
             {tabMenu.map((item) => (
               <TabItem key={item.path}>{item.title}</TabItem>
             ))}
           </div>
         )}
       </Tab.List>
+      <div className="flex flex-row">
+          <div className="w-3/5">
+            <div className="mb-2 flex flex-row-reverse text-xs text-gray-900 dark:text-white">
+              <span className="">
+                24H Vol<span>&darr;</span>
+              </span>
+              <span className=" text-stone-400">Asset/</span>
+            </div>
+          </div>
+          <div className="w-2/5">
+            <div className="mb-2 text-right text-xs dark:text-stone-400 ">
+              <span className="pr-1">Price/%</span>
+            </div>
+          </div>
+        </div>
       <TabPanels>{children}</TabPanels>
     </Tab.Group>
   );
