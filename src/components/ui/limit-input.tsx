@@ -12,34 +12,28 @@ const CoinSelectView = dynamic(() =>
   import('@/components/ui/coin-select-view')
 );
 
-interface CoinInputTypes extends React.InputHTMLAttributes<HTMLInputElement> {
+interface LimitInputTypes extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
   disabled?: boolean;
   exchangeRate?: number;
   defaultCoinIndex?: number;
-  showvalue?: number;
   // className?: string;
   getCoinValue: (param: { coin: string; value: string }) => void;
-  onchangeToken: (param: string) => void;
-  onchangeAmount: (param: string) => void;
   data?: object;
 }
 
 const decimalPattern = /^[0-9]*[.,]?[0-9]*$/;
 
-export default function CoinInput({
+export default function LimitInput({
   label,
   disabled,
-  showvalue,
   getCoinValue,
-  onchangeToken,
-  onchangeAmount,
   data,
   defaultCoinIndex = 0,
   exchangeRate,
   // className,
   ...rest
-}: CoinInputTypes) {
+}: LimitInputTypes) {
   let [focused, setFocused] = useState(false);
   let [value, setValue] = useState('');
   let [selectedCoin, setSelectedCoin] = useState(coinList[defaultCoinIndex]);
@@ -57,57 +51,52 @@ export default function CoinInput({
     if (event.target.value.match(decimalPattern)) {
       setValue(event.target.value);
       let param = { coin: selectedCoin.code, value: event.target.value };
-      onchangeAmount(event.target.value);
       getCoinValue && getCoinValue(param);
     }
   };
   function handleSelectedCoin(coin: CoinTypes) {
     setSelectedCoin(coin);
-    console.log('aaa', coin.address);
-    onchangeToken(coin.address);
     !disabled ? setCoinIn(coin) : setCoinOut(coin);
     setVisibleCoinList(false);
   }
   return (
     <>
-      {/* <div
-        className={cn(
-          'group flex min-h-[70px] rounded-lg border border-gray-200 transition-colors duration-200 hover:border-gray-900 dark:border-gray-700 dark:border-blue-400 dark:bg-[#000000]',
-          className
-        )}
-      > */}
-      <div className="dark:focus-within:border-blue-600 dark:focus-within:bg-[#0f0f0e] block px-4 min-h-[70px] rounded-lg border border-gray-200  transition-colors duration-200 hover:border-gray-900 dark:border-gray-700 dark:bg-[#0f1112]">
-        <span className="mt-2 mb-0.5 min-h-[10px] block text-xs text-gray-600 dark:text-gray-400">
-          {label}
-        </span>
-        <div className="min-h-[60px] flex flex-row justify-between">
-          <button
-            onClick={() => setVisibleCoinList(true)}
-            className="min-w-[80px] flex items-center font-medium outline-none dark:text-gray-100"
-          >
-            {selectedCoin?.icon}{' '}
-            <span className="ltr:ml-2 rtl:mr-2">{selectedCoin?.code} </span>
-            <ChevronDown className="ltr:ml-1.5 rtl:mr-1.5" />
-          </button>
-          <input
-            type="text"
-            value={!disabled ? (value) : Number(showvalue).toFixed(2)}
-            placeholder="0.0"
-            inputMode="decimal"
-            disabled={disabled}
-            onChange={handleOnChange}
-            className={cn('w-full rounded-tr-lg rounded-br-lg border-0 text-right text-lg outline-none dark:focus:ring-0 dark:bg-inherit',
-              !disabled
-                ? ''
-                : 'cursor-not-allowed bg-gray-100 text-gray-400'
-            )}
-            style={{ padding: '0px' }}
-          />
+      <div className="dark:focus-within:border-blue-600 dark:hover:bg-[#10100f] dark:focus-within:bg-[#0f0f0e] block min-h-[70px] rounded-lg border border-gray-200 transition-colors duration-200 hover:border-gray-900 dark:border-gray-700 dark:bg-[#0f1112]">
+        <div className="mt-4 min-h-[10px] flex text-xs text-gray-600 dark:text-gray-400">
+          {label && <div className="px-2 py-1 bg-emerald-600 rounded-r-lg bg-opacity-25">
+            <span className="text-teal-300">{label}</span>
+          </div>}
         </div>
-        <div className="mt-0.5 mb-2 min-h-[10px] flex flex-row justify-between">
-          <span>{selectedCoin?.name} </span>
-          <div className="font-xs text-gray-400 text-right">
-            = ${exchangeRate ? Number(value) * exchangeRate : '0.00'}
+        <div className="px-4">
+          <div className="min-h-[50px] flex flex-row justify-between">
+            <button
+              onClick={() => setVisibleCoinList(true)}
+              className="min-w-[80px] flex items-center font-medium outline-none dark:text-gray-100"
+            >
+              {selectedCoin?.icon}{' '}
+              <span className="ltr:ml-2 rtl:mr-2">{selectedCoin?.code} </span>
+              <ChevronDown className="ltr:ml-1.5 rtl:mr-1.5" />
+            </button>
+            <input
+              type="text"
+              value={!disabled ? (value) : (Number(value) * 1)}
+              placeholder="0.0"
+              inputMode="decimal"
+              disabled={disabled}
+              onChange={handleOnChange}
+              className={cn('w-full rounded-tr-lg rounded-br-lg border-0 text-right text-lg outline-none dark:focus:ring-0 dark:bg-inherit',
+                !disabled
+                  ? ''
+                  : 'cursor-not-allowed bg-gray-100 text-gray-400'
+              )}
+              style={{ padding: '0px' }}
+            />
+          </div>
+          <div className="mt-0.5 mb-2 min-h-[10px] flex flex-row justify-between">
+            <span></span>
+            <div className="font-xs text-gray-400 text-right">
+              = ${exchangeRate ? Number(value) * exchangeRate : '0.00'}
+            </div>
           </div>
         </div>
       </div>
@@ -147,4 +136,4 @@ export default function CoinInput({
   );
 }
 
-CoinInput.displayName = 'CoinInput';
+LimitInput.displayName = 'LimitInput';

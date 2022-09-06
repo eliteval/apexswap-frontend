@@ -22,14 +22,14 @@ const tradeMenu = [
     name: 'Market',
     value: routes.swap,
   },
-  // {
-  //   name: 'Bridge',
-  //   value: routes.bridge,
-  // },
   {
     name: 'Limit',
-    value: routes.liquidity,
+    value: routes.limit,
   },
+  // {
+  //   name: 'Limit',
+  //   value: routes.liquidity,
+  // },
 ];
 
 function ActiveNavLink({ href, title, isActive, className }: any) {

@@ -7,6 +7,10 @@ import { ChevronDown } from '@/components/icons/chevron-down';
 import { useClickAway } from '@/lib/hooks/use-click-away';
 import { useLockBodyScroll } from '@/lib/hooks/use-lock-body-scroll';
 import { coinList } from '@/data/static/coin-list';
+import { Ethereum } from '@/components/icons/ethereum';
+import { Bnb } from '@/components/icons/bnb';
+import { Listbox } from '@/components/ui/listbox';
+import { Transition } from '@/components/ui/transition';
 // dynamic import
 const CoinSelectView = dynamic(() =>
   import('@/components/ui/coin-select-view')
@@ -58,6 +62,52 @@ export default function BridgeInput({
     !disabled? setCoinIn(coin) : setCoinOut(coin);
     setVisibleCoinList(false);
   }
+  const sort = [
+    { id: 1, icon: <Ethereum />, name: 'Ethereum Mainnet' },
+    { id: 2, icon: <Bnb />, name: 'BinanceSmartChain Mainnet' },
+  ];  
+  function SortList() {
+    const [selectedItem, setSelectedItem] = useState(sort[0]);
+  
+    return (
+      <div className="relative w-full md:w-auto">
+        <Listbox value={selectedItem} onChange={setSelectedItem}>
+          <Listbox.Button className="flex h-11 w-full items-center rounded-2xl bg-gray-100 pr-4 text-sm text-gray-900 dark:bg-inherit dark:text-white ">
+            <span className="px-2">{selectedItem.icon}</span>
+            <span className="pr-2">{selectedItem.name}</span>
+            <ChevronDown style={{ color: '#7676d1' }} />
+          </Listbox.Button>
+          <Transition
+            enter="ease-out duration-200"
+            // enterFrom=" translate-y-2"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100 -translate-y-0"
+            // leaveTo="opacity-0 translate-y-2"
+          >
+            <Listbox.Options className="absolute left-0 z-10 mt-2 w-full origin-top-right rounded-lg bg-white shadow-large dark:bg-[#303030]">
+              {sort.map((item) => (
+                <Listbox.Option key={item.id} value={item}>
+                  {({ selected }) => (
+                    <div
+                      className={`block cursor-pointer rounded-md px-3 py-2 text-sm font-medium text-gray-900 transition dark:text-white  ${
+                        selected
+                          ? 'my-1 bg-gray-100 dark:bg-gray-600'
+                          : 'hover:bg-gray-50 dark:hover:bg-gray-700'
+                      }`}
+                    >
+                      {item.name}
+                    </div>
+                  )}
+                </Listbox.Option>
+              ))}
+            </Listbox.Options>
+          </Transition>
+        </Listbox>
+      </div>
+    );
+  }
+  
   return (
     <>
       {/* <div
@@ -73,70 +123,21 @@ export default function BridgeInput({
             Max:0
           </div>
         </div>
-        {/* <div className="min-h-[60px] flex flex-row justify-between">
-          <button
-            onClick={() => setVisibleCoinList(true)}
-            className="min-w-[80px] flex items-center font-medium outline-none dark:text-gray-100"
-          >
-            {selectedCoin?.icon}{' '}
-            <span className="ltr:ml-2 rtl:mr-2">{selectedCoin?.code} </span>
-            <ChevronDown className="ltr:ml-1.5 rtl:mr-1.5" />
-          </button>
-          <input
-            type="text"
-            value={!disabled? (value) : (Number(value) * 1) }
-            placeholder="0.0"
-            inputMode="decimal"
-            disabled={disabled}
-            onChange={handleOnChange}
-            className={cn('w-full rounded-tr-lg rounded-br-lg border-0 text-right text-lg outline-none dark:focus:ring-0 dark:bg-inherit',
-              !disabled
-                ? ''
-                : 'cursor-not-allowed bg-gray-100 text-gray-400'
-            )}
-            style={{padding: '0px'}}
-            // {...rest}
-          />
-        </div> */}
-        <div className="mt-0.5 mb-2 min-h-[10px] flex flex-row justify-between">
+        <div className="mt-1 mb-2 min-h-[10px] flex items-center justify-between">
           <span className="text-lg font-normal">0.0</span>
           <div className="font-sm text-gray-400 text-right">
-            {}
+            {/* <SortList /> */}
+            <button
+              onClick={() => setVisibleCoinList(true)}
+              className="min-w-[80px] flex items-center font-medium outline-none dark:text-gray-100"
+            >
+              {selectedCoin?.icon}{' '}
+              <span className="ltr:ml-2 rtl:mr-2">{selectedCoin?.code} </span>
+              <ChevronDown className="ltr:ml-1.5 rtl:mr-1.5" />
+            </button>
           </div>
         </div>
       </div>
-      {/* <div className="grid grid-rows-3 grid-flow-col px-3 transition-colors duration-200 group-hover:border-gray-900">
-          <span className="mt-5 mb-2 max-h-[10px] block text-xs text-gray-600 dark:text-gray-400">
-            {label}
-          </span>
-          <button
-            onClick={() => setVisibleCoinList(true)}
-            className="min-w-[80px] flex items-center font-medium outline-none dark:text-gray-100"
-          >
-            {selectedCoin?.icon}{' '}
-            <span className="ltr:ml-2 rtl:mr-2">{selectedCoin?.code} </span>
-            <ChevronDown className="ltr:ml-1.5 rtl:mr-1.5" />
-          </button>
-          <div className="pt-2">
-            <span>{selectedCoin?.name} </span>
-          </div>
-        </div>
-        <div className="min-w-[80px] grid grid-rows-3 grid-flow-col transition-colors duration-200 group-hover:border-gray-900 dark:border-gray-700 dark:group-hover:border-gray-600">
-          <div />
-          <input
-            type="text"
-            value={value}
-            placeholder="0.0"
-            inputMode="decimal"
-            onChange={handleOnChange}
-            className=" w-full rounded-tr-lg rounded-br-lg border-0 text-right text-lg outline-none focus:ring-0 dark:bg-inherit"
-            {...rest}
-          />
-          <div className="pt-2 font-xs px-3 text-gray-400 text-right">
-            = ${exchangeRate ? Number(value) * exchangeRate : '0.00'}
-          </div>
-        </div> */}
-      {/* // </div> */}
       {/* </div> */}
 
       <AnimatePresence>

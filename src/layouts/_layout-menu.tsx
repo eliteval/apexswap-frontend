@@ -22,9 +22,10 @@ export function MenuItems() {
           {item?.dropdownItems ? (
             <div className="relative mx-4 first:ml-0 last:mr-0" key={index}>
               <Menu>
-                <Menu.Button className="flex items-center text-xs font-medium uppercase text-gray-600 transition hover:text-gray-900 dark:text-gray-300 dark:hover:text-white">
+                <Menu.Button className="flex items-center text-xs font-medium  text-gray-600 transition hover:text-gray-900 dark:text-gray-300 dark:hover:text-white">
+                  <span style={{fontSize: '14px', fontWeight: '600'}}>
                   {item.name}
-
+                  </span>
                   <span className="z-[1] transition-transform duration-200 ltr:ml-3 rtl:mr-3">
                     <ChevronDown />
                   </span>
@@ -38,12 +39,12 @@ export function MenuItems() {
                   leaveFrom="opacity-100 translate-y-0"
                   leaveTo="opacity-0 translate-y-4"
                 >
-                  <Menu.Items className="absolute left-0 mt-5 w-64 origin-top-right rounded-lg bg-white p-3 shadow-large dark:bg-gray-800">
+                  <Menu.Items className="absolute left-0 mt-5 w-32 origin-top-right rounded-lg bg-white shadow-large dark:bg-gray-800">
                     {item.dropdownItems.map((dropDownItem, index) => (
                       <Menu.Item key={index}>
                         <ActiveLink
                           href={dropDownItem.href}
-                          className="block rounded-lg px-3 py-2 text-sm font-medium uppercase text-gray-900 transition hover:bg-gray-50 dark:text-white dark:hover:bg-gray-700"
+                          className="block rounded-lg px-3 py-2 text-sm font-medium  text-gray-900 transition hover:bg-gray-50 dark:text-white dark:hover:bg-gray-700"
                           activeClassName="!bg-gray-100 dark:!bg-light-dark my-1 last:mb-0 first:mt-0"
                         >
                           {dropDownItem.name}

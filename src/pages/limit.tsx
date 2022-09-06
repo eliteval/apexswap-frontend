@@ -1,30 +1,25 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import type { NextPageWithLayout } from '@/types';
 import cn from 'classnames';
 import { NextSeo } from 'next-seo';
 import Button from '@/components/ui/button';
 import { OptionIcon } from '@/components/icons/option';
 import { InfoCircle } from '@/components/icons/info-circle';
-import CoinInput from '@/components/ui/coin-input';
+import LimitInput from '@/components/ui/limit-input';
 import TransactionInfo from '@/components/ui/transaction-info';
 import { SwapIcon } from '@/components/icons/swap-icon';
 import { ChevronDown } from '@/components/icons/chevron-down';
 import ParamTab, { TabPanel } from '@/components/ui/param-tab';
+// import CurrencySwapIcons from '@/components/ui/currency-swap-icons';
 import AllTokens from '@/components/ui/all-tokens';
 import { Listbox } from '@/components/ui/listbox';
 import { Transition } from '@/components/ui/transition';
-import NftDropDown from '@/components/nft/nft-dropdown';
-import Image from '@/components/ui/image';
-import { coinList } from '@/data/static/coin-list';
 import Scrollbar from '@/components/ui/scrollbar';
-import DashboardLayout from '@/layouts/_dashboard';
 import Layout from '@/layouts/_layout';
 import TradeContainer from '@/components/ui/trade';
 import { useModal } from '@/components/modal-views/context';
 import { AdvancedRealTimeChart } from 'react-ts-tradingview-widgets';
-import { ethers } from "ethers";
-import ERC20 from "@/abi/ERC20.json";
-import VixRouter from "@/abi/VixRouter.json";
+import { coinList } from '@/data/static/coin-list';
 
 const sort1 = [
   { id: 1, name: 'All Types' },
@@ -49,7 +44,7 @@ function SortList() {
           leaveFrom="opacity-100 -translate-y-0"
           leaveTo="opacity-0 translate-y-2"
         >
-          <Listbox.Options className="absolute w-[120px] left-0 z-10 mt-2 origin-top-right rounded-md bg-white shadow-large dark:bg-[#303030]">
+          <Listbox.Options className="absolute left-0 z-10 mt-2 w-[120px] origin-top-right rounded-md bg-white shadow-large dark:bg-[#303030]">
             {sort1.map((item) => (
               <Listbox.Option key={item.id} value={item}>
                 {({ selected }) => (
@@ -95,7 +90,7 @@ function SortList2() {
           leaveFrom="opacity-100 -translate-y-0"
           leaveTo="opacity-0 translate-y-2"
         >
-          <Listbox.Options className="absolute w-[120px] left-0 z-10 mt-2 origin-top-right rounded-md bg-white shadow-large dark:bg-[#303030]">
+          <Listbox.Options className="absolute left-0 z-10 mt-2 w-[120px] origin-top-right rounded-md bg-white shadow-large dark:bg-[#303030]">
             {sort2.map((item) => (
               <Listbox.Option key={item.id} value={item}>
                 {({ selected }) => (
@@ -117,86 +112,81 @@ function SortList2() {
   );
 }
 
-const SwapPage: NextPageWithLayout = () => {
-  //new
-  const [balance, setBalance] = useState<String | undefined>()
-  const [test, setTest] = useState<String | undefined>()
-  const usdt = {
-    address: "0xdac17f958d2ee523a2206206994597c13d831ec7",
-  };
+const sort3 = [
+  { id: 1, name: '10 Minutes' },
+  { id: 2, name: '1 Hour' },
+  { id: 3, name: '1 Day' },
+  { id: 4, name: '3 Days' },
+  { id: 5, name: '7 Days' },
+  { id: 6, name: '30 Days' },
+  { id: 7, name: '3 Months' },
+];
 
-  useEffect(() => {
-    const myfunc = async () => {
-      if (!window.ethereum) return
+function SortList3() {
+  const [selectedItem, setSelectedItem] = useState(sort3[3]);
 
-      const provider = new ethers.providers.Web3Provider(window.ethereum)
-      await provider.send("eth_requestAccounts", []);
-      const { chainId } = await provider.getNetwork()
-      // console.log(chainId)
-      const signer = provider.getSigner();
-      let userAddress = await signer.getAddress();
-      // console.log(userAddress)
-    }
-    myfunc();
-  })
-  const dexs = {
-    "0xDB66686Ac8bEA67400CF9E5DD6c8849575B90148": "Trader Joe",
-    "0x3614657EDc3cb90BA420E5f4F61679777e4974E3": "Pangolin",
-    "0x3f314530a4964acCA1f20dad2D35275C23Ed7F5d": "Sushiswap",
-    "0xb2e51D2E2B85DbbE8C758C753b5BdA3f86Af05E4": "ElkFinance",
-  }
-  const [tokenIn, setTokenIn] = useState<String | undefined>("0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7")
-  const [tokenOut, setTokenOut] = useState<String | undefined>("0xd586E7F844cEa2F87f50152665BCbc2C279D8d70")
-  const [amountIn, setAmountIn] = useState<String | undefined>("0")
-  const [amountOut, setAmountOut] = useState<String | undefined>("0")
-  const [adapter, setAdapter] = useState<String | undefined>("")
-  const [dexname, setDexName] = useState<String | undefined>("")
+  return (
+    <div className="relative w-full md:w-auto">
+      <Listbox value={selectedItem} onChange={setSelectedItem}>
+        <Listbox.Button className="flex h-11 w-full items-center rounded-lg bg-gray-100 pr-4 text-sm text-gray-900 dark:bg-[#0f1112] dark:text-white ">
+          <span className="px-2">{selectedItem.icon}</span>
+          <span className="pr-2">{selectedItem.name}</span>
+          <ChevronDown style={{ color: '#7676d1' }} />
+        </Listbox.Button>
+        <Transition
+          enter="ease-out duration-200"
+          // enterFrom=" translate-y-2"
+          enterTo="opacity-100"
+          leave="ease-in duration-200"
+          leaveFrom="opacity-100 -translate-y-0"
+        // leaveTo="opacity-0 translate-y-2"
+        >
+          <Listbox.Options className="absolute left-0 z-10 mt-2 w-full origin-top-right rounded-lg bg-white shadow-large dark:bg-[#303030]">
+            {sort3.map((item) => (
+              <Listbox.Option key={item.id} value={item}>
+                {({ selected }) => (
+                  <div
+                    className={`block cursor-pointer rounded-md px-3 py-2 text-sm font-medium text-gray-900 transition dark:text-white  ${selected
+                      ? 'my-1 bg-gray-100 dark:bg-gray-600'
+                      : 'hover:bg-gray-50 dark:hover:bg-gray-700'
+                      }`}
+                  >
+                    {item.name}
+                  </div>
+                )}
+              </Listbox.Option>
+            ))}
+          </Listbox.Options>
+        </Transition>
+      </Listbox>
+    </div>
+  );
+}
 
-  useEffect(() => {
-    const getAmountOut = async () => {
-      try {
-
-
-        const provider = new ethers.providers.Web3Provider(window.ethereum)
-        await provider.send("eth_requestAccounts", []);
-        const { chainId } = await provider.getNetwork()
-        // console.log(chainId)
-        const signer = provider.getSigner();
-        let userAddress = await signer.getAddress();
-
-        const vixrouterContract = new ethers.Contract(VixRouter.address, VixRouter.abi, signer);
-        var inamount = ethers.utils.parseEther(amountIn);
-        let { amountOut, adapter } = await vixrouterContract.queryNoSplit(inamount, tokenIn, tokenOut);
-        amountOut = ethers.utils.formatEther(amountOut);
-        setAmountOut(amountOut)
-        setAdapter(adapter)
-        setDexName(dexs[adapter])
-      } catch (e) {
-        console.log(e)
-      }
-    }
-    getAmountOut();
-  }, [tokenIn, tokenOut, amountIn])
-
-  //old
+const LimitPage: NextPageWithLayout = () => {
   const { openModal } = useModal();
-
+  let [selectedItem, setSelectedItem] = useState(sort1[0]);
+  let [toggleCoin, setToggleCoin] = useState(false);
+  let [baseToken, setBaseToken] = useState(null);
+  let [targetToken, setTargetToken] = useState(null);
+  var today = new Date();
+  var date =
+    today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+  var time =
+    today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds();
+  console.log('baseToken=>', baseToken);
   return (
     <>
       <NextSeo
         title="Apexswap - Trade"
         description="Apexswap - Avalanche DEX"
       />
-      {/* <h1>tokenIn:{tokenIn}</h1>
-      <h1>tokenOut:{tokenOut}</h1>
-      <h1>amountIn:{amountIn}</h1>
-      <h1>amountOut:{amountOut}</h1>
-      <h1>adapter:{adapter}</h1> */}
+
       <div className="xl:grid-rows-7 grid grid-cols-1 gap-4 xl:grid-cols-4">
         {/* Swap box */}
         <div className="xl:col-span-1 xl:row-span-5 xl:row-start-1 xl:row-end-6">
           <TradeContainer>
-            <div className=" dark:border-gray-800 xs:mb-2 xs:pb-6 ">
+            <div className=" dark:border-gray-800 xs:mb-2 xs:pb-4 ">
               <div className="my-4 flex w-[105%] flex-row justify-between">
                 <div className="grid grid-cols-1 place-items-center">
                   <div className="font-medium">Dex Aggregator</div>
@@ -215,39 +205,108 @@ const SwapPage: NextPageWithLayout = () => {
                   />
                 </div>
               </div>
+              <div className="mb-4 grid grid-cols-1 place-items-center">
+                <div
+                  className="inline-flex rounded-md shadow-sm"
+                  role="group"
+                  style={{ width: '100%' }}
+                >
+                  <button
+                    type="button"
+                    autoFocus
+                    className="focus:border-1 w-1/2 rounded-l-lg border border-gray-200 bg-white py-2 px-4 text-sm font-medium text-gray-900 focus:z-10 focus:border-green-700 focus:text-green-700 dark:border-gray-600 dark:bg-[#0f1112] dark:text-white dark:focus:border-green-600 dark:focus:bg-[#161b1d] dark:focus:text-green-600"
+                  >
+                    Buy
+                  </button>
+                  {/* <button
+                  type="button"
+                  className="border-t border-b border-gray-200 bg-white py-2 px-4 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:text-blue-700 focus:ring-2 focus:ring-blue-700 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600 dark:hover:text-white dark:focus:text-white dark:focus:ring-blue-500"
+                >
+                  Settings
+                </button> */}
+                  <button
+                    type="button"
+                    className="focus:border-1 w-1/2 rounded-r-md border border-gray-200 bg-white py-2 px-4 text-sm font-medium text-gray-900 focus:z-10 focus:border-red-700 focus:text-red-700 dark:border-gray-600 dark:bg-[#0f1112] dark:text-white dark:focus:border-red-600 dark:focus:bg-[#161b1d] dark:focus:text-red-600"
+                  >
+                    Sell
+                  </button>
+                </div>
+              </div>
+              <div className="mb-4">
+                <div className="block flex min-h-[50px] items-center rounded-lg border border-gray-200 px-2 transition-colors duration-200 hover:border-gray-900  dark:border-gray-700 dark:bg-[#0f1112] dark:focus-within:border-blue-600 dark:focus-within:bg-[#0f0f0e] dark:hover:bg-[#10100f]">
+                  <div className="my-1 flex min-h-[10px] items-center justify-between">
+                    <span className="text-sm font-normal dark:text-gray-400">
+                      Limit Price($)
+                    </span>
+                    <input
+                      type="text"
+                      // value={!disabled ? value : Number(value) * 1}
+                      id="myInput"
+                      placeholder="0"
+                      inputMode="decimal"
+                      // disabled={disabled}
+                      // onChange={handleOnChange}
+                      className={cn(
+                        'w-full rounded-tr-lg rounded-br-lg border-0 text-right text-xl outline-none dark:bg-inherit dark:text-white dark:focus:ring-0'
+                        // !disabled
+                        //   ? ''
+                        //   : 'cursor-not-allowed bg-gray-100 text-gray-400'
+                      )}
+                      style={{ padding: '0px', color: 'rgb(255 255 255)' }}
+                    // {...rest}
+                    />
+                  </div>
+                </div>
+              </div>
               <div
+                className="mb-4"
+              // className={cn(
+              //   'relative flex gap-3',
+              //   toggleCoin ? 'flex-col-reverse' : 'flex-col'
+              // )}
               >
-                <CoinInput
-                  label={'You Pay'}
+                <LimitInput
+                  // label={'Pay by StableCoin'}
                   exchangeRate={1580}
                   defaultCoinIndex={0}
-                  onchangeToken={setTokenIn}
-                  onchangeAmount={setAmountIn}
+                  getCoinValue={(data) => {
+                    console.log('From coin value:', data);
+                    setBaseToken(data?.coin);
+                  }}
+                  data={baseToken}
                 />
-                <div className="grid grid-cols-1 place-items-center my-2">
+                <div className="my-2 grid grid-cols-1 place-items-center">
                   <Button
                     size="mini"
                     color="info"
                     shape="circle"
                     variant="transparent"
                     className="uppercase xs:tracking-widest"
+                    onClick={() => setToggleCoin(!toggleCoin)}
                   >
                     <SwapIcon className="h-auto w-3" />
                   </Button>
                 </div>
-                <CoinInput
-                  label={'You Receive'}
+                <LimitInput
+                  label={'Pay by StableCoin'}
                   disabled={true}
                   exchangeRate={1}
                   defaultCoinIndex={1}
-                  onchangeToken={setTokenOut}
-                  showvalue={amountOut}
+                  getCoinValue={(data) => {
+                    console.log('To coin value:', data);
+                    setTargetToken(data);
+                  }}
                 />
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="pl-2">Expires in</span>
+                {/* <div className="">1</div> */}
+                <SortList3 />
               </div>
             </div>
             <div className="flex flex-col gap-4 px-2 xs:gap-[18px]">
-              {/* <TransactionInfo label={'Min. Received'} value={`${amountOut ? amountOut.toFixed(2) : 0}`} /> */}
-              <TransactionInfo label={'Rate'} value={`${(amountOut / amountIn).toFixed(2)} ${coinList[0].code}/${coinList[1].code}`} />
+              <TransactionInfo label={'Min. Received'} value={'2450 USDC'} />
+              <TransactionInfo label={'Rate'} value={amountIn / amountOut} />
               <TransactionInfo label={'Price Slippage'} value={'1%'} />
               <TransactionInfo label={'Network Fee'} value={'0.5 USD'} />
             </div>
@@ -263,8 +322,7 @@ const SwapPage: NextPageWithLayout = () => {
                   }}
                   style={{ cursor: 'pointer' }}
                 >
-                  {/* 3 steps in the route */}
-                  100% via {dexname}
+                  3 steps in the route
                 </div>
               </div>
             </div>
@@ -359,6 +417,11 @@ const SwapPage: NextPageWithLayout = () => {
                     </div>
                     <div className="flex shrink flex-row items-center px-4">
                       <div className=" flex flex-row items-center">
+                        {/* <div className="text-xs mx-2">
+                          All Types
+                        </div>
+                        <ChevronDown /> */}
+                        {/* <NftDropDown /> */}
                         <SortList />
                       </div>
                       <div className="mx-5 flex flex-row items-center">
@@ -367,6 +430,7 @@ const SwapPage: NextPageWithLayout = () => {
                     </div>
                   </div>
                 </div>
+                {/* <div className="text-center mt-20"> Please connect wallet.</div> */}
                 <div className="mt-6 h-[200px] max-h-[220px] w-full px-8">
                   <Scrollbar style={{ height: 'calc(100% - 32px)' }}>
                     <table>
@@ -383,66 +447,68 @@ const SwapPage: NextPageWithLayout = () => {
                       </thead>
                       <tbody>
                         <tr>
-                          <td style={{ textAlign: 'left' }}>{coinList[0].code} / {coinList[1].code}</td>
-                          <td>1.3 {coinList[0].code}</td>
+                          <td style={{ textAlign: 'left' }}>ETH/USDC</td>
+                          <td>1.3 ETH</td>
                           <td>1580</td>
                           <td>1588</td>
                           <td>completed</td>
                           <td>2022-9-3 1:27:46</td>
-                          <td style={{ textAlign: 'right' }}>0.0014 {coinList[0].code}</td>
+                          <td style={{ textAlign: 'right' }}>0.0014 ETH</td>
                         </tr>
                         <tr>
-                          <td style={{ textAlign: 'left' }}>{coinList[0].code} / {coinList[1].code}</td>
-                          <td>1.5 {coinList[0].code}</td>
+                          <td style={{ textAlign: 'left' }}>ETH/USDC</td>
+                          <td>1.5 ETH</td>
                           <td>1580</td>
                           <td></td>
                           <td>pending</td>
                           <td>2022-9-3 1:27:46</td>
-                          <td style={{ textAlign: 'right' }}>0.0014 {coinList[0].code}</td>
+                          <td style={{ textAlign: 'right' }}>0.0014 ETH</td>
                         </tr>
                         <tr>
-                          <td style={{ textAlign: 'left' }}>{coinList[0].code} / {coinList[1].code}</td>
-                          <td>1.4 {coinList[0].code}</td>
+                          <td style={{ textAlign: 'left' }}>ETH/USDC</td>
+                          <td>1.4 ETH</td>
                           <td>1580</td>
                           <td></td>
                           <td>pending</td>
                           <td>2022-9-3 1:27:46</td>
-                          <td style={{ textAlign: 'right' }}>0.0014 {coinList[0].code}</td>
+                          <td style={{ textAlign: 'right' }}>0.0014 ETH</td>
                         </tr>
                         <tr>
-                          <td style={{ textAlign: 'left' }}>{coinList[0].code} / {coinList[1].code}</td>
-                          <td>1.4 {coinList[0].code}</td>
+                          <td style={{ textAlign: 'left' }}>ETH/USDC</td>
+                          <td>1.4 ETH</td>
                           <td>1580</td>
                           <td></td>
                           <td>pending</td>
                           <td>2022-9-3 1:27:46</td>
-                          <td style={{ textAlign: 'right' }}>0.0014 {coinList[0].code}</td>
+                          <td style={{ textAlign: 'right' }}>0.0014 ETH</td>
                         </tr>
                         <tr>
-                          <td style={{ textAlign: 'left' }}>{coinList[0].code} / {coinList[1].code}</td>
-                          <td>1.4 {coinList[0].code}</td>
+                          <td style={{ textAlign: 'left' }}>ETH/USDC</td>
+                          <td>1.4 ETH</td>
                           <td>1580</td>
                           <td></td>
                           <td>pending</td>
                           <td>2022-9-3 1:27:46</td>
-                          <td style={{ textAlign: 'right' }}>0.0014 {coinList[0].code}</td>
+                          <td style={{ textAlign: 'right' }}>0.0014 ETH</td>
                         </tr>
                         <tr>
-                          <td style={{ textAlign: 'left' }}>{coinList[0].code} / {coinList[1].code}</td>
-                          <td>1.4 {coinList[0].code}</td>
+                          <td style={{ textAlign: 'left' }}>ETH/USDC</td>
+                          <td>1.4 ETH</td>
                           <td>1580</td>
                           <td></td>
                           <td>pending</td>
                           <td>2022-9-3 1:27:46</td>
-                          <td style={{ textAlign: 'right' }}>0.0014 {coinList[0].code}</td>
+                          <td style={{ textAlign: 'right' }}>0.0014 ETH</td>
                         </tr>
                       </tbody>
                     </table>
                   </Scrollbar>
-                </div>              </div>
+                </div>
+              </div>
             </div>
             <div className="lg:col-span-1 ">
               <div className="flex min-h-[50px] w-full items-center justify-around border-b border-b-[#374151]">
+                {/* <div className="w-1/3"> */}
                 <Button
                   size="mini"
                   color="gray"
@@ -452,6 +518,8 @@ const SwapPage: NextPageWithLayout = () => {
                 >
                   Favorites
                 </Button>
+                {/* </div>
+                <div className="w-1/3"> */}
                 <Button
                   size="mini"
                   color="gray"
@@ -461,6 +529,8 @@ const SwapPage: NextPageWithLayout = () => {
                 >
                   My Wallet
                 </Button>
+                {/* </div>
+                <div className="w-1/3"> */}
                 <Button
                   size="mini"
                   color="primary"
@@ -470,6 +540,7 @@ const SwapPage: NextPageWithLayout = () => {
                 >
                   Market
                 </Button>
+                {/* </div> */}
               </div>
               <div className="flex resize-y flex-col divide-y divide-[#374151]">
                 <div className="text-xs">
@@ -676,7 +747,7 @@ const SwapPage: NextPageWithLayout = () => {
                 </div>
                 <div className="">
                   <div className="w-full px-4 py-2 text-left">Market Trade</div>
-                  <div className="px-2 flex flex-row items-center pb-1">
+                  <div className="flex flex-row items-center px-2 pb-1">
                     <div className="w-[35%] text-right text-xs text-stone-400">
                       <span>Price</span>
                       <span>(USD)</span>
@@ -689,7 +760,7 @@ const SwapPage: NextPageWithLayout = () => {
                     </div>
                   </div>
                   <Scrollbar style={{ height: 'calc(100% - 32px)' }}>
-                    <div className="h-[460px] max-h-[480px] flex w-full flex-col px-2">
+                    <div className="flex h-[460px] max-h-[480px] w-full flex-col px-2">
                       <div className="flex flex-row text-sm">
                         <div className="w-[35%] text-right text-green-400">
                           1555.809
@@ -995,13 +1066,14 @@ const SwapPage: NextPageWithLayout = () => {
           </div>
         </div>
 
+        {/* Orders */}
       </div>
     </>
   );
 };
 
-SwapPage.getLayout = function getLayout(page) {
+LimitPage.getLayout = function getLayout(page) {
   return <Layout>{page}</Layout>;
 };
 
-export default SwapPage;
+export default LimitPage;

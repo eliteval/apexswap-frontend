@@ -114,7 +114,7 @@ export const menuItems = [
       },
       {
         name: 'Limit',
-        href: routes.swap,
+        href: routes.limit,
       },
     ],
   },

@@ -12,9 +12,10 @@ import { SwapIcon } from '@/components/icons/swap-icon';
 import { Listbox } from '@/components/ui/listbox';
 import { Transition } from '@/components/ui/transition';
 import NftDropDown from '@/components/nft/nft-dropdown';
-import ETH from '@/assets/images/coin/eth2.svg';
-import BNB from '@/assets/images/coin/bnb.svg';
-import nut from '@/assets/images/collection/nut.svg';
+// import ETH from '@/assets/images/coin/eth2.svg';
+// import BNB from '@/assets/images/coin/bnb.svg';
+import { Ethereum } from '@/components/icons/ethereum';
+import { Bnb } from '@/components/icons/bnb';
 import { Gear } from '@/components/icons/gear';
 import Image from '@/components/ui/image';
 import { ChevronDown } from '@/components/icons/chevron-down';
@@ -24,8 +25,8 @@ import ActiveLink from '@/components/ui/links/active-link';
 import TradeContainer from '@/components/ui/trade';
 
 const sort = [
-  { id: 1, icon: ETH, name: 'Ethereum Mainnet' },
-  { id: 2, icon: BNB, name: 'Binance Smart Chain Mainnet' },
+  { id: 1, icon: <Ethereum />, name: 'Ethereum Mainnet' },
+  { id: 2, icon: <Bnb />, name: 'BinanceSmartChain Mainnet' },
 ];
 
 function SortList() {
@@ -35,7 +36,7 @@ function SortList() {
     <div className="relative w-full md:w-auto">
       <Listbox value={selectedItem} onChange={setSelectedItem}>
         <Listbox.Button className="flex h-11 w-full items-center rounded-2xl bg-gray-100 pr-4 text-sm text-gray-900 dark:bg-[#0f0f0e] dark:text-white ">
-          <Image src={selectedItem.icon} alt="avatar" width={30} height={30} />
+          <span className="px-2">{selectedItem.icon}</span>
           <span className="pr-2">{selectedItem.name}</span>
           <ChevronDown style={{ color: '#7676d1' }} />
         </Listbox.Button>
@@ -45,17 +46,18 @@ function SortList() {
           enterTo="opacity-100"
           leave="ease-in duration-200"
           leaveFrom="opacity-100 -translate-y-0"
-        // leaveTo="opacity-0 translate-y-2"
+          // leaveTo="opacity-0 translate-y-2"
         >
           <Listbox.Options className="absolute left-0 z-10 mt-2 w-full origin-top-right rounded-lg bg-white shadow-large dark:bg-[#303030]">
             {sort.map((item) => (
               <Listbox.Option key={item.id} value={item}>
                 {({ selected }) => (
                   <div
-                    className={`block cursor-pointer rounded-md px-3 py-2 text-sm font-medium text-gray-900 transition dark:text-white  ${selected
-                      ? 'my-1 bg-gray-100 dark:bg-gray-600'
-                      : 'hover:bg-gray-50 dark:hover:bg-gray-700'
-                      }`}
+                    className={`block cursor-pointer rounded-md px-3 py-2 text-sm font-medium text-gray-900 transition dark:text-white  ${
+                      selected
+                        ? 'my-1 bg-gray-100 dark:bg-gray-600'
+                        : 'hover:bg-gray-50 dark:hover:bg-gray-700'
+                    }`}
                   >
                     {item.name}
                   </div>
@@ -68,16 +70,20 @@ function SortList() {
     </div>
   );
 }
+const sort2 = [
+  { id: 1, icon: <Ethereum />, name: 'Ethereum Mainnet' },
+  { id: 2, icon: <Bnb />, name: 'BinanceSamrtChain Mainnet' },
+];
 
 function SortList2() {
-  const [selectedItem, setSelectedItem] = useState(sort[1]);
+  const [selectedItem, setSelectedItem] = useState(sort2[1]);
 
   return (
     <div className="relative w-full md:w-auto">
       <Listbox value={selectedItem} onChange={setSelectedItem}>
         <Listbox.Button className="flex h-11 w-full items-center rounded-2xl bg-gray-100 pr-4 text-sm text-gray-900 dark:bg-[#0f0f0e] dark:text-white ">
-          <Image src={selectedItem.icon} alt="avatar" width={20} height={20} />
-          <span className="px-2">{selectedItem.name}</span>
+          <span className="px-2">{selectedItem.icon}</span>
+          <span className="pr-2">{selectedItem.name}</span>
           <ChevronDown style={{ color: '#7676d1' }} />
         </Listbox.Button>
         <Transition
@@ -86,17 +92,18 @@ function SortList2() {
           enterTo="opacity-100"
           leave="ease-in duration-200"
           leaveFrom="opacity-100 -translate-y-0"
-        // leaveTo="opacity-0 translate-y-2"
+          // leaveTo="opacity-0 translate-y-2"
         >
           <Listbox.Options className="absolute left-0 z-10 mt-2 w-full origin-top-right rounded-lg bg-white shadow-large dark:bg-[#303030]">
             {sort.map((item) => (
               <Listbox.Option key={item.id} value={item}>
                 {({ selected }) => (
                   <div
-                    className={`block cursor-pointer rounded-md px-3 py-2 text-sm font-medium text-gray-900 transition dark:text-white  ${selected
-                      ? 'my-1 bg-gray-100 dark:bg-gray-600'
-                      : 'hover:bg-gray-50 dark:hover:bg-gray-700'
-                      }`}
+                    className={`block cursor-pointer rounded-md px-3 py-2 text-sm font-medium text-gray-900 transition dark:text-white  ${
+                      selected
+                        ? 'my-1 bg-gray-100 dark:bg-gray-600'
+                        : 'hover:bg-gray-50 dark:hover:bg-gray-700'
+                    }`}
                   >
                     {item.name}
                   </div>
@@ -114,7 +121,7 @@ const BridgePage: NextPageWithLayout = () => {
   let [toggleCoin, setToggleCoin] = useState(false);
   return (
     <>
-      <NextSeo title="Liquidity" description="Apexswap - Avalanche DEX" />
+      <NextSeo title="Bridge" description="Apexswap - Avalanche DEX" />
       {/* <TradeContainer> */}
       <div className="text-sm ">
         <div className=" mt-6 w-full max-w-lg rounded-lg border border-[#374151] bg-white  shadow-card dark:bg-[#161b1d] xs:p-4 xs:pt-5">

@@ -10,6 +10,7 @@ export type CoinTypes = {
   icon: JSX.Element;
   code: string;
   name: string;
+  address: string;
   price: number;
 };
 
