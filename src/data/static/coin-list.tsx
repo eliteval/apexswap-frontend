@@ -5,7 +5,7 @@ import { Bnb } from '@/components/icons/bnb';
 import { Usdc } from '@/components/icons/usdc';
 import { Cardano } from '@/components/icons/cardano';
 import { Doge } from '@/components/icons/doge';
-import Avalanche from '@/assets/images/coin/Avalanche.png';
+import Avalanche from '@/assets/images/coin/avalanche.png';
 import DAI from '@/assets/images/coin/dai.png';
 import Image from '@/components/ui/image';
 
