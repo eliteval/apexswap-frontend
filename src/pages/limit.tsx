@@ -306,7 +306,7 @@ const LimitPage: NextPageWithLayout = () => {
             </div>
             <div className="flex flex-col gap-4 px-2 xs:gap-[18px]">
               <TransactionInfo label={'Min. Received'} value={'2450 USDC'} />
-              <TransactionInfo label={'Rate'} value={amountIn / amountOut} />
+              {/* <TransactionInfo label={'Rate'} value={amountIn / amountOut} /> */}
               <TransactionInfo label={'Price Slippage'} value={'1%'} />
               <TransactionInfo label={'Network Fee'} value={'0.5 USD'} />
             </div>
