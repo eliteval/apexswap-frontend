@@ -183,7 +183,7 @@ const BridgePage: NextPageWithLayout = () => {
                   <BridgeInput
                     label={'Receive(estimated):'}
                     exchangeRate={0.0}
-                    defaultCoinIndex={2}
+                    defaultCoinIndex={1}
                     getCoinValue={(data) => console.log('To coin value:', data)}
                   />
                 </div>

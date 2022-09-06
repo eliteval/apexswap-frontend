@@ -107,7 +107,7 @@ export default function CoinInput({
         <div className="mt-0.5 mb-2 min-h-[10px] flex flex-row justify-between">
           <span>{selectedCoin?.name} </span>
           <div className="font-xs text-gray-400 text-right">
-            = ${exchangeRate ? Number(value) * exchangeRate : '0.00'}
+            = ${showvalue ? Number(showvalue * exchangeRate).toFixed(2) : exchangeRate ? Number(value) * exchangeRate : '0.00'}
           </div>
         </div>
       </div>

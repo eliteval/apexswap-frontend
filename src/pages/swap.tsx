@@ -155,8 +155,6 @@ const SwapPage: NextPageWithLayout = () => {
   useEffect(() => {
     const getAmountOut = async () => {
       try {
-
-
         const provider = new ethers.providers.Web3Provider(window.ethereum)
         await provider.send("eth_requestAccounts", []);
         const { chainId } = await provider.getNetwork()
@@ -177,6 +175,12 @@ const SwapPage: NextPageWithLayout = () => {
     }
     getAmountOut();
   }, [tokenIn, tokenOut, amountIn])
+
+  const toogleTokens = () => {
+    var dish = tokenIn;
+    setTokenIn(tokenOut);
+    setTokenOut(dish);
+  }
 
   //old
   const { openModal } = useModal();
@@ -215,11 +219,10 @@ const SwapPage: NextPageWithLayout = () => {
                   />
                 </div>
               </div>
-              <div
-              >
+              <div>
                 <CoinInput
                   label={'You Pay'}
-                  exchangeRate={1580}
+                  exchangeRate={19.8}
                   defaultCoinIndex={0}
                   onchangeToken={setTokenIn}
                   onchangeAmount={setAmountIn}
@@ -231,6 +234,7 @@ const SwapPage: NextPageWithLayout = () => {
                     shape="circle"
                     variant="transparent"
                     className="uppercase xs:tracking-widest"
+                    onClick={() => { toogleTokens() }}
                   >
                     <SwapIcon className="h-auto w-3" />
                   </Button>
@@ -246,7 +250,8 @@ const SwapPage: NextPageWithLayout = () => {
               </div>
             </div>
             <div className="flex flex-col gap-4 px-2 xs:gap-[18px]">
-              {/* <TransactionInfo label={'Min. Received'} value={`${amountOut ? amountOut.toFixed(2) : 0}`} /> */}
+              <TransactionInfo label={'Savings'} value={`~ $${Number(amountOut / 10).toFixed(3)}`} />
+              <TransactionInfo label={'Min. Received'} value={`${amountOut ? Number(amountOut).toFixed(2) : 0}`} />
               <TransactionInfo label={'Rate'} value={`${(amountOut / amountIn).toFixed(2)} ${coinList[0].code}/${coinList[1].code}`} />
               <TransactionInfo label={'Price Slippage'} value={'1%'} />
               <TransactionInfo label={'Network Fee'} value={'0.5 USD'} />
