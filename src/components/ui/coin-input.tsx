@@ -19,7 +19,6 @@ interface CoinInputTypes extends React.InputHTMLAttributes<HTMLInputElement> {
   defaultCoinIndex?: number;
   showvalue?: number;
   // className?: string;
-  getCoinValue: (param: { coin: string; value: string }) => void;
   onchangeToken: (param: string) => void;
   onchangeAmount: (param: string) => void;
   data?: object;
@@ -31,7 +30,6 @@ export default function CoinInput({
   label,
   disabled,
   showvalue,
-  getCoinValue,
   onchangeToken,
   onchangeAmount,
   data,
@@ -43,11 +41,7 @@ export default function CoinInput({
   let [focused, setFocused] = useState(false);
   let [value, setValue] = useState('');
   let [selectedCoin, setSelectedCoin] = useState(coinList[defaultCoinIndex]);
-  let [coinIn, setCoinIn] = useState(coinList[defaultCoinIndex]);
-  let [coinOut, setCoinOut] = useState(coinList[defaultCoinIndex]);
   let [visibleCoinList, setVisibleCoinList] = useState(false);
-  const ratio = 12.8;
-  console.log('data=>', data);
   const modalContainerRef = useRef<HTMLDivElement>(null);
   useClickAway(modalContainerRef, () => {
     setVisibleCoinList(false);
@@ -58,24 +52,16 @@ export default function CoinInput({
       setValue(event.target.value);
       let param = { coin: selectedCoin.code, value: event.target.value };
       onchangeAmount(event.target.value);
-      getCoinValue && getCoinValue(param);
     }
   };
   function handleSelectedCoin(coin: CoinTypes) {
     setSelectedCoin(coin);
-    console.log('aaa', coin.address);
+    console.log(coin.code)
     onchangeToken(coin.address);
-    !disabled ? setCoinIn(coin) : setCoinOut(coin);
     setVisibleCoinList(false);
   }
   return (
     <>
-      {/* <div
-        className={cn(
-          'group flex min-h-[70px] rounded-lg border border-gray-200 transition-colors duration-200 hover:border-gray-900 dark:border-gray-700 dark:border-blue-400 dark:bg-[#000000]',
-          className
-        )}
-      > */}
       <div className="dark:focus-within:border-blue-600 dark:focus-within:bg-[#0f0f0e] block px-4 min-h-[70px] rounded-lg border border-gray-200  transition-colors duration-200 hover:border-gray-900 dark:border-gray-700 dark:bg-[#0f1112]">
         <span className="mt-2 mb-0.5 min-h-[10px] block text-xs text-gray-600 dark:text-gray-400">
           {label}
@@ -86,7 +72,7 @@ export default function CoinInput({
             className="min-w-[80px] flex items-center font-medium outline-none dark:text-gray-100"
           >
             {selectedCoin?.icon}{' '}
-            <span className="ltr:ml-2 rtl:mr-2">{selectedCoin?.code} </span>
+            <span className="ltr:ml-2 rtl:mr-2">{selectedCoin?.code}</span>
             <ChevronDown className="ltr:ml-1.5 rtl:mr-1.5" />
           </button>
           <input
@@ -105,7 +91,7 @@ export default function CoinInput({
           />
         </div>
         <div className="mt-0.5 mb-2 min-h-[10px] flex flex-row justify-between">
-          <span>{selectedCoin?.name} </span>
+          <span>{selectedCoin?.name}</span>
           <div className="font-xs text-gray-400 text-right">
             = ${showvalue ? Number(showvalue * exchangeRate).toFixed(2) : exchangeRate ? Number(value) * exchangeRate : '0.00'}
           </div>

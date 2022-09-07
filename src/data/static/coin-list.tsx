@@ -7,6 +7,8 @@ import { Cardano } from '@/components/icons/cardano';
 import { Doge } from '@/components/icons/doge';
 import Avalanche from '@/assets/images/coin/avalanche.png';
 import DAI from '@/assets/images/coin/dai.png';
+import USDT from '@/assets/images/coin/tether.png';
+import SUSHI from '@/assets/images/coin/sushiswap.png';
 import Image from '@/components/ui/image';
 
 
@@ -25,6 +27,20 @@ export const coinList = [
     address: '0xd586E7F844cEa2F87f50152665BCbc2C279D8d70',
     price: 1,
   },
+  // {
+  //   icon: <Image src={USDT} alt="Criptic" width='24px' height='24px' />,
+  //   code: 'USDT',
+  //   name: 'USDT',
+  //   address: '0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7',
+  //   price: 1,
+  // },
+  // {
+  //   icon: <Image src={SUSHI} alt="Criptic" width='24px' height='24px' />,
+  //   code: 'SUSHIe',
+  //   name: 'SUSHIe',
+  //   address: '0x37b608519f91f70f2eeb0e5ed9af4061722e4f76',
+  //   price: 1,
+  // },
   // {
   //   icon: <Bitcoin />,
   //   code: 'BTC',

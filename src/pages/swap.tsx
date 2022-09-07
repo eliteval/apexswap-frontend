@@ -26,6 +26,7 @@ import { ethers } from "ethers";
 import ERC20 from "@/abi/ERC20.json";
 import VixRouter from "@/abi/VixRouter.json";
 
+
 const sort1 = [
   { id: 1, name: 'All Types' },
   { id: 2, name: 'Limit' },
@@ -120,10 +121,6 @@ function SortList2() {
 const SwapPage: NextPageWithLayout = () => {
   //new
   const [balance, setBalance] = useState<String | undefined>()
-  const [test, setTest] = useState<String | undefined>()
-  const usdt = {
-    address: "0xdac17f958d2ee523a2206206994597c13d831ec7",
-  };
 
   useEffect(() => {
     const myfunc = async () => {
@@ -136,14 +133,18 @@ const SwapPage: NextPageWithLayout = () => {
       const signer = provider.getSigner();
       let userAddress = await signer.getAddress();
       // console.log(userAddress)
+
+
+      if (chainId != 43114) await swtichNetwork();
+
     }
     myfunc();
   })
   const dexs = {
-    "0xDB66686Ac8bEA67400CF9E5DD6c8849575B90148": "Trader Joe",
-    "0x3614657EDc3cb90BA420E5f4F61679777e4974E3": "Pangolin",
-    "0x3f314530a4964acCA1f20dad2D35275C23Ed7F5d": "Sushiswap",
-    "0xb2e51D2E2B85DbbE8C758C753b5BdA3f86Af05E4": "ElkFinance",
+    "0x623DC9E82F055471B7675503e8deF05A35EBeA19": "Trader Joe",
+    "0xeE57D82AA7c1f6Edb1aa63219828A55b1CAC2786": "Pangolin",
+    "0x1b013c840f4b8BFa1cEaa7dd5f31d1f234C56A54": "Sushiswap",
+    "0x4c90a08eab5DBAD079Abc165C29c1A32dDEf2beC": "ElkFinance",
   }
   const [tokenIn, setTokenIn] = useState<String | undefined>("0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7")
   const [tokenOut, setTokenOut] = useState<String | undefined>("0xd586E7F844cEa2F87f50152665BCbc2C279D8d70")
@@ -168,6 +169,7 @@ const SwapPage: NextPageWithLayout = () => {
         amountOut = ethers.utils.formatEther(amountOut);
         setAmountOut(amountOut)
         setAdapter(adapter)
+        console.log(adapter)
         setDexName(dexs[adapter])
       } catch (e) {
         console.log(e)
@@ -181,6 +183,71 @@ const SwapPage: NextPageWithLayout = () => {
     setTokenIn(tokenOut);
     setTokenOut(dish);
   }
+
+  const swap = async () => {
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    await provider.send("eth_requestAccounts", []);
+    const { chainId } = await provider.getNetwork()
+    // console.log(chainId)
+    const signer = provider.getSigner();
+    let userAddress = await signer.getAddress();
+
+    //approve
+    const tokenContract = new ethers.Contract(tokenIn, ERC20.abi, signer);
+    var approved_amount = await tokenContract.allowance(userAddress, VixRouter.address);
+    if (ethers.utils.formatEther(approved_amount) < amountIn) {
+      var approving_amount = ethers.utils.parseEther("9999999");
+      await tokenContract.approve(VixRouter.address, approving_amount);
+    }
+
+    //swap
+    const vixrouterContract = new ethers.Contract(VixRouter.address, VixRouter.abi, signer);
+    var parsed_amountIn = ethers.utils.parseEther(amountIn);
+    var parsed_amountOut = ethers.utils.parseEther("0");
+    var path = [tokenIn, tokenOut];
+    var adapters = [adapter];
+    var _trade = [parsed_amountIn, parsed_amountOut, path, adapters];
+    console.log(_trade)
+    var _to = userAddress;
+    var _fee = ethers.utils.parseEther("0");
+    await vixrouterContract.swapNoSplit(_trade, _to, _fee);
+  }
+
+  const swtichNetwork = async () => {
+    console.log("swtichNetwork");
+    try {
+      await window.ethereum.request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: "0xa86a" }],
+      });
+    } catch (switchError) {
+      // This error code indicates that the chain has not been added to MetaMask.
+      if (switchError.code === 4902) {
+        try {
+          await window.ethereum.request({
+            method: "wallet_addEthereumChain",
+            params: [
+              {
+                chainId: "0xa86a",
+                chainName: "Avalanche C-Chain",
+                nativeCurrency: {
+                  name: "AVAX",
+                  symbol: "AVAX",
+                  decimals: 18,
+                },
+                rpcUrls: ["https://api.avax.network/ext/bc/C/rpc"] /* ... */,
+                blockExplorerUrls: ["https://snowtrace.io"],
+              },
+            ],
+          });
+        } catch (addError) {
+          // handle "add" error
+        }
+      }
+      // handle other "switch" errors
+    }
+    window.location.reload();
+  };
 
   //old
   const { openModal } = useModal();
@@ -252,7 +319,7 @@ const SwapPage: NextPageWithLayout = () => {
             <div className="flex flex-col gap-4 px-2 xs:gap-[18px]">
               <TransactionInfo label={'Savings'} value={`~ $${Number(amountOut / 10).toFixed(3)}`} />
               <TransactionInfo label={'Min. Received'} value={`${amountOut ? Number(amountOut).toFixed(2) : 0}`} />
-              <TransactionInfo label={'Rate'} value={`${(amountOut / amountIn).toFixed(2)} ${coinList[0].code}/${coinList[1].code}`} />
+              <TransactionInfo label={'Rate'} value={`${(amountOut / amountIn).toFixed(2)} ${coinList[1].code}/${coinList[0].code}`} />
               <TransactionInfo label={'Price Slippage'} value={'1%'} />
               <TransactionInfo label={'Network Fee'} value={'0.5 USD'} />
             </div>
@@ -279,6 +346,7 @@ const SwapPage: NextPageWithLayout = () => {
               shape="rounded"
               fullWidth={true}
               className=" mt-3 uppercase dark:bg-gradient-to-r dark:from-cyan-400 dark:to-blue-500 xs:mt-4 xs:tracking-widest"
+              onClick={() => { swap() }}
             >
               SWAP
             </Button>
