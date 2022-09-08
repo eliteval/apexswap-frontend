@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import type { NextPageWithLayout } from '@/types';
 import cn from 'classnames';
 import { NextSeo } from 'next-seo';
@@ -25,6 +25,7 @@ import { AdvancedRealTimeChart } from 'react-ts-tradingview-widgets';
 import { ethers } from "ethers";
 import ERC20 from "@/abi/ERC20.json";
 import VixRouter from "@/abi/VixRouter.json";
+// import { Web3Button, Web3Address } from '@/components/web3';
 
 
 const sort1 = [
@@ -134,11 +135,9 @@ const SwapPage: NextPageWithLayout = () => {
       let userAddress = await signer.getAddress();
       // console.log(userAddress)
 
-
       if (chainId != 43114) await swtichNetwork();
-
     }
-    myfunc();
+    // myfunc();
   })
   const dexs = {
     "0x623DC9E82F055471B7675503e8deF05A35EBeA19": "Trader Joe",
@@ -146,12 +145,43 @@ const SwapPage: NextPageWithLayout = () => {
     "0x1b013c840f4b8BFa1cEaa7dd5f31d1f234C56A54": "Sushiswap",
     "0x4c90a08eab5DBAD079Abc165C29c1A32dDEf2beC": "ElkFinance",
   }
-  const [tokenIn, setTokenIn] = useState<String | undefined>("0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7")
-  const [tokenOut, setTokenOut] = useState<String | undefined>("0xd586E7F844cEa2F87f50152665BCbc2C279D8d70")
-  const [amountIn, setAmountIn] = useState<String | undefined>("0")
-  const [amountOut, setAmountOut] = useState<String | undefined>("0")
-  const [adapter, setAdapter] = useState<String | undefined>("")
-  const [dexname, setDexName] = useState<String | undefined>("")
+  const tempcoinnames = {
+    "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7": "Avax",
+    "0xd586E7F844cEa2F87f50152665BCbc2C279D8d70": "DAI",
+    "0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7": "USDT",
+    "0x37b608519f91f70f2eeb0e5ed9af4061722e4f76": "Sushi",
+    "0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E": "USDC",
+  }
+
+  const [settings, setSettings] = useState({})
+  const [marketData, setMarketData] = useState({})
+
+  const [tokenInIndex, setTokenInIndex] = useState(0)
+  const [tokenInPrice, setTokenInPrice] = useState(0)
+  const [tokenIn, setTokenIn] = useState("")
+
+  const [tokenOutIndex, setTokenOutIndex] = useState(1)
+  const [tokenOutPrice, setTokenOutPrice] = useState(0)
+  const [tokenOut, setTokenOut] = useState("")
+
+  const [amountIn, setAmountIn] = useState(1)
+  const [amountOut, setAmountOut] = useState(0)
+  const [adapter, setAdapter] = useState("")
+  const [dexname, setDexName] = useState("")
+
+  const [tempdev] = useState(true)
+
+  useEffect(() => {
+    console.log('tokenin changed ', tokenInIndex, coinList[tokenInIndex].code)
+
+    setTokenIn(coinList[tokenInIndex].address);
+    console.log(tokenIn)
+    setTokenInPrice(0); //~~coingecko API
+  }, [tokenInIndex])
+
+  useEffect(() => {
+    setTokenOut(coinList[tokenOutIndex].address);
+  }, [tokenOutIndex])
 
   useEffect(() => {
     const getAmountOut = async () => {
@@ -164,13 +194,14 @@ const SwapPage: NextPageWithLayout = () => {
         let userAddress = await signer.getAddress();
 
         const vixrouterContract = new ethers.Contract(VixRouter.address, VixRouter.abi, signer);
-        var inamount = ethers.utils.parseEther(amountIn);
+        var inamount = ethers.utils.parseEther(String(amountIn));
         let { amountOut, adapter } = await vixrouterContract.queryNoSplit(inamount, tokenIn, tokenOut);
         amountOut = ethers.utils.formatEther(amountOut);
         setAmountOut(amountOut)
         setAdapter(adapter)
-        console.log(adapter)
         setDexName(dexs[adapter])
+        console.log("@@@@@@@@@ Query", amountIn, tempcoinnames[tokenIn], tokenIn, "=>", amountOut, tempcoinnames[tokenOut], tokenOut, " || ", dexs[adapter])
+        console.log("@@@@@@@@@ details", tokenInIndex, "=>", tokenOutIndex)
       } catch (e) {
         console.log(e)
       }
@@ -179,9 +210,11 @@ const SwapPage: NextPageWithLayout = () => {
   }, [tokenIn, tokenOut, amountIn])
 
   const toogleTokens = () => {
-    var dish = tokenIn;
-    setTokenIn(tokenOut);
-    setTokenOut(dish);
+    var dish = tokenInIndex;
+    setTokenInIndex(tokenOutIndex)
+    setTokenOutIndex(dish)
+
+    setAmountIn(amountOut)
   }
 
   const swap = async () => {
@@ -258,11 +291,6 @@ const SwapPage: NextPageWithLayout = () => {
         title="Apexswap - Trade"
         description="Apexswap - Avalanche DEX"
       />
-      {/* <h1>tokenIn:{tokenIn}</h1>
-      <h1>tokenOut:{tokenOut}</h1>
-      <h1>amountIn:{amountIn}</h1>
-      <h1>amountOut:{amountOut}</h1>
-      <h1>adapter:{adapter}</h1> */}
       <div className="xl:grid-rows-7 grid grid-cols-1 gap-4 xl:grid-cols-4">
         {/* Swap box */}
         <div className="xl:col-span-1 xl:row-span-5 xl:row-start-1 xl:row-end-6">
@@ -289,9 +317,10 @@ const SwapPage: NextPageWithLayout = () => {
               <div>
                 <CoinInput
                   label={'You Pay'}
-                  exchangeRate={19.8}
-                  defaultCoinIndex={0}
-                  onchangeToken={setTokenIn}
+                  usdPrice={tokenInPrice}
+                  defaultValue={amountIn}
+                  defaultCoinIndex={tokenInIndex}
+                  onChangeTokenIndex={(tokenIndex) => { setTokenInIndex(tokenIndex); }}
                   onchangeAmount={setAmountIn}
                 />
                 <div className="grid grid-cols-1 place-items-center my-2">
@@ -308,18 +337,19 @@ const SwapPage: NextPageWithLayout = () => {
                 </div>
                 <CoinInput
                   label={'You Receive'}
-                  disabled={true}
-                  exchangeRate={1}
-                  defaultCoinIndex={1}
-                  onchangeToken={setTokenOut}
+                  editable={true}
+                  usdPrice={tokenOutPrice}
+                  defaultValue={amountOut}
+                  defaultCoinIndex={tokenOutIndex}
+                  onChangeTokenIndex={setTokenOutIndex}
                   showvalue={amountOut}
                 />
               </div>
             </div>
             <div className="flex flex-col gap-4 px-2 xs:gap-[18px]">
-              <TransactionInfo label={'Savings'} value={`~ $${Number(amountOut / 10).toFixed(3)}`} />
-              <TransactionInfo label={'Min. Received'} value={`${amountOut ? Number(amountOut).toFixed(2) : 0}`} />
-              <TransactionInfo label={'Rate'} value={`${(amountOut / amountIn).toFixed(2)} ${coinList[1].code}/${coinList[0].code}`} />
+              <TransactionInfo label={'Savings'} value={`~$${Number(amountOut * 0.03).toFixed(3)}`} />
+              <TransactionInfo label={'Min. Received'} value={`${amountOut ? Number(amountOut * 0.99).toFixed(2) : 0} ${coinList[tokenOutIndex].code}`} />
+              <TransactionInfo label={'Rate'} value={`${(amountOut / amountIn).toFixed(2)} ${coinList[tokenOutIndex].code}/${coinList[tokenInIndex].code}`} />
               <TransactionInfo label={'Price Slippage'} value={'1%'} />
               <TransactionInfo label={'Network Fee'} value={'0.5 USD'} />
             </div>
@@ -350,6 +380,21 @@ const SwapPage: NextPageWithLayout = () => {
             >
               SWAP
             </Button>
+
+            {tempdev ? <div>
+              <br></br>
+              <h1>tokenInIndex: {tokenInIndex}</h1>
+              <h1>tokenIn: {tempcoinnames[tokenIn]}</h1>
+              <h1>Amount: {amountIn}</h1>
+              <h1>Price: {tokenInPrice}</h1>
+              <hr></hr>
+              <h1>tokenOutIndex: {tokenOutIndex}</h1>
+              <h1>tokenOut: {tempcoinnames[tokenOut]}</h1>
+              <h1>Amount: {amountOut}</h1>
+              <h1>Price: {tokenOutPrice}</h1>
+              <hr></hr>
+              <h1>adapter: {dexname}</h1>
+            </div> : <></>}
           </TradeContainer>
         </div>
 

@@ -14,12 +14,13 @@ const CoinSelectView = dynamic(() =>
 
 interface CoinInputTypes extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
-  disabled?: boolean;
-  exchangeRate?: number;
+  editable?: boolean;
+  usdPrice?: number;
+  defaultValue?: number;
   defaultCoinIndex?: number;
   showvalue?: number;
   // className?: string;
-  onchangeToken: (param: string) => void;
+  onChangeTokenIndex: (param: number) => void;
   onchangeAmount: (param: string) => void;
   data?: object;
 }
@@ -28,18 +29,19 @@ const decimalPattern = /^[0-9]*[.,]?[0-9]*$/;
 
 export default function CoinInput({
   label,
-  disabled,
+  editable,
   showvalue,
-  onchangeToken,
+  onChangeTokenIndex,
   onchangeAmount,
   data,
+  defaultValue = 0,
   defaultCoinIndex = 0,
-  exchangeRate,
+  usdPrice,
   // className,
   ...rest
 }: CoinInputTypes) {
   let [focused, setFocused] = useState(false);
-  let [value, setValue] = useState('');
+  let [value, setValue] = useState(defaultValue);
   let [selectedCoin, setSelectedCoin] = useState(coinList[defaultCoinIndex]);
   let [visibleCoinList, setVisibleCoinList] = useState(false);
   const modalContainerRef = useRef<HTMLDivElement>(null);
@@ -56,8 +58,8 @@ export default function CoinInput({
   };
   function handleSelectedCoin(coin: CoinTypes) {
     setSelectedCoin(coin);
-    console.log(coin.code)
-    onchangeToken(coin.address);
+    var coinIndex = coinList.findIndex((element) => element.address == coin.address)
+    onChangeTokenIndex(coinIndex);
     setVisibleCoinList(false);
   }
   return (
@@ -77,13 +79,13 @@ export default function CoinInput({
           </button>
           <input
             type="text"
-            value={!disabled ? (value) : Number(showvalue).toFixed(2)}
+            value={!editable ? (value) : Number(showvalue).toFixed(5)}
             placeholder="0.0"
             inputMode="decimal"
-            disabled={disabled}
+            disabled={editable}
             onChange={handleOnChange}
             className={cn('w-full rounded-tr-lg rounded-br-lg border-0 text-right text-lg outline-none dark:focus:ring-0 dark:bg-inherit',
-              !disabled
+              !editable
                 ? ''
                 : 'cursor-not-allowed bg-gray-100 text-gray-400'
             )}
@@ -93,7 +95,7 @@ export default function CoinInput({
         <div className="mt-0.5 mb-2 min-h-[10px] flex flex-row justify-between">
           <span>{selectedCoin?.name}</span>
           <div className="font-xs text-gray-400 text-right">
-            = ${showvalue ? Number(showvalue * exchangeRate).toFixed(2) : exchangeRate ? Number(value) * exchangeRate : '0.00'}
+            = ${showvalue ? Number(showvalue * usdPrice).toFixed(5) : usdPrice ? Number(value) * usdPrice : '0.00'}
           </div>
         </div>
       </div>
