@@ -1,4 +1,5 @@
 import { useEffect, useState, useMemo } from 'react';
+import axios from 'axios';
 import type { NextPageWithLayout } from '@/types';
 import cn from 'classnames';
 import { NextSeo } from 'next-seo';
@@ -25,7 +26,6 @@ import { AdvancedRealTimeChart } from 'react-ts-tradingview-widgets';
 import { ethers } from "ethers";
 import ERC20 from "@/abi/ERC20.json";
 import VixRouter from "@/abi/VixRouter.json";
-// import { Web3Button, Web3Address } from '@/components/web3';
 
 
 const sort1 = [
@@ -145,6 +145,7 @@ const SwapPage: NextPageWithLayout = () => {
     "0x1b013c840f4b8BFa1cEaa7dd5f31d1f234C56A54": "Sushiswap",
     "0x4c90a08eab5DBAD079Abc165C29c1A32dDEf2beC": "ElkFinance",
   }
+
   const tempcoinnames = {
     "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7": "Avax",
     "0xd586E7F844cEa2F87f50152665BCbc2C279D8d70": "DAI",
@@ -209,12 +210,55 @@ const SwapPage: NextPageWithLayout = () => {
     getAmountOut();
   }, [tokenIn, tokenOut, amountIn])
 
+  // angel work
+  useEffect(() => {
+    const getPrice = async () => {
+      try {
+        const { data } = await axios.get(`https://api.coingecko.com/api/v3/coins/${coinList[tokenInIndex].coinGeckoCoinsId}`);
+        const currentPrice = data?.market_data.current_price.usd;
+        const price_change = data?.market_data.price_change_24h_in_currency.usd;
+        const price_change_p1 = data?.market_data.price_change_percentage_24h_in_currency.usd;
+        const price_change_p7 = data?.market_data.price_change_percentage_7d_in_currency.usd;
+        const market_cap = data?.market_data.market_cap.usd;
+        const market_cap_change_p = data?.market_data.market_cap_change_percentage_24h_in_currency.usd;
+        const total_supply = data?.market_data.total_supply;
+        const total_volume = data?.market_data.total_volume.usd;
+        setMarketData({
+          currentPrice: currentPrice.toFixed(3),
+          price_change: price_change,
+          price_change_p1: price_change_p1.toFixed(3),
+          price_change_p7: price_change_p7.toFixed(3),
+          market_cap: market_cap.toLocaleString('en-US'),
+          market_cap_change_p: market_cap_change_p,
+          total_supply: total_supply.toLocaleString('en-US'),
+          total_volume: total_volume.toLocaleString('en-US'),
+        })
+        setTokenInPrice(currentPrice);
+      } catch (err) {
+        console.error(err.message);
+      }
+    }
+    getPrice();
+  }, [tokenInIndex]);
+
+  useEffect(() => {
+    const getPrice = async () => {
+      try {
+        const { data } = await axios.get(`https://api.coingecko.com/api/v3/coins/${coinList[tokenOutIndex].coinGeckoCoinsId}`);
+        const currentPrice = data?.market_data.current_price.usd;
+        setTokenOutPrice(currentPrice);
+      } catch (err) {
+        console.error(err.message);
+      }
+    }
+    getPrice();
+  }, [tokenOutIndex]);
+  // ~~angel work
+
   const toogleTokens = () => {
     var dish = tokenInIndex;
     setTokenInIndex(tokenOutIndex)
     setTokenOutIndex(dish)
-
-    setAmountIn(amountOut)
   }
 
   const swap = async () => {
@@ -347,7 +391,7 @@ const SwapPage: NextPageWithLayout = () => {
               </div>
             </div>
             <div className="flex flex-col gap-4 px-2 xs:gap-[18px]">
-              <TransactionInfo label={'Savings'} value={`~$${Number(amountOut * 0.03).toFixed(3)}`} />
+              <TransactionInfo label={'Savings'} value={`~$${Number(tokenOutPrice * amountOut * 0.02).toFixed(3)}`} />
               <TransactionInfo label={'Min. Received'} value={`${amountOut ? Number(amountOut * 0.99).toFixed(2) : 0} ${coinList[tokenOutIndex].code}`} />
               <TransactionInfo label={'Rate'} value={`${(amountOut / amountIn).toFixed(2)} ${coinList[tokenOutIndex].code}/${coinList[tokenInIndex].code}`} />
               <TransactionInfo label={'Price Slippage'} value={'1%'} />
@@ -401,42 +445,58 @@ const SwapPage: NextPageWithLayout = () => {
         {/* Trading View */}
         <div className="xl:row-end-8 xl:row-span-7 text-large mt-5 w-full rounded-lg border border-[#374151] pb-5 text-center shadow-card dark:bg-[#161b1d] xs:mb-2 xs:pb-6 xl:col-span-3 xl:row-start-1">
           <div className="flex min-h-[50px] flex-row border-b border-b-[#374151]">
-            <div className="flex w-1/6 items-center p-2">
-              {coinList[0].icon}
-              <span className="ml-4 text-xl">{coinList[0].name}</span>
+            <div className="flex items-center p-2">
+              {coinList[tokenInIndex].icon}
+              <span className="ml-4 text-xl">{coinList[tokenInIndex].name}</span>
             </div>
             <div className=" flex">
               <div className="mr-4 flex items-center px-2">
                 <div className="flex flex-col">
                   <span className="text-left text-lg font-semibold">
-                    $ {coinList[0].price}
+                    $ {marketData.currentPrice}
                   </span>
-                  <span className="text-left text-xs text-green-400">
+                  {/* <span className="text-left text-xs text-green-400">
                     {0.31}%
-                  </span>
+                  </span> */}
                 </div>
               </div>
               <div className="flex items-center">
                 <div className="h-1/3 w-[5px] border-l border-l-[#374151]"></div>
               </div>
-              <div className="flex items-center px-4">
+              <div className="flex items-center ml-4">
                 <div className="flex flex-col">
                   <span className="text-left text-xs text-[#8d8d8d]">
-                    24H Volume(USD)
+                    24h Price Change(USD)
                   </span>
-                  <span className="text-left text-sm">${8511706592}</span>
+                  <div className="flex items-center">
+                    <span className="text-left text-sm">${marketData.price_change}</span>
+                    <span className={cn("text-xs", marketData.price_change_p1 > 0 ? 'text-green-400' : 'text-red-400')}>{`(${marketData.price_change_p1}%)`}</span>
+                  </div>
                 </div>
-                <div className="flex flex-col pl-8">
-                  <span className="text-left text-xs text-[#8d8d8d]">
-                    Total Liquidity
-                  </span>
-                  <span className="text-left text-sm">${220390415.83}</span>
-                </div>
-                <div className="flex flex-col pl-8">
+                <div className="flex flex-col pl-4">
                   <span className="text-left text-xs text-[#8d8d8d]">
                     Fully Dilluted Market Cap
                   </span>
-                  <span className="text-left text-sm">${190186857003}</span>
+                  <div className="flex items-center">
+                    <span className="text-left text-sm">${marketData.market_cap}</span>
+                    <span className={cn("text-xs",
+                      (marketData.market_cap_change_p > 0 ? 'text-green-400' : 'text-red-400'))}>
+
+                      {`(${marketData.market_cap_change_p}%)`}
+                    </span>
+                  </div>
+                </div>
+                <div className="flex flex-col pl-4">
+                  <span className="text-left text-xs text-[#8d8d8d]">
+                    Total Supply
+                  </span>
+                  <span className="text-left text-sm">${marketData.total_supply}</span>
+                </div>
+                <div className="flex flex-col pl-4">
+                  <span className="text-left text-xs text-[#8d8d8d]">
+                    Total Volume
+                  </span>
+                  <span className="text-left text-sm">${marketData.total_volume}</span>
                 </div>
               </div>
             </div>
@@ -448,7 +508,7 @@ const SwapPage: NextPageWithLayout = () => {
                   theme="dark"
                   height="97%"
                   width="100%"
-                  symbol="AVAXUSD"
+                  symbol={`${coinList[tokenInIndex].tradingviewcode}USD`}
                   interval="1"
                 ></AdvancedRealTimeChart>
               </div>

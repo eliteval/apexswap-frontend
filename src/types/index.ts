@@ -9,6 +9,8 @@ export type NextPageWithLayout<P = {}> = NextPage<P> & {
 export type CoinTypes = {
   icon: JSX.Element;
   code: string;
+  coinGeckoCoinsId: string;
+  tradingviewcode: string;
   name: string;
   address: string;
   price: number;

@@ -17,16 +17,18 @@ export const coinList = [
   {
     icon: <Image src={Avalanche} alt="Criptic" width='24px' height='24px' />,
     code: 'AVAX',
+    tradingviewcode: 'AVAX',
     name: 'Avalanche',
     address: '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7',
-    price: 18.95,
+    coinGeckoCoinsId: 'avalanche-2',
   },
   {
     icon: <Image src={DAI} alt="Criptic" width='24px' height='24px' />,
     code: 'DAI',
+    tradingviewcode: 'DAI',
     name: 'DAI',
     address: '0xd586E7F844cEa2F87f50152665BCbc2C279D8d70',
-    price: 1,
+    coinGeckoCoinsId: 'dai',
   },
   // {
   //   icon: <Image src={USDC} alt="Criptic" width='24px' height='24px' />,
@@ -45,9 +47,10 @@ export const coinList = [
   {
     icon: <Image src={SUSHI} alt="Criptic" width='24px' height='24px' />,
     code: 'SUSHIe',
+    tradingviewcode: 'SUSHI',
     name: 'SUSHIe',
     address: '0x37b608519f91f70f2eeb0e5ed9af4061722e4f76',
-    price: 1.24,
+    coinGeckoCoinsId: 'sushi',
   },
   // {
   //   icon: <Bitcoin />,
