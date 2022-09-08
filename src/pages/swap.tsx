@@ -177,54 +177,42 @@ const SwapPage: NextPageWithLayout = () => {
   const [amountIn, setAmountIn] = useState(1)
   const [amountOut, setAmountOut] = useState(0)
   const [adapter, setAdapter] = useState("")
-  const [dexname, setDexName] = useState("")
 
   const [adapters, setAdapters] = useState([])
   const [path, setPath] = useState([])
   const [amounts, setAmounts] = useState([])
 
 
-  const [tempdev] = useState(true)
+  const [tempdev] = useState(false)
 
   useEffect(() => {
-    console.log('tokenin changed ', tokenInIndex, coinList[tokenInIndex].code)
-
     setTokenIn(coinList[tokenInIndex].address);
-    console.log(tokenIn)
-    setTokenInPrice(0); //~~coingecko API
   }, [tokenInIndex])
+
 
   useEffect(() => {
     setTokenOut(coinList[tokenOutIndex].address);
   }, [tokenOutIndex])
 
+
   useEffect(() => {
-    const getAmountOut = async () => {
+    const getAmountOut = async () => {      
       try {
         const provider = new ethers.providers.Web3Provider(window.ethereum)
-        await provider.send("eth_requestAccounts", []);
-        const { chainId } = await provider.getNetwork()
-        // console.log(chainId)
         const signer = provider.getSigner();
-        let userAddress = await signer.getAddress();
 
         const vixrouterContract = new ethers.Contract(VixRouter.address, VixRouter.abi, signer);
         var inamount = ethers.utils.parseUnits(String(amountIn), tempdecimals[tokenIn]);
-        let { amountOut, adapter } = await vixrouterContract.queryNoSplit(inamount, tokenIn, tokenOut);
-        amountOut = ethers.utils.formatEther(amountOut);
-        setAmountOut(amountOut)
-        setAdapter(adapter)
-        setDexName(tempadapternames[adapter])
-        console.log("@@@@@@@@@ Query", amountIn, tempcoinnames[tokenIn], tokenIn, "=>", amountOut, tempcoinnames[tokenOut], tokenOut, " || ", tempadapternames[adapter])
+        // let { amountOut, adapter } = await vixrouterContract.queryNoSplit(inamount, tokenIn, tokenOut);
+        // amountOut = ethers.utils.formatUnits(amountOut, tempdecimals[tokenOut]);
+        // console.log("@@@@@@@@@ Query", amountIn, tempcoinnames[tokenIn], "=>", amountOut, tempcoinnames[tokenOut], " || ", tempadapternames[adapter])
 
-        let result = await vixrouterContract.findBestPath(inamount, tokenIn, tokenOut, 4);
-        setAdapters(result.adapters)
-        setPath(result.path)
-        setAmounts(result.amounts)
-        console.log(result)
-        console.log(typeof ethers.utils.formatUnits(result.amounts[0], 6))
-        console.log(ethers.utils.formatUnits(result.amounts[0], 6))
-
+        let { adapters, path, amounts } = await vixrouterContract.findBestPath(inamount, tokenIn, tokenOut, 4);
+        setAdapters(adapters)
+        setPath(path)
+        setAmounts(amounts)
+        var final_amount = Number(ethers.utils.formatUnits(amounts[amounts.length - 1], tempdecimals[tokenOut]));
+        setAmountOut(final_amount)
       } catch (e) {
         console.log(e)
       }
@@ -275,7 +263,6 @@ const SwapPage: NextPageWithLayout = () => {
     }
     getPrice();
   }, [tokenOutIndex]);
-  // ~~angel work
 
   let [toggleCoin, setToggleCoin] = useState(false);
   const toggleTokens = () => {
@@ -287,12 +274,9 @@ const SwapPage: NextPageWithLayout = () => {
 
   const { settingsAtom } = useTextAtom();
   const { closeModal } = useModal();
-  console.log('jotai => ', closeModal);
   const [txSpeed, setTxSpeed] = useState(settingsAtom?.init.txSpeed);
   const [tolerance, setTolerance] = useState(settingsAtom?.init.tolerance);
-  // const getTxSpeed = () => {
-  //   setTxSpeed(settingsAtom?.init.txSpeed);  
-  // }
+
   useEffect(() => {
     setTxSpeed(settingsAtom?.init.txSpeed);
     setTolerance(settingsAtom?.init.tolerance);
@@ -301,39 +285,22 @@ const SwapPage: NextPageWithLayout = () => {
   const swap = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum)
     await provider.send("eth_requestAccounts", []);
-    const { chainId } = await provider.getNetwork()
-    // console.log(chainId)
     const signer = provider.getSigner();
     let userAddress = await signer.getAddress();
 
     //approve
     const tokenContract = new ethers.Contract(tokenIn, ERC20.abi, signer);
     var approved_amount = await tokenContract.allowance(userAddress, VixRouter.address);
-    console.log("DECIMAILS:", tempdecimals[tokenIn])
-    if (ethers.utils.formatUnits(approved_amount, tempdecimals[tokenIn]) < amountIn) {
-      var approving_amount = ethers.utils.parseEther("9999999");
+    if (Number(ethers.utils.formatUnits(approved_amount, tempdecimals[tokenIn])) < amountIn) {
+      var approving_amount = ethers.utils.parseUnits("9999999", tempdecimals[tokenIn]);
       await tokenContract.approve(VixRouter.address, approving_amount);
     }
 
     //swap
     const vixrouterContract = new ethers.Contract(VixRouter.address, VixRouter.abi, signer);
-    var inamount = ethers.utils.parseUnits(String(amountIn), tempdecimals[tokenIn]);
-
-    let result = await vixrouterContract.findBestPath(inamount, tokenIn, tokenOut, 4);
-    setAdapters(result.adapters)
-    setPath(result.path)
-    setAmounts(result.amounts)
-    console.log(result)
-    console.log(typeof ethers.utils.formatUnits(result.amounts[0], 6))
-    console.log(ethers.utils.formatUnits(result.amounts[0], 6))
-
-
-    var parsed_amountIn = ethers.utils.parseEther(String(amountIn));
+    var parsed_amountIn = ethers.utils.parseUnits(String(amountIn), tempdecimals[tokenIn]);
     var parsed_amountOut = ethers.utils.parseEther("0");
-    var path = result.path;
-    var adapters = result.adapters;
     var _trade = [parsed_amountIn, parsed_amountOut, path, adapters];
-    console.log(_trade)
     var _to = userAddress;
     var _fee = ethers.utils.parseEther("0");
     await vixrouterContract.swapNoSplit(_trade, _to, _fee);
@@ -402,7 +369,6 @@ const SwapPage: NextPageWithLayout = () => {
                     className="mr-1 h-auto w-4"
                     onClick={() => {
                       openModal('SETTINGS');
-                      // getTxSpeed();
                     }}
                     style={{ cursor: 'pointer' }}
                   />
@@ -448,7 +414,7 @@ const SwapPage: NextPageWithLayout = () => {
               <TransactionInfo label={'Rate'} value={`${(amountOut / amountIn).toFixed(2)} ${coinList[tokenOutIndex].code}/${coinList[tokenInIndex].code}`} />
               <TransactionInfo label={'TxSpeed'} value={txSpeed} />
               <TransactionInfo label={'Price Slippage'} value={tolerance} />
-              <TransactionInfo label={'Network Fee'} value={'0.5 USD'} />
+              <TransactionInfo label={'Network Fee'} value={'0.04$'} />
             </div>
             <div className="mt-6 flex w-[105%] flex-row justify-between px-2">
               <div className="grid grid-cols-1 place-items-center">
@@ -462,8 +428,8 @@ const SwapPage: NextPageWithLayout = () => {
                   }}
                   style={{ cursor: 'pointer' }}
                 >
-                  {/* 3 steps in the route */}
-                  100% via {dexname}
+                  {adapters.length} steps in the route
+
                 </div>
               </div>
             </div>
@@ -490,7 +456,6 @@ const SwapPage: NextPageWithLayout = () => {
               <h1>Amount: {amountOut}</h1>
               <h1>Price: {tokenOutPrice}</h1>
               <hr></hr>
-              <h1>adapter: {dexname}</h1>
               <h1>adapters:{adapters.length}: {adapters.map(ele => { return " ->" + tempadapternames[ele] })}</h1>
               <h1>Coin path:{path.length}: {path.map(ele => { return " ->" + tempcoinnames[ele] })}</h1>
               <h1>

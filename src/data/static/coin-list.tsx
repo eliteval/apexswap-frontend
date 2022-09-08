@@ -35,6 +35,7 @@ export const coinList = [
   {
     icon: <Image src={USDC} alt="Criptic" width='24px' height='24px' />,
     code: 'USDC',
+    tradingviewcode: 'USDC',
     name: 'USDC',
     address: '0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E',
     price: 1,
@@ -43,6 +44,7 @@ export const coinList = [
   {
     icon: <Image src={USDT} alt="Criptic" width='24px' height='24px' />,
     code: 'USDT',
+    tradingviewcode: 'USDT',
     name: 'USDT',
     address: '0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7',
     price: 1,
@@ -53,7 +55,7 @@ export const coinList = [
     code: 'SUSHIe',
     tradingviewcode: 'SUSHI',
     name: 'SUSHIe',
-    address: '0x37b608519f91f70f2eeb0e5ed9af4061722e4f76',
+    address: '0x37B608519F91f70F2EeB0e5Ed9AF4061722e4F76',
     coinGeckoCoinsId: 'sushi',
     decimals: 18
   },
