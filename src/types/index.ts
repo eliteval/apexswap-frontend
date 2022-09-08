@@ -14,6 +14,7 @@ export type CoinTypes = {
   name: string;
   address: string;
   price: number;
+  decimals: number;
 };
 
 export interface Attachment {

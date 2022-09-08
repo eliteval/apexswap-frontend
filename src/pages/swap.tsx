@@ -22,11 +22,12 @@ import DashboardLayout from '@/layouts/_dashboard';
 import Layout from '@/layouts/_layout';
 import TradeContainer from '@/components/ui/trade';
 import { useModal } from '@/components/modal-views/context';
+import { atom, useAtom } from 'jotai';
+import { useTextAtom } from '@/components/swap/settings';
 import { AdvancedRealTimeChart } from 'react-ts-tradingview-widgets';
 import { ethers } from "ethers";
 import ERC20 from "@/abi/ERC20.json";
 import VixRouter from "@/abi/VixRouter.json";
-
 
 const sort1 = [
   { id: 1, name: 'All Types' },
@@ -139,7 +140,7 @@ const SwapPage: NextPageWithLayout = () => {
     }
     // myfunc();
   })
-  const dexs = {
+  const tempadapternames = {
     "0x623DC9E82F055471B7675503e8deF05A35EBeA19": "Trader Joe",
     "0xeE57D82AA7c1f6Edb1aa63219828A55b1CAC2786": "Pangolin",
     "0x1b013c840f4b8BFa1cEaa7dd5f31d1f234C56A54": "Sushiswap",
@@ -150,8 +151,16 @@ const SwapPage: NextPageWithLayout = () => {
     "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7": "Avax",
     "0xd586E7F844cEa2F87f50152665BCbc2C279D8d70": "DAI",
     "0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7": "USDT",
-    "0x37b608519f91f70f2eeb0e5ed9af4061722e4f76": "Sushi",
+    "0x37B608519F91f70F2EeB0e5Ed9AF4061722e4F76": "Sushi",
     "0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E": "USDC",
+  }
+
+  const tempdecimals = {
+    "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7": "18",
+    "0xd586E7F844cEa2F87f50152665BCbc2C279D8d70": "18",
+    "0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7": "6",
+    "0x37B608519F91f70F2EeB0e5Ed9AF4061722e4F76": "18",
+    "0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E": "6",
   }
 
   const [settings, setSettings] = useState({})
@@ -169,6 +178,11 @@ const SwapPage: NextPageWithLayout = () => {
   const [amountOut, setAmountOut] = useState(0)
   const [adapter, setAdapter] = useState("")
   const [dexname, setDexName] = useState("")
+
+  const [adapters, setAdapters] = useState([])
+  const [path, setPath] = useState([])
+  const [amounts, setAmounts] = useState([])
+
 
   const [tempdev] = useState(true)
 
@@ -195,14 +209,22 @@ const SwapPage: NextPageWithLayout = () => {
         let userAddress = await signer.getAddress();
 
         const vixrouterContract = new ethers.Contract(VixRouter.address, VixRouter.abi, signer);
-        var inamount = ethers.utils.parseEther(String(amountIn));
+        var inamount = ethers.utils.parseUnits(String(amountIn), tempdecimals[tokenIn]);
         let { amountOut, adapter } = await vixrouterContract.queryNoSplit(inamount, tokenIn, tokenOut);
         amountOut = ethers.utils.formatEther(amountOut);
         setAmountOut(amountOut)
         setAdapter(adapter)
-        setDexName(dexs[adapter])
-        console.log("@@@@@@@@@ Query", amountIn, tempcoinnames[tokenIn], tokenIn, "=>", amountOut, tempcoinnames[tokenOut], tokenOut, " || ", dexs[adapter])
-        console.log("@@@@@@@@@ details", tokenInIndex, "=>", tokenOutIndex)
+        setDexName(tempadapternames[adapter])
+        console.log("@@@@@@@@@ Query", amountIn, tempcoinnames[tokenIn], tokenIn, "=>", amountOut, tempcoinnames[tokenOut], tokenOut, " || ", tempadapternames[adapter])
+
+        let result = await vixrouterContract.findBestPath(inamount, tokenIn, tokenOut, 4);
+        setAdapters(result.adapters)
+        setPath(result.path)
+        setAmounts(result.amounts)
+        console.log(result)
+        console.log(typeof ethers.utils.formatUnits(result.amounts[0], 6))
+        console.log(ethers.utils.formatUnits(result.amounts[0], 6))
+
       } catch (e) {
         console.log(e)
       }
@@ -255,11 +277,26 @@ const SwapPage: NextPageWithLayout = () => {
   }, [tokenOutIndex]);
   // ~~angel work
 
-  const toogleTokens = () => {
+  let [toggleCoin, setToggleCoin] = useState(false);
+  const toggleTokens = () => {
     var dish = tokenInIndex;
-    setTokenInIndex(tokenOutIndex)
-    setTokenOutIndex(dish)
+    setTokenInIndex(tokenOutIndex);
+    setTokenOutIndex(dish);
+    setToggleCoin(!toggleCoin);
   }
+
+  const { settingsAtom } = useTextAtom();
+  const { closeModal } = useModal();
+  console.log('jotai => ', closeModal);
+  const [txSpeed, setTxSpeed] = useState(settingsAtom?.init.txSpeed);
+  const [tolerance, setTolerance] = useState(settingsAtom?.init.tolerance);
+  // const getTxSpeed = () => {
+  //   setTxSpeed(settingsAtom?.init.txSpeed);  
+  // }
+  useEffect(() => {
+    setTxSpeed(settingsAtom?.init.txSpeed);
+    setTolerance(settingsAtom?.init.tolerance);
+  });
 
   const swap = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum)
@@ -272,17 +309,29 @@ const SwapPage: NextPageWithLayout = () => {
     //approve
     const tokenContract = new ethers.Contract(tokenIn, ERC20.abi, signer);
     var approved_amount = await tokenContract.allowance(userAddress, VixRouter.address);
-    if (ethers.utils.formatEther(approved_amount) < amountIn) {
+    console.log("DECIMAILS:", tempdecimals[tokenIn])
+    if (ethers.utils.formatUnits(approved_amount, tempdecimals[tokenIn]) < amountIn) {
       var approving_amount = ethers.utils.parseEther("9999999");
       await tokenContract.approve(VixRouter.address, approving_amount);
     }
 
     //swap
     const vixrouterContract = new ethers.Contract(VixRouter.address, VixRouter.abi, signer);
-    var parsed_amountIn = ethers.utils.parseEther(amountIn);
+    var inamount = ethers.utils.parseUnits(String(amountIn), tempdecimals[tokenIn]);
+
+    let result = await vixrouterContract.findBestPath(inamount, tokenIn, tokenOut, 4);
+    setAdapters(result.adapters)
+    setPath(result.path)
+    setAmounts(result.amounts)
+    console.log(result)
+    console.log(typeof ethers.utils.formatUnits(result.amounts[0], 6))
+    console.log(ethers.utils.formatUnits(result.amounts[0], 6))
+
+
+    var parsed_amountIn = ethers.utils.parseEther(String(amountIn));
     var parsed_amountOut = ethers.utils.parseEther("0");
-    var path = [tokenIn, tokenOut];
-    var adapters = [adapter];
+    var path = result.path;
+    var adapters = result.adapters;
     var _trade = [parsed_amountIn, parsed_amountOut, path, adapters];
     console.log(_trade)
     var _to = userAddress;
@@ -336,7 +385,7 @@ const SwapPage: NextPageWithLayout = () => {
         description="Apexswap - Avalanche DEX"
       />
       <div className="xl:grid-rows-7 grid grid-cols-1 gap-4 xl:grid-cols-4">
-        {/* Swap box */}
+        {/* Swap box min-w-[410px] max-w-[410px] */}
         <div className="xl:col-span-1 xl:row-span-5 xl:row-start-1 xl:row-end-6">
           <TradeContainer>
             <div className=" dark:border-gray-800 xs:mb-2 xs:pb-6 ">
@@ -353,6 +402,7 @@ const SwapPage: NextPageWithLayout = () => {
                     className="mr-1 h-auto w-4"
                     onClick={() => {
                       openModal('SETTINGS');
+                      // getTxSpeed();
                     }}
                     style={{ cursor: 'pointer' }}
                   />
@@ -366,6 +416,7 @@ const SwapPage: NextPageWithLayout = () => {
                   defaultCoinIndex={tokenInIndex}
                   onChangeTokenIndex={(tokenIndex) => { setTokenInIndex(tokenIndex); }}
                   onchangeAmount={setAmountIn}
+                  onToggleTokens={toggleCoin}
                 />
                 <div className="grid grid-cols-1 place-items-center my-2">
                   <Button
@@ -374,7 +425,7 @@ const SwapPage: NextPageWithLayout = () => {
                     shape="circle"
                     variant="transparent"
                     className="uppercase xs:tracking-widest"
-                    onClick={() => { toogleTokens() }}
+                    onClick={() => { toggleTokens() }}
                   >
                     <SwapIcon className="h-auto w-3" />
                   </Button>
@@ -385,6 +436,7 @@ const SwapPage: NextPageWithLayout = () => {
                   usdPrice={tokenOutPrice}
                   defaultValue={amountOut}
                   defaultCoinIndex={tokenOutIndex}
+                  onToggleTokens={toggleCoin}
                   onChangeTokenIndex={setTokenOutIndex}
                   showvalue={amountOut}
                 />
@@ -394,7 +446,8 @@ const SwapPage: NextPageWithLayout = () => {
               <TransactionInfo label={'Savings'} value={`~$${Number(tokenOutPrice * amountOut * 0.02).toFixed(3)}`} />
               <TransactionInfo label={'Min. Received'} value={`${amountOut ? Number(amountOut * 0.99).toFixed(2) : 0} ${coinList[tokenOutIndex].code}`} />
               <TransactionInfo label={'Rate'} value={`${(amountOut / amountIn).toFixed(2)} ${coinList[tokenOutIndex].code}/${coinList[tokenInIndex].code}`} />
-              <TransactionInfo label={'Price Slippage'} value={'1%'} />
+              <TransactionInfo label={'TxSpeed'} value={txSpeed} />
+              <TransactionInfo label={'Price Slippage'} value={tolerance} />
               <TransactionInfo label={'Network Fee'} value={'0.5 USD'} />
             </div>
             <div className="mt-6 flex w-[105%] flex-row justify-between px-2">
@@ -438,6 +491,14 @@ const SwapPage: NextPageWithLayout = () => {
               <h1>Price: {tokenOutPrice}</h1>
               <hr></hr>
               <h1>adapter: {dexname}</h1>
+              <h1>adapters:{adapters.length}: {adapters.map(ele => { return " ->" + tempadapternames[ele] })}</h1>
+              <h1>Coin path:{path.length}: {path.map(ele => { return " ->" + tempcoinnames[ele] })}</h1>
+              <h1>
+                amounts:
+                {amounts.length}: {
+                  amounts.map((ele, index) => { return " ->" + ethers.utils.formatUnits(ele, tempdecimals[path[index]]) })
+                }
+              </h1>
             </div> : <></>}
           </TradeContainer>
         </div>

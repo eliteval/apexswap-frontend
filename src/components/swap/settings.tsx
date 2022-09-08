@@ -3,11 +3,21 @@ import { InfoIcon } from '@/components/icons/info-icon';
 import { Switch } from '@/components/ui/switch';
 import cn from 'classnames';
 import { useState } from 'react';
+import { atom, useAtom } from 'jotai';
+
+// Create your atoms and derivatives
+var settingsAtom
+export function useTextAtom() {
+  return {settingsAtom};
+}
 
 export default function Settings({ ...props }) {
+  let [txSpeed, setTxSpeed] = useState('');
+  let [tolerance, setTolerance] = useState('');
   let [swch1, setSwch1] = useState(false);
   let [swch2, setSwch2] = useState(false);
   let [swch3, setSwch3] = useState(false);
+  settingsAtom = atom({ txSpeed: txSpeed, tolerance: tolerance });
 
   return (
     <div
@@ -24,6 +34,7 @@ export default function Settings({ ...props }) {
         <Button
           color="gray"
           className="dark:focus:bg-gradient-to-r dark:focus:from-cyan-400 dark:focus:to-blue-500 mb-5 max-h-8 w-full font-normal text-gray-600 hover:text-gray-900 dark:bg-gray-600 dark:text-gray-200 dark:hover:text-white lg:mt-6"
+          onClick={()=>{setTxSpeed('Standard')}}
         >
           <span className="flex items-center gap-2">
             Standard
@@ -32,6 +43,7 @@ export default function Settings({ ...props }) {
         <Button
           color="gray"
           className="dark:focus:bg-gradient-to-r dark:focus:from-cyan-400 dark:focus:to-blue-500 mb-5 max-h-8 w-full font-normal text-gray-600 hover:text-gray-900 dark:bg-gray-600 dark:text-gray-200 dark:hover:text-white lg:mt-6"
+          onClick={()=>{setTxSpeed('Fast')}}
         >
           <span className="flex items-center gap-2">
             Fast
@@ -40,6 +52,7 @@ export default function Settings({ ...props }) {
         <Button
           color="gray"
           className="dark:focus:bg-gradient-to-r dark:focus:from-cyan-400 dark:focus:to-blue-500 mb-5 max-h-8 w-full font-normal text-gray-600 hover:text-gray-900 dark:bg-gray-600 dark:text-gray-200 dark:hover:text-white lg:mt-6"
+          onClick={()=>{setTxSpeed('Instant')}}
         >
           <span className="flex items-center gap-2">
             Instant
@@ -53,6 +66,7 @@ export default function Settings({ ...props }) {
         <Button
           color="gray"
           className="dark:focus:bg-gradient-to-r dark:focus:from-cyan-400 dark:focus:to-blue-500 mb-5 max-h-8 w-full font-normal text-gray-600 hover:text-gray-900 dark:bg-gray-600 dark:text-gray-200 dark:hover:text-white lg:mt-6"
+          onClick={()=>{setTolerance('0.1%')}}
         >
           <span className="flex items-center gap-2">
             0.1%
@@ -61,6 +75,7 @@ export default function Settings({ ...props }) {
         <Button
           color="gray"
           className="dark:focus:bg-gradient-to-r dark:focus:from-cyan-400 dark:focus:to-blue-500 mb-5 max-h-8 w-full font-normal text-gray-600 hover:text-gray-900 dark:bg-gray-600 dark:text-gray-200 dark:hover:text-white lg:mt-6"
+          onClick={()=>{setTolerance('0.5%')}}
         >
           <span className="flex items-center gap-2">
             0.5%
@@ -69,6 +84,7 @@ export default function Settings({ ...props }) {
         <Button
           color="gray"
           className="dark:focus:bg-gradient-to-r dark:focus:from-cyan-400 dark:focus:to-blue-500 mb-5 max-h-8 w-full font-normal text-gray-600 hover:text-gray-900 dark:bg-gray-600 dark:text-gray-200 dark:hover:text-white lg:mt-6"
+          onClick={()=>{setTolerance('1.0%')}}
         >
           <span className="flex items-center gap-2">
             1.0%
@@ -83,7 +99,7 @@ export default function Settings({ ...props }) {
           />
         </div>
       </div>
-      <p className="relative flex items-center justify-between gap-2 text-center text-sm leading-loose tracking-tight text-gray-600 dark:text-gray-400">
+      {/* <p className="relative flex items-center justify-between gap-2 text-center text-sm leading-loose tracking-tight text-gray-600 dark:text-gray-400">
         <div className="flex items-center gap-2">
           Select1 <InfoIcon className="h-3 w-3" />
         </div>
@@ -148,7 +164,7 @@ export default function Settings({ ...props }) {
             />
           </div>
         </Switch>
-      </p>
+      </p> */}
 
     </div>
   );

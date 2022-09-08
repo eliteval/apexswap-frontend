@@ -21,29 +21,33 @@ export const coinList = [
     name: 'Avalanche',
     address: '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7',
     coinGeckoCoinsId: 'avalanche-2',
+    decimals: 18
   },
   {
     icon: <Image src={DAI} alt="Criptic" width='24px' height='24px' />,
-    code: 'DAI',
+    code: 'DAIe',
     tradingviewcode: 'DAI',
-    name: 'DAI',
+    name: 'DAI.e',
     address: '0xd586E7F844cEa2F87f50152665BCbc2C279D8d70',
     coinGeckoCoinsId: 'dai',
+    decimals: 18
   },
-  // {
-  //   icon: <Image src={USDC} alt="Criptic" width='24px' height='24px' />,
-  //   code: 'USDC',
-  //   name: 'USDC',
-  //   address: '0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E',
-  //   price: 1,
-  // },
-  // {
-  //   icon: <Image src={USDT} alt="Criptic" width='24px' height='24px' />,
-  //   code: 'USDT',
-  //   name: 'USDT',
-  //   address: '0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7',
-  //   price: 1,
-  // },
+  {
+    icon: <Image src={USDC} alt="Criptic" width='24px' height='24px' />,
+    code: 'USDC',
+    name: 'USDC',
+    address: '0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E',
+    price: 1,
+    decimals: 6
+  },
+  {
+    icon: <Image src={USDT} alt="Criptic" width='24px' height='24px' />,
+    code: 'USDT',
+    name: 'USDT',
+    address: '0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7',
+    price: 1,
+    decimals: 6
+  },
   {
     icon: <Image src={SUSHI} alt="Criptic" width='24px' height='24px' />,
     code: 'SUSHIe',
@@ -51,6 +55,7 @@ export const coinList = [
     name: 'SUSHIe',
     address: '0x37b608519f91f70f2eeb0e5ed9af4061722e4f76',
     coinGeckoCoinsId: 'sushi',
+    decimals: 18
   },
   // {
   //   icon: <Bitcoin />,

@@ -15,6 +15,7 @@ const CoinSelectView = dynamic(() =>
 interface CoinInputTypes extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
   editable?: boolean;
+  onToggleTokens?: boolean;
   usdPrice?: number;
   defaultValue?: number;
   defaultCoinIndex?: number;
@@ -30,6 +31,7 @@ const decimalPattern = /^[0-9]*[.,]?[0-9]*$/;
 export default function CoinInput({
   label,
   editable,
+  onToggleTokens,
   showvalue,
   onChangeTokenIndex,
   onchangeAmount,
@@ -73,8 +75,8 @@ export default function CoinInput({
             onClick={() => setVisibleCoinList(true)}
             className="min-w-[80px] flex items-center font-medium outline-none dark:text-gray-100"
           >
-            {selectedCoin?.icon}{' '}
-            <span className="ltr:ml-2 rtl:mr-2">{selectedCoin?.code}</span>
+            {onToggleTokens ? coinList[defaultCoinIndex]?.icon : selectedCoin?.icon}{' '}
+            <span className="ltr:ml-2 rtl:mr-2">{onToggleTokens ? coinList[defaultCoinIndex]?.code : selectedCoin?.code}</span>
             <ChevronDown className="ltr:ml-1.5 rtl:mr-1.5" />
           </button>
           <input
@@ -93,7 +95,7 @@ export default function CoinInput({
           />
         </div>
         <div className="mt-0.5 mb-2 min-h-[10px] flex flex-row justify-between">
-          <span>{selectedCoin?.name}</span>
+          <span>{onToggleTokens ? coinList[defaultCoinIndex]?.name : selectedCoin?.name}</span>
           <div className="font-xs text-gray-400 text-right">
             = ${showvalue ? Number(showvalue * usdPrice).toFixed(5) : usdPrice ? Number(value) * usdPrice : '0.00'}
           </div>
