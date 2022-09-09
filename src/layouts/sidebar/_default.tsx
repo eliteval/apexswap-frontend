@@ -166,13 +166,13 @@ export default function Sidebar({ className }: SidebarProps) {
 
       <Scrollbar style={{ height: 'calc(100% - 96px)' }}>
         <div className="px-6 pb-5 2xl:px-8">
-          <AuthorCard
+          {/* <AuthorCard
             image={AuthorImage}
             name="Cameron Williamson"
             role="admin"
-          />
+          /> */}
 
-          <div className="mt-12">
+          <div className="mt-1">
             {menuItems.map((item, index) => (
               <MenuItem
                 key={index}
