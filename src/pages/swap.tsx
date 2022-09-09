@@ -147,20 +147,26 @@ const SwapPage: NextPageWithLayout = () => {
     "0x4c90a08eab5DBAD079Abc165C29c1A32dDEf2beC": "ElkFinance",
   }
 
-  const tempcoinnames = {
-    "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7": "Avax",
-    "0xd586E7F844cEa2F87f50152665BCbc2C279D8d70": "DAI",
-    "0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7": "USDT",
-    "0x37B608519F91f70F2EeB0e5Ed9AF4061722e4F76": "Sushi",
-    "0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E": "USDC",
+  const getCoinName = (address: string) => {
+    const index = coinList.findIndex(
+      (item) => item.address === address
+    );
+    if (index !== -1) {
+      return coinList[index].name;
+    } else {
+      return "Unknown";
+    }
   }
 
-  const tempdecimals = {
-    "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7": "18",
-    "0xd586E7F844cEa2F87f50152665BCbc2C279D8d70": "18",
-    "0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7": "6",
-    "0x37B608519F91f70F2EeB0e5Ed9AF4061722e4F76": "18",
-    "0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E": "6",
+  const getCoinDecimals = (address: string) => {
+    const index = coinList.findIndex(
+      (item) => item.address === address
+    );
+    if (index !== -1) {
+      return coinList[index].decimals;
+    } else {
+      return 18;
+    }
   }
 
   const [settings, setSettings] = useState({})
@@ -196,22 +202,24 @@ const SwapPage: NextPageWithLayout = () => {
 
 
   useEffect(() => {
-    const getAmountOut = async () => {      
+    const getAmountOut = async () => {
       try {
         const provider = new ethers.providers.Web3Provider(window.ethereum)
         const signer = provider.getSigner();
 
         const vixrouterContract = new ethers.Contract(VixRouter.address, VixRouter.abi, signer);
-        var inamount = ethers.utils.parseUnits(String(amountIn), tempdecimals[tokenIn]);
+        var inamount = ethers.utils.parseUnits(String(amountIn), getCoinDecimals(tokenIn));
         // let { amountOut, adapter } = await vixrouterContract.queryNoSplit(inamount, tokenIn, tokenOut);
-        // amountOut = ethers.utils.formatUnits(amountOut, tempdecimals[tokenOut]);
-        // console.log("@@@@@@@@@ Query", amountIn, tempcoinnames[tokenIn], "=>", amountOut, tempcoinnames[tokenOut], " || ", tempadapternames[adapter])
+        // amountOut = ethers.utils.formatUnits(amountOut, getCoinDecimals(tokenOut));
+        // console.log("@@@@@@@@@ Query", amountIn, getCoinName(tokenIn), "=>", amountOut, getCoinName(tokenOut), " || ", tempadapternames[adapter])
 
+        console.log(amountIn, tokenIn, tokenOut)
         let { adapters, path, amounts } = await vixrouterContract.findBestPath(inamount, tokenIn, tokenOut, 4);
         setAdapters(adapters)
         setPath(path)
         setAmounts(amounts)
-        var final_amount = Number(ethers.utils.formatUnits(amounts[amounts.length - 1], tempdecimals[tokenOut]));
+        console.log(adapters, path, amounts)
+        var final_amount = Number(ethers.utils.formatUnits(amounts[amounts.length - 1], getCoinDecimals(tokenOut)));
         setAmountOut(final_amount)
       } catch (e) {
         console.log(e)
@@ -290,15 +298,20 @@ const SwapPage: NextPageWithLayout = () => {
 
     //approve
     const tokenContract = new ethers.Contract(tokenIn, ERC20.abi, signer);
+    var balance = await tokenContract.balanceOf(userAddress);
+    if (Number(ethers.utils.formatUnits(balance, getCoinDecimals(tokenIn))) < amountIn) {
+      alert('Not enough balance');
+      return;
+    }
     var approved_amount = await tokenContract.allowance(userAddress, VixRouter.address);
-    if (Number(ethers.utils.formatUnits(approved_amount, tempdecimals[tokenIn])) < amountIn) {
-      var approving_amount = ethers.utils.parseUnits("9999999", tempdecimals[tokenIn]);
+    if (Number(ethers.utils.formatUnits(approved_amount, getCoinDecimals(tokenIn))) < amountIn) {
+      var approving_amount = ethers.utils.parseUnits("9999999", getCoinDecimals(tokenIn));
       await tokenContract.approve(VixRouter.address, approving_amount);
     }
 
     //swap
     const vixrouterContract = new ethers.Contract(VixRouter.address, VixRouter.abi, signer);
-    var parsed_amountIn = ethers.utils.parseUnits(String(amountIn), tempdecimals[tokenIn]);
+    var parsed_amountIn = ethers.utils.parseUnits(String(amountIn), getCoinDecimals(tokenIn));
     var parsed_amountOut = ethers.utils.parseEther("0");
     var _trade = [parsed_amountIn, parsed_amountOut, path, adapters];
     var _to = userAddress;
@@ -423,9 +436,9 @@ const SwapPage: NextPageWithLayout = () => {
               <div className="flex flex-row">
                 <div
                   className="pr-5 text-sm"
-                  onClick={() => {
-                    openModal('ROUTING');
-                  }}
+                  // onClick={() => {
+                  //   openModal('ROUTING');
+                  // }}
                   style={{ cursor: 'pointer' }}
                 >
                   {adapters.length} steps in the route
@@ -444,24 +457,30 @@ const SwapPage: NextPageWithLayout = () => {
               SWAP
             </Button>
 
+            <br></br>
+            <br></br>
+            <h1>Dex: {adapters.map((ele, i) => { return (i ? " ->" : "") + tempadapternames[ele] })}</h1>
+            <br></br>
+            <h1>Coin: {path.map((ele, i) => { return (i ? " ->" : "") + getCoinName(ele) })}</h1>
             {tempdev ? <div>
               <br></br>
+              <hr></hr>
               <h1>tokenInIndex: {tokenInIndex}</h1>
-              <h1>tokenIn: {tempcoinnames[tokenIn]}</h1>
+              <h1>tokenIn: {getCoinName(tokenIn)}</h1>
               <h1>Amount: {amountIn}</h1>
               <h1>Price: {tokenInPrice}</h1>
               <hr></hr>
               <h1>tokenOutIndex: {tokenOutIndex}</h1>
-              <h1>tokenOut: {tempcoinnames[tokenOut]}</h1>
+              <h1>tokenOut: {getCoinName(tokenOut)}</h1>
               <h1>Amount: {amountOut}</h1>
               <h1>Price: {tokenOutPrice}</h1>
               <hr></hr>
-              <h1>adapters:{adapters.length}: {adapters.map(ele => { return " ->" + tempadapternames[ele] })}</h1>
-              <h1>Coin path:{path.length}: {path.map(ele => { return " ->" + tempcoinnames[ele] })}</h1>
+              <h1>adapters:{adapters.map((ele, i) => { return (i ? " ->" : "") + tempadapternames[ele] })}</h1>
+              <h1>Coin path: {path.map((ele, i) => { return (i ? " ->" : "") + getCoinName(ele) })}</h1>
               <h1>
                 amounts:
                 {amounts.length}: {
-                  amounts.map((ele, index) => { return " ->" + ethers.utils.formatUnits(ele, tempdecimals[path[index]]) })
+                  amounts.map((ele, index) => { return " ->" + ethers.utils.formatUnits(ele, getCoinDecimals(path[index])) })
                 }
               </h1>
             </div> : <></>}
