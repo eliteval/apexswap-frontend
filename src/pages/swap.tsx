@@ -568,7 +568,7 @@ const SwapPage: NextPageWithLayout = () => {
                         variant="transparent"
                         className="text-sm xs:tracking-widest"
                       >
-                        Active Orders(3)
+                        Active Orders
                       </Button>
                       <Button
                         size="mini"
@@ -605,7 +605,7 @@ const SwapPage: NextPageWithLayout = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
+                        {/* <tr>
                           <td style={{ textAlign: 'left' }}>{coinList[0].code} / {coinList[1].code}</td>
                           <td>1.3 {coinList[0].code}</td>
                           <td>1580</td>
@@ -658,11 +658,12 @@ const SwapPage: NextPageWithLayout = () => {
                           <td>pending</td>
                           <td>2022-9-3 1:27:46</td>
                           <td style={{ textAlign: 'right' }}>0.0014 {coinList[0].code}</td>
-                        </tr>
+                        </tr> */}
                       </tbody>
                     </table>
                   </Scrollbar>
-                </div>              </div>
+                </div>
+              </div>
             </div>
             <div className="lg:col-span-1 ">
               <div className="flex min-h-[50px] w-full items-center justify-around border-b border-b-[#374151]">
