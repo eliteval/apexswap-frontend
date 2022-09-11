@@ -15,6 +15,15 @@ import MIM from '@/assets/images/coin/mim.png';
 import SUSHI from '@/assets/images/coin/sushiswap.png';
 import USDT from '@/assets/images/coin/tether.png';
 import USDC from '@/assets/images/coin/usd-coin.png';
+import JOE from '@/assets/images/coin/joe.png';
+import sAVAX from '@/assets/images/coin/sAVAX.png';
+import EGG from '@/assets/images/coin/EGG.png';
+import GMX from '@/assets/images/coin/GMX.png';
+import AAVEe from '@/assets/images/coin/AAVEe.png';
+import ALPHAe from '@/assets/images/coin/ALPHAe.png';
+import APE from '@/assets/images/coin/APE.png';
+import BNB from '@/assets/images/coin/BNB.png';
+import ELK from '@/assets/images/coin/ELK.png';
 
 
 export const coinList = [
@@ -109,6 +118,87 @@ export const coinList = [
     icon: <Image src={SUSHI} alt="Criptic" width='24px' height='24px' />,
     tradingviewcode: 'SUSHI',
     coinGeckoCoinsId: 'sushi',
+    decimals: 18
+  },
+  {
+    name: 'JOE',
+    code: 'JOE',
+    address: '0x6e84a6216eA6dACC71eE8E6b0a5B7322EEbC0fDd',
+    icon: <Image src={JOE} alt="Criptic" width='24px' height='24px' />,
+    tradingviewcode: 'JOE',
+    coinGeckoCoinsId: '', //~~
+    decimals: 18
+  },
+  {
+    name: 'sAVAX',
+    code: 'sAVAX',
+    address: '0x2b2C81e08f1Af8835a78Bb2A90AE924ACE0eA4bE',
+    icon: <Image src={sAVAX} alt="Criptic" width='24px' height='24px' />,
+    tradingviewcode: 'AVAX',
+    coinGeckoCoinsId: 'avalanche-2',
+    decimals: 18
+  },
+  {
+    name: 'EGG',
+    code: 'EGG',
+    address: '0x7761E2338B35bCEB6BdA6ce477EF012bde7aE611',
+    icon: <Image src={EGG} alt="Criptic" width='24px' height='24px' />,
+    tradingviewcode: '',
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'GMX',
+    code: 'GMX',
+    address: '0x62edc0692BD897D2295872a9FFCac5425011c661',
+    icon: <Image src={GMX} alt="Criptic" width='24px' height='24px' />,
+    tradingviewcode: '',
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'AAVEe',
+    code: 'AAVEe',
+    address: '0x63a72806098Bd3D9520cC43356dD78afe5D386D9',
+    icon: <Image src={AAVEe} alt="Criptic" width='24px' height='24px' />,
+    tradingviewcode: '',
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'ALPHAe',
+    code: 'ALPHAe',
+    address: '0x2147EFFF675e4A4eE1C2f918d181cDBd7a8E208f',
+    icon: <Image src={ALPHAe} alt="Criptic" width='24px' height='24px' />,
+    tradingviewcode: '',
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'APE',
+    code: 'APE',
+    address: '0x0802d66f029c46E042b74d543fC43B6705ccb4ba',
+    icon: <Image src={APE} alt="Criptic" width='24px' height='24px' />,
+    tradingviewcode: '',
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'BNB',
+    code: 'BNB',
+    address: '0x264c1383ea520f73dd837f915ef3a732e204a493',
+    icon: <Image src={BNB} alt="Criptic" width='24px' height='24px' />,
+    tradingviewcode: 'BNB',
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'ELK',
+    code: 'ELK',
+    address: '0xe1c110e1b1b4a1ded0caf3e42bfbdbb7b5d7ce1c',
+    icon: <Image src={ELK} alt="Criptic" width='24px' height='24px' />,
+    tradingviewcode: 'BNB',
+    coinGeckoCoinsId: '',
     decimals: 18
   },
 ];

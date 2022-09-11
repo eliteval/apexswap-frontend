@@ -81,7 +81,7 @@ export default function CoinInput({
           </button>
           <input
             type="text"
-            value={!editable ? (value) : Number(showvalue).toFixed(5)}
+            value={!editable ? (value) : Number(showvalue).toFixed(6)}
             placeholder="0.0"
             inputMode="decimal"
             disabled={editable}
@@ -97,7 +97,7 @@ export default function CoinInput({
         <div className="mt-0.5 mb-2 min-h-[10px] flex flex-row justify-between">
           <span>{onToggleTokens ? coinList[defaultCoinIndex]?.name : selectedCoin?.name}</span>
           <div className="font-xs text-gray-400 text-right">
-            = ${showvalue ? Number(showvalue * usdPrice).toFixed(5) : usdPrice ? Number(value) * usdPrice : '0.00'}
+            = ${showvalue ? Number(showvalue * usdPrice).toFixed(6) : usdPrice ? Number(value) * usdPrice : '0.00'}
           </div>
         </div>
       </div>

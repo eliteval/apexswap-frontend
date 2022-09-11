@@ -145,11 +145,13 @@ const SwapPage: NextPageWithLayout = () => {
     "0xeE57D82AA7c1f6Edb1aa63219828A55b1CAC2786": "Pangolin",
     "0x1b013c840f4b8BFa1cEaa7dd5f31d1f234C56A54": "Sushiswap",
     "0x4c90a08eab5DBAD079Abc165C29c1A32dDEf2beC": "ElkFinance",
+    "0x7F8B47Ff174Eaf96960a050B220a907dFa3feD5b": "GMX",
+    "0xd0f6e66113A6D6Cca238371948F4Ce2893D62881": "Curve",
   }
 
   const getCoinName = (address: string) => {
     const index = coinList.findIndex(
-      (item) => item.address === address
+      (item) => item.address.toLowerCase() === address.toLowerCase()
     );
     if (index !== -1) {
       return coinList[index].name;
