@@ -17,6 +17,7 @@ import { Transition } from '@/components/ui/transition';
 import NftDropDown from '@/components/nft/nft-dropdown';
 import Image from '@/components/ui/image';
 import { coinList } from '@/data/static/coin-list';
+import { dexList } from '@/data/static/dex-list';
 import Scrollbar from '@/components/ui/scrollbar';
 import DashboardLayout from '@/layouts/_dashboard';
 import Layout from '@/layouts/_layout';
@@ -28,6 +29,15 @@ import { AdvancedRealTimeChart } from 'react-ts-tradingview-widgets';
 import { ethers } from "ethers";
 import ERC20 from "@/abi/ERC20.json";
 import VixRouter from "@/abi/VixRouter.json";
+
+// Create your atoms and derivatives
+var routingAtom, toSettingsAtom;
+export function useRoutingAtom() {
+  return { routingAtom };
+}
+export function useSettingsAtom() {
+  return { toSettingsAtom };
+}
 
 const sort1 = [
   { id: 1, name: 'All Types' },
@@ -140,14 +150,6 @@ const SwapPage: NextPageWithLayout = () => {
     }
     // myfunc();
   })
-  const tempadapternames = {
-    "0x623DC9E82F055471B7675503e8deF05A35EBeA19": "Trader Joe",
-    "0xeE57D82AA7c1f6Edb1aa63219828A55b1CAC2786": "Pangolin",
-    "0x1b013c840f4b8BFa1cEaa7dd5f31d1f234C56A54": "Sushiswap",
-    "0x4c90a08eab5DBAD079Abc165C29c1A32dDEf2beC": "ElkFinance",
-    "0x7F8B47Ff174Eaf96960a050B220a907dFa3feD5b": "GMX",
-    "0xd0f6e66113A6D6Cca238371948F4Ce2893D62881": "Curve",
-  }
 
   const getCoinName = (address: string) => {
     const index = coinList.findIndex(
@@ -160,7 +162,7 @@ const SwapPage: NextPageWithLayout = () => {
     }
   }
 
-  const getCoinDecimals = (address: string) => {
+  const getCoinDecimals = (address: any) => {
     const index = coinList.findIndex(
       (item) => item.address === address
     );
@@ -168,6 +170,18 @@ const SwapPage: NextPageWithLayout = () => {
       return coinList[index].decimals;
     } else {
       return 18;
+    }
+  }
+
+  const getDexName = (address: any) => {
+    const index = dexList.findIndex(
+      (item) => item.address.toLowerCase() === address.toLowerCase()
+    );
+    if (index !== -1) {
+      console.log(dexList[index])
+      return dexList[index].dex;
+    } else {
+      return "Unknown";
     }
   }
 
@@ -190,7 +204,6 @@ const SwapPage: NextPageWithLayout = () => {
   const [path, setPath] = useState([])
   const [amounts, setAmounts] = useState([])
 
-
   const [tempdev] = useState(false)
 
   useEffect(() => {
@@ -211,15 +224,21 @@ const SwapPage: NextPageWithLayout = () => {
 
         const vixrouterContract = new ethers.Contract(VixRouter.address, VixRouter.abi, signer);
         var inamount = ethers.utils.parseUnits(String(amountIn), getCoinDecimals(tokenIn));
-        // let { amountOut, adapter } = await vixrouterContract.queryNoSplit(inamount, tokenIn, tokenOut);
-        // amountOut = ethers.utils.formatUnits(amountOut, getCoinDecimals(tokenOut));
-        // console.log("@@@@@@@@@ Query", amountIn, getCoinName(tokenIn), "=>", amountOut, getCoinName(tokenOut), " || ", tempadapternames[adapter])
+
+        //query one dex
+        let { amountOut, adapter } = await vixrouterContract.queryNoSplit(inamount, tokenIn, tokenOut);
+        amountOut = ethers.utils.formatUnits(amountOut, getCoinDecimals(tokenOut));
+        console.log("@@@@@@@@@ Query", amountIn, getCoinName(tokenIn), "=>", amountOut, getCoinName(tokenOut), " || ", getDexName(adapter))
 
         console.log(amountIn, tokenIn, tokenOut)
         let { adapters, path, amounts } = await vixrouterContract.findBestPath(inamount, tokenIn, tokenOut, 4);
         setAdapters(adapters)
         setPath(path)
         setAmounts(amounts)
+        routingAtom = atom({
+          adapters: adapters,
+          path: path
+        })
         console.log(adapters, path, amounts)
         var final_amount = Number(ethers.utils.formatUnits(amounts[amounts.length - 1], getCoinDecimals(tokenOut)));
         setAmountOut(final_amount)
@@ -283,14 +302,20 @@ const SwapPage: NextPageWithLayout = () => {
   }
 
   const { settingsAtom } = useTextAtom();
-  const { closeModal } = useModal();
-  const [txSpeed, setTxSpeed] = useState(settingsAtom?.init.txSpeed);
-  const [tolerance, setTolerance] = useState(settingsAtom?.init.tolerance);
+  const [txSpeed, setTxSpeed] = useState('');
+  const [tolerance, setTolerance] = useState('');
+  toSettingsAtom = atom({ speed: txSpeed, tol: tolerance });
 
   useEffect(() => {
-    setTxSpeed(settingsAtom?.init.txSpeed);
-    setTolerance(settingsAtom?.init.tolerance);
-  });
+    if (settingsAtom?.init.txSpeed) {
+      setTxSpeed(settingsAtom?.init.txSpeed);
+    }
+  }, [settingsAtom?.init.txSpeed]);
+  useEffect(() => {
+    if (settingsAtom?.init.tolerance) {
+      setTolerance(settingsAtom?.init.tolerance);
+    }
+  }, [settingsAtom?.init.tolerance]);
 
   const swap = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum)
@@ -438,9 +463,9 @@ const SwapPage: NextPageWithLayout = () => {
               <div className="flex flex-row">
                 <div
                   className="pr-5 text-sm"
-                  // onClick={() => {
-                  //   openModal('ROUTING');
-                  // }}
+                  onClick={() => {
+                    openModal('ROUTING');
+                  }}
                   style={{ cursor: 'pointer' }}
                 >
                   {adapters.length} steps in the route
@@ -459,11 +484,7 @@ const SwapPage: NextPageWithLayout = () => {
               SWAP
             </Button>
 
-            <br></br>
-            <br></br>
-            <h1>Dex: {adapters.map((ele, i) => { return (i ? " ->" : "") + tempadapternames[ele] })}</h1>
-            <br></br>
-            <h1>Coin: {path.map((ele, i) => { return (i ? " ->" : "") + getCoinName(ele) })}</h1>
+            <br></br>         
             {tempdev ? <div>
               <br></br>
               <hr></hr>
@@ -477,7 +498,7 @@ const SwapPage: NextPageWithLayout = () => {
               <h1>Amount: {amountOut}</h1>
               <h1>Price: {tokenOutPrice}</h1>
               <hr></hr>
-              <h1>adapters:{adapters.map((ele, i) => { return (i ? " ->" : "") + tempadapternames[ele] })}</h1>
+              <h1>adapters:{adapters.map((ele, i) => { return (i ? " ->" : "") + getDexName(ele) })}</h1>
               <h1>Coin path: {path.map((ele, i) => { return (i ? " ->" : "") + getCoinName(ele) })}</h1>
               <h1>
                 amounts:

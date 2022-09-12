@@ -57,29 +57,23 @@ export default function Routing({ ...props }) {
 
   return (
     <div
-      className="relative z-50 mx-auto max-w-lg rounded-2xl border border-gray-200 bg-white px-1 pt-5 pb-7 dark:border-gray-700 dark:bg-light-dark sm:px-2 sm:pb-8 sm:pt-6vv md:max-w-2xl"
+      className="relative md:max-w-4xl z-50 mx-auto rounded-2xl border border-gray-200 bg-white px-1 pt-5 pb-7 dark:border-gray-700 dark:bg-light-dark sm:px-2 sm:pb-8 sm:pt-6vv"
       {...props}
     >
       <h2 className="mb-4 text-2xl font-medium uppercase text-gray-900 dark:text-white">
         Routing
       </h2>
-      {/* {['xs', 'sm'].indexOf(breakpoint) !== -1 ? (<Scrollbar style={{ height: 'calc(100% - 32px)' }} >) : (<Scrollbar style={{ width: '100%' }} >)} */}
-
-      {/* <Scrollbar style={{ height: 'calc(100% - 32px)' }} > */}
-        {/* {if(['xs', 'sm'].indexOf(breakpoint) !== -1) <Scrollbar style={{ width: '100%' }}>} */}
-
-      {/* </Scrollbar> */}
 
       <div style={{ overflow: "auto" }}>
         <div className="grid grid-cols-12 gap-2 " style={{ display: "table", width: "100%" }}>
 
-          <div className="h-96 max-h-full col-span-1" style={{ display: "table-cell", minWidth: "50px" }}>
+          <div className="h-[20%] max-h-full col-span-1" style={{ display: "table-cell", minWidth: "50px" }}>
             <div className="mx-3" style={{ position: "absolute", top: "50%" }}>
               {inCoin[0]?.icon}
             </div>
           </div>
 
-          <div className="h-96 max-h-full col-span-10 grid grid-cols-1 place-items-center">
+          <div className="h-[20%] max-h-full col-span-10 grid grid-cols-1 place-items-center">
             <div className="grid grid-cols-12">
 
               <div className="col-span-2">
@@ -94,11 +88,12 @@ export default function Routing({ ...props }) {
               </div>
 
               <div className="col-span-10 text-sm tracking-tighter text-gray-600 dark:text-blue-400">
+                <div className="flex items-center gap-4 ">
                 {routes?.map((element, index) => (
                   // 
-                  <div key={index} className="flex items-center gap-4 ">
+                  <div key={index} className="mr-2">
                     {/* {element.map((item, id) => ( */}
-                      <div style={{ width: `${100 / routes.length}%` }} className="h-36 max-h-full grid grid-cols-1 place-items-center tracking-tighter text-gray-600 dark:text-blue-400">
+                      <div className="h-36 max-h-full grid grid-cols-1 place-items-center tracking-tighter text-gray-600 dark:text-blue-400">
                         <div className="grid grid-cols-12 gap-1">
                           <div className="col-span-11 ">
                             <div className="grid grid-cols-1 gap-2 rounded-md p-2 outline outline-offset-2 outline-1">
@@ -108,8 +103,8 @@ export default function Routing({ ...props }) {
                               </div>
                               {/* {item.dex.map((ele, id) => ( */}
                                 <div className="flex flex-row rounded-md dark:bg-[#334155]">
-                                  <p className="w-10 max-w-full text-center">{dexList.filter(ele => ele.address === adapters[index])[0].dex}</p>
-                                  <p className="w-10 max-w-full text-center">{`${''}%`}</p>
+                                  <p className="ml-2 max-w-full text-center">{dexList.filter(ele => ele.address === adapters[index])[0].dex}</p>
+                                  {/* <p className="w-20 max-w-full text-center">{`${'100'}%`}</p> */}
                                 </div>
                               {/* ))} */}
                             </div>
@@ -124,12 +119,13 @@ export default function Routing({ ...props }) {
                     {/* ))} */}
                   </div>
                 ))}
+                </div>
               </div>
 
             </div>
           </div>
 
-          <div className="h-96 max-h-full col-span-1" style={{ display: "table-cell", minWidth: "50px" }}>
+          <div className="h-[20%] max-h-full col-span-1" style={{ display: "table-cell", minWidth: "50px" }}>
             <div className="mx-3" style={{ position: "absolute", top: "50%" }}>
               {outCoin[0]?.icon}
             </div>
