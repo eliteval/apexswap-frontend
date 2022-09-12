@@ -69,7 +69,7 @@ export function Header() {
     <nav
       className={`fixed top-0 z-30 myBox flex w-full items-center justify-between px-4 transition-all duration-300 ltr:right-0 rtl:left-0 sm:px-6 lg:px-8 xl:px-10 3xl:px-12 ${
         // isMounted && windowScroll.y > 10
-           'h-12 bg-gradient-to-b from-white to-white/80 shadow-card backdrop-blur dark:from-dark dark:to-dark/80 sm:h-16'
+           'h-12 bg-gradient-to-b from-white to-white/80 shadow-card backdrop-blur dark:from-[#161b1d] dark:to-[#161b1d]/80 sm:h-16'
           // : 'h-12 bg-body dark:bg-dark sm:h-20'
       }`}
     >
@@ -80,7 +80,7 @@ export function Header() {
             isOpen={isOpen}
             onClick={() => openDrawer('DRAWER_MENU')}
             color="white"
-            className="shadow-main dark:border dark:border-solid dark:border-gray-700 dark:bg-light-dark dark:text-white"
+            className="shadow-main dark:border dark:border-solid dark:border-gray-700 dark:bg-red-dark dark:text-white"
           />
         </div>
         <Logo />

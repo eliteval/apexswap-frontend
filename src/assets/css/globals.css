@@ -153,11 +153,11 @@ Styles for Swiper slider
 } */
 
 .myBox{
-  text-align:center;
+  text-align: center;
   border-bottom: 2px solid transparent;
   border-image: linear-gradient(0.25turn, rgba(255,249,34), rgba(255,0,128), rgba(93, 9, 248, 0.575));
   border-image-slice: 1;
-  width:100%;
+  width: 100%;
 }
 .background{
   background-image: linear-gradient(to right, #F9C72D, #F05A2A, #F1573F, #F147A3, #2EEDE0);
