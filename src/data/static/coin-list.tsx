@@ -24,6 +24,22 @@ import ALPHAe from '@/assets/images/coin/ALPHAe.png';
 import APE from '@/assets/images/coin/APE.png';
 import BNB from '@/assets/images/coin/BNB.png';
 import ELK from '@/assets/images/coin/ELK.png';
+import BUSD from '@/assets/images/coin/BUSD.png';
+import UNISWAP from '@/assets/images/coin/uniswap.png';
+import LINK from '@/assets/images/coin/LINK.png';
+import FRAX from '@/assets/images/coin/Frax.png';
+import TUSD from '@/assets/images/coin/trueusd.png';
+import GRT from '@/assets/images/coin/the-graph.png';
+import USDD from '@/assets/images/coin/usdd.png';
+import SNX from '@/assets/images/coin/synthetix-network-token.png';
+import MKR from '@/assets/images/coin/maker.png';
+import BAT from '@/assets/images/coin/basic-attention-token.png';
+import CRV from '@/assets/images/coin/curve-dao-token.png';
+import ONEINCH from '@/assets/images/coin/1inch.png';
+import COMP from '@/assets/images/coin/compound.png';
+import YFI from '@/assets/images/coin/yearn-finance.png';
+import ZRX from '@/assets/images/coin/0x.png';
+import SYN from '@/assets/images/coin/synapse.png';
 
 
 export const coinList = [
@@ -112,6 +128,153 @@ export const coinList = [
 
   //other tokens
   {
+    name: 'BUSD.e',
+    code: 'BUSD.e',
+    address: '0x19860ccb0a68fd4213ab9d8266f7bbf05a8dde98',
+    icon: <Image src={BUSD} alt="Criptic" width='24px' height='24px' />,
+    tradingviewcode: 'BUSD',
+    coinGeckoCoinsId: 'binance-usd',
+    decimals: 18
+  },
+  {
+    name: 'UNI.e',
+    code: 'UNI.e',
+    address: '0x8ebaf22b6f053dffeaf46f4dd9efa95d89ba8580',
+    icon: <Image src={UNISWAP} alt="Criptic" width='24px' height='24px' />,
+    tradingviewcode: 'UNISWAP',
+    coinGeckoCoinsId: 'uniswap',
+    decimals: 18
+  },
+  {
+    name: 'LINK',
+    code: 'LINK',
+    address: '0x5947bb275c521040051d82396192181b413227a3',
+    icon: <Image src={LINK} alt="Criptic" width='24px' height='24px' />,
+    tradingviewcode: 'LINK',
+    coinGeckoCoinsId: 'chainlink',
+    decimals: 18
+  },
+  {
+    name: 'FRAX',
+    code: 'FRAX',
+    address: '0xd24c2ad096400b6fbcd2ad8b24e7acbc21a1da64',
+    icon: <Image src={FRAX} alt="Criptic" width='24px' height='24px' />,
+    tradingviewcode: 'FRAX',
+    coinGeckoCoinsId: 'FRAX',
+    decimals: 18
+  },
+  {
+    name: 'TUSD',
+    code: 'TUSD',
+    address: '0x1c20e891bab6b1727d14da358fae2984ed9b59eb',
+    icon: <Image src={TUSD} alt="Criptic" width='24px' height='24px' />,
+    tradingviewcode: 'TUSD',
+    coinGeckoCoinsId: 'true-usd',
+    decimals: 18
+  },
+  {
+    name: 'GRT.e',
+    code: 'GRT.e',
+    address: '0x8a0cac13c7da965a312f08ea4229c37869e85cb9',
+    icon: <Image src={GRT} alt="Criptic" width='24px' height='24px' />,
+    tradingviewcode: '',
+    coinGeckoCoinsId: 'the-graph',
+    decimals: 18
+  },
+  {
+    name: 'USDD',
+    code: 'USDD',
+    address: '0xcf799767d366d789e8B446981C2D578E241fa25c',
+    icon: <Image src={USDD} alt="Criptic" width='24px' height='24px' />,
+    tradingviewcode: '',
+    coinGeckoCoinsId: 'USDD',
+    decimals: 18
+  },
+  {
+    name: 'SNX.e',
+    code: 'SNX.e',
+    address: '0xbec243c995409e6520d7c41e404da5deba4b209b',
+    icon: <Image src={SNX} alt="Criptic" width='24px' height='24px' />,
+    tradingviewcode: '',
+    coinGeckoCoinsId: 'havven',
+    decimals: 18
+  },
+  {
+    name: 'MKR.e',
+    code: 'MKR.e',
+    address: '0x88128fd4b259552a9a1d457f435a6527aab72d42',
+    icon: <Image src={MKR} alt="Criptic" width='24px' height='24px' />,
+    tradingviewcode: '',
+    coinGeckoCoinsId: 'maker',
+    decimals: 18
+  }, 
+  {
+    name: 'BAT.e',
+    code: 'BAT.e',
+    address: '0x98443b96ea4b0858fdf3219cd13e98c7a4690588',
+    icon: <Image src={BAT} alt="Criptic" width='24px' height='24px' />,
+    tradingviewcode: '',
+    coinGeckoCoinsId: 'basic-attention-token',
+    decimals: 18
+  },
+  {
+    name: 'CRV.e',
+    code: 'CRV.e',
+    address: '0x249848beca43ac405b8102ec90dd5f22ca513c06',
+    icon: <Image src={CRV} alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: 'curve-dao-token',
+    decimals: 18
+  },
+  {
+    name: '1INCH.e',
+    code: '1INCH.e',
+    address: '0xd501281565bf7789224523144fe5d98e8b28f267',
+    icon: <Image src={ONEINCH} alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '1inch',
+    decimals: 18
+  },
+  {
+    name: 'COMP.e ',
+    code: 'COMP.e ',
+    address: '0xc3048e19e76cb9a3aa9d77d8c03c29fc906e2437',
+    icon: <Image src={COMP} alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: 'compound-governance-token',
+    decimals: 18
+  },
+  {
+    name: 'YFI.e',
+    code: 'YFI.e',
+    address: '0x9eaac1b23d935365bd7b542fe22ceee2922f52dc',
+    icon: <Image src={YFI} alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: 'yearn-finance',
+    decimals: 18
+  },
+  {
+    name: 'ZRX.e ',
+    code: 'ZRX.e ',
+    address: '0x596fa47043f99a4e0f122243b841e55375cde0d2',
+    icon: <Image src={ZRX} alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '0x',
+    decimals: 18
+  },
+  {
+    name: 'SYN',
+    code: 'SYN',
+    address: '0x1f1e7c893855525b303f99bdf5c3c05be09ca251',
+    icon: <Image src={SYN} alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: 'synapse-2',
+    decimals: 18
+  },
+
+
+
+
+
+
+
+
+
+  {
     name: 'SUSHIe',
     code: 'SUSHIe',
     address: '0x37B608519F91f70F2EeB0e5Ed9AF4061722e4F76',
@@ -162,7 +325,7 @@ export const coinList = [
     address: '0x63a72806098Bd3D9520cC43356dD78afe5D386D9',
     icon: <Image src={AAVEe} alt="Criptic" width='24px' height='24px' />,
     tradingviewcode: '',
-    coinGeckoCoinsId: '',
+    coinGeckoCoinsId: 'aave',
     decimals: 18
   },
   {

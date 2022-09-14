@@ -25,7 +25,8 @@ import TradeContainer from '@/components/ui/trade';
 import { useModal } from '@/components/modal-views/context';
 import { atom, useAtom } from 'jotai';
 import { useTextAtom } from '@/components/swap/settings';
-import { AdvancedRealTimeChart } from 'react-ts-tradingview-widgets';
+// import { AdvancedRealTimeChart } from 'react-ts-tradingview-widgets';
+import LineChart from '@/components/ui/pair-price-chart';
 import { ethers } from "ethers";
 import ERC20 from "@/abi/ERC20.json";
 import VixRouter from "@/abi/VixRouter.json";
@@ -141,10 +142,8 @@ const SwapPage: NextPageWithLayout = () => {
       const provider = new ethers.providers.Web3Provider(window.ethereum)
       await provider.send("eth_requestAccounts", []);
       const { chainId } = await provider.getNetwork()
-      // console.log(chainId)
       const signer = provider.getSigner();
       let userAddress = await signer.getAddress();
-      // console.log(userAddress)
 
       if (chainId != 43114) await swtichNetwork();
     }
@@ -178,7 +177,6 @@ const SwapPage: NextPageWithLayout = () => {
       (item) => item.address.toLowerCase() === address.toLowerCase()
     );
     if (index !== -1) {
-      console.log(dexList[index])
       return dexList[index].dex;
     } else {
       return "Unknown";
@@ -191,12 +189,13 @@ const SwapPage: NextPageWithLayout = () => {
   const [tokenInIndex, setTokenInIndex] = useState(0)
   const [tokenInPrice, setTokenInPrice] = useState(0)
   const [tokenIn, setTokenIn] = useState("")
+  const [tokenInBalance, setTokenInBalance] = useState(0)
 
   const [tokenOutIndex, setTokenOutIndex] = useState(1)
   const [tokenOutPrice, setTokenOutPrice] = useState(0)
   const [tokenOut, setTokenOut] = useState("")
 
-  const [amountIn, setAmountIn] = useState(1)
+  const [amountIn, setAmountIn] = useState(0)
   const [amountOut, setAmountOut] = useState(0)
   const [adapter, setAdapter] = useState("")
 
@@ -207,7 +206,13 @@ const SwapPage: NextPageWithLayout = () => {
   const [tempdev] = useState(false)
 
   useEffect(() => {
-    setTokenIn(coinList[tokenInIndex].address);
+    (async () => {
+      var tokenin_address = coinList[tokenInIndex].address
+      setTokenIn(tokenin_address);
+      var balance = await getBalance(tokenin_address);
+      console.log('123213', balance)
+      setTokenInBalance(balance)
+    })()
   }, [tokenInIndex])
 
 
@@ -230,7 +235,6 @@ const SwapPage: NextPageWithLayout = () => {
         amountOut = ethers.utils.formatUnits(amountOut, getCoinDecimals(tokenOut));
         console.log("@@@@@@@@@ Query", amountIn, getCoinName(tokenIn), "=>", amountOut, getCoinName(tokenOut), " || ", getDexName(adapter))
 
-        console.log(amountIn, tokenIn, tokenOut)
         let { adapters, path, amounts } = await vixrouterContract.findBestPath(inamount, tokenIn, tokenOut, 4);
         setAdapters(adapters)
         setPath(path)
@@ -239,7 +243,6 @@ const SwapPage: NextPageWithLayout = () => {
           adapters: adapters,
           path: path
         })
-        console.log(adapters, path, amounts)
         var final_amount = Number(ethers.utils.formatUnits(amounts[amounts.length - 1], getCoinDecimals(tokenOut)));
         setAmountOut(final_amount)
       } catch (e) {
@@ -293,6 +296,41 @@ const SwapPage: NextPageWithLayout = () => {
     getPrice();
   }, [tokenOutIndex]);
 
+  //price chart
+  const [hours, setHours] = useState('24');
+  const [timePrices1, setTimePrices1] = useState([]);
+  const [timePrices2, setTimePrices2] = useState([]);
+
+  useEffect(() => {
+    const getPrice = async () => {
+      try {
+        const xhours = Number(hours);
+        const to = Math.round(new Date().getTime() / 1000);
+        const xHourAgo = (xhours) => {
+          const date = new Date();
+          const timeAgo = Math.round(
+            date.setTime(date.getTime() - xhours * 60 * 60 * 1000) / 1000
+          );
+          return timeAgo;
+        };
+
+        const from = xHourAgo(xhours);
+        const response1 = await axios.get(
+          `https://api.coingecko.com/api/v3/coins/avalanche/contract/${coinList[tokenInIndex].address.toLowerCase()}/market_chart/range?vs_currency=usd&from=${from}&to=${to}`
+        );
+        const response2 = await axios.get(
+          `https://api.coingecko.com/api/v3/coins/avalanche/contract/${coinList[tokenOutIndex].address.toLowerCase()}/market_chart/range?vs_currency=usd&from=${from}&to=${to}`
+        );
+        setTimePrices1(response1?.data.prices);
+        setTimePrices2(response2?.data.prices);
+      } catch (err) {
+        console.error(err.message);
+      }
+    };
+    getPrice();
+  }, [hours, tokenInIndex, tokenOutIndex]);
+  //~price chart
+
   let [toggleCoin, setToggleCoin] = useState(false);
   const toggleTokens = () => {
     var dish = tokenInIndex;
@@ -302,8 +340,8 @@ const SwapPage: NextPageWithLayout = () => {
   }
 
   const { settingsAtom } = useTextAtom();
-  const [txSpeed, setTxSpeed] = useState('');
-  const [tolerance, setTolerance] = useState('');
+  const [txSpeed, setTxSpeed] = useState('Standard');
+  const [tolerance, setTolerance] = useState('0.1%');
   toSettingsAtom = atom({ speed: txSpeed, tol: tolerance });
 
   useEffect(() => {
@@ -382,7 +420,30 @@ const SwapPage: NextPageWithLayout = () => {
     window.location.reload();
   };
 
-  //old
+  const clearOutput = async () => {
+    setAmountOut(0)
+    setAdapters([])
+    setPath([])
+    setAmounts([])
+  }
+
+  const getBalance = async (token_address: string) => {
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    await provider.send("eth_requestAccounts", []);
+    const signer = provider.getSigner();
+    let userAddress = await signer.getAddress();
+
+    const tokenContract = new ethers.Contract(token_address, ERC20.abi, signer);
+    var balance = await tokenContract.balanceOf(userAddress);
+    return Number(ethers.utils.formatUnits(balance, getCoinDecimals(token_address)));
+  }
+
+  const onClickMaxButton = async () => {
+    var balance = await getBalance(tokenIn);
+    clearOutput();
+    setAmountIn(balance);
+  }
+
   const { openModal } = useModal();
 
   return (
@@ -417,11 +478,14 @@ const SwapPage: NextPageWithLayout = () => {
               <div>
                 <CoinInput
                   label={'You Pay'}
+                  isInbox={true}
                   usdPrice={tokenInPrice}
                   defaultValue={amountIn}
-                  defaultCoinIndex={tokenInIndex}
-                  onChangeTokenIndex={(tokenIndex) => { setTokenInIndex(tokenIndex); }}
-                  onchangeAmount={setAmountIn}
+                  showvalue={amountIn}
+                  coinIndex={tokenInIndex}
+                  onChangeTokenIndex={(tokenIndex) => { clearOutput(); setTokenInIndex(tokenIndex); }}
+                  onchangeAmount={(value) => { clearOutput(); setAmountIn(Number(value)); }}
+                  onClickMaxButton={onClickMaxButton}
                   onToggleTokens={toggleCoin}
                 />
                 <div className="grid grid-cols-1 place-items-center my-2">
@@ -438,20 +502,19 @@ const SwapPage: NextPageWithLayout = () => {
                 </div>
                 <CoinInput
                   label={'You Receive'}
-                  editable={true}
                   usdPrice={tokenOutPrice}
                   defaultValue={amountOut}
-                  defaultCoinIndex={tokenOutIndex}
-                  onToggleTokens={toggleCoin}
-                  onChangeTokenIndex={setTokenOutIndex}
                   showvalue={amountOut}
+                  coinIndex={tokenOutIndex}
+                  onToggleTokens={toggleCoin}
+                  onChangeTokenIndex={(tokenIndex) => { clearOutput(); setTokenOutIndex(tokenIndex); }}
                 />
               </div>
             </div>
             <div className="flex flex-col gap-4 px-2 xs:gap-[18px]">
               <TransactionInfo label={'Savings'} value={`~$${Number(tokenOutPrice * amountOut * 0.02).toFixed(3)}`} />
-              <TransactionInfo label={'Min. Received'} value={`${amountOut ? Number(amountOut * 0.99).toFixed(2) : 0} ${coinList[tokenOutIndex].code}`} />
-              <TransactionInfo label={'Rate'} value={`${(amountOut / amountIn).toFixed(2)} ${coinList[tokenOutIndex].code}/${coinList[tokenInIndex].code}`} />
+              {/* <TransactionInfo label={'Min. Received'} value={`${amountOut ? Number(amountOut * 0.99).toFixed(2) : 0} ${coinList[tokenOutIndex].code}`} /> */}
+              <TransactionInfo label={'Price'} value={`${(amountOut / amountIn).toFixed(2)} ${coinList[tokenOutIndex].code}/${coinList[tokenInIndex].code}`} />
               <TransactionInfo label={'TxSpeed'} value={txSpeed} />
               <TransactionInfo label={'Price Slippage'} value={tolerance} />
               <TransactionInfo label={'Network Fee'} value={'0.04$'} />
@@ -473,7 +536,7 @@ const SwapPage: NextPageWithLayout = () => {
                 </div>
               </div>
             </div>
-            <Button
+            {tokenInBalance >= amountIn ? <Button
               size="large"
               id=""
               shape="rounded"
@@ -482,14 +545,24 @@ const SwapPage: NextPageWithLayout = () => {
               onClick={() => { swap() }}
             >
               SWAP
+            </Button> : <Button
+              size="large"
+              shape="rounded"
+              fullWidth={true}
+              className="mt-3 uppercase dark:bg-gradient-to-r dark:from-cyan-300 dark:to-blue-300 xs:mt-4 xs:tracking-widest"
+              disabled={true}
+            >
+              Insufficient Balance
             </Button>
+            }
 
-            <br></br>         
+            <br></br>
             {tempdev ? <div>
               <br></br>
               <hr></hr>
               <h1>tokenInIndex: {tokenInIndex}</h1>
-              <h1>tokenIn: {getCoinName(tokenIn)}</h1>
+              <h1>tokenIn: {tokenIn}</h1>
+              <h1>tokenInBalance: {tokenInBalance}</h1>
               <h1>Amount: {amountIn}</h1>
               <h1>Price: {tokenInPrice}</h1>
               <hr></hr>
@@ -572,13 +645,72 @@ const SwapPage: NextPageWithLayout = () => {
           <div className="grid grid-cols-1 divide-x divide-[#374151] lg:grid-cols-4">
             <div className="grid grid-cols-1 divide-y divide-[#374151] lg:col-span-3">
               <div className="mb-2 min-h-[620px]">
-                <AdvancedRealTimeChart
+                {/* <AdvancedRealTimeChart
                   theme="dark"
                   height="97%"
                   width="100%"
                   symbol={`${coinList[tokenInIndex].tradingviewcode}USD`}
                   interval="1"
-                ></AdvancedRealTimeChart>
+                ></AdvancedRealTimeChart> */}
+                <div className="mt-5 mb-2 flex flex-row-reverse">
+                  <div className="inline-flex rounded-md shadow-sm mr-3" role="group">
+                    <button
+                      type="button"
+                      className={cn("rounded-l-lg border border-gray-900 bg-transparent py-1 px-2 text-sm font-medium text-gray-900 hover:bg-gray-900 hover:text-white focus:z-10 focus:bg-gray-900 focus:text-white focus:ring-gray-500 dark:border-[#374151] dark:text-white dark:hover:bg-gray-700 dark:hover:text-white",
+                        hours === '1' ? 'dark:bg-cyan-600/50' : 'dark:focus:bg-gray-700'
+                      )}
+                      onClick={() => { setHours('1'); }}
+                    >
+                      1H
+                    </button>
+                    <button
+                      type="button"
+                      className={cn("border-t border-b border-r border-gray-900 bg-transparent py-1 px-2 text-sm font-medium text-gray-900 hover:bg-gray-900 hover:text-white focus:z-10 focus:bg-gray-900 focus:text-white focus:ring-gray-500 dark:border-[#374151] dark:text-white dark:hover:bg-gray-700 dark:hover:text-white",
+                        hours === '4' ? 'dark:bg-cyan-600/50' : 'dark:focus:bg-gray-700'
+                      )}
+                      onClick={() => { setHours('4'); }}
+                    >
+                      4H
+                    </button>
+                    <button
+                      type="button"
+                      className={cn("border-t border-b border-r border-gray-900 bg-transparent py-1 px-2 text-sm font-medium text-gray-900 hover:bg-gray-900 hover:text-white focus:z-10 focus:bg-gray-900 focus:text-white focus:ring-gray-500 dark:border-[#374151] dark:text-white dark:hover:bg-gray-700 dark:hover:text-white",
+                        hours === '24' ? 'dark:bg-cyan-600/50' : 'dark:focus:bg-gray-700'
+                      )}
+                      onClick={() => { setHours('24'); }}
+                    >
+                      1D
+                    </button>
+                    <button
+                      type="button"
+                      className={cn("border-t border-b border-r border-gray-900 bg-transparent py-1 px-2 text-sm font-medium text-gray-900 hover:bg-gray-900 hover:text-white focus:z-10 focus:bg-gray-900 focus:text-white focus:ring-gray-500 dark:border-[#374151] dark:text-white dark:hover:bg-gray-700 dark:hover:text-white",
+                        hours === '168' ? 'dark:bg-cyan-600/50' : 'dark:focus:bg-gray-700'
+                      )}
+                      onClick={() => { setHours('168'); }}
+                    >
+                      1W
+                    </button>
+                    <button
+                      type="button"
+                      className={cn("border-t border-b border-gray-900 bg-transparent py-1 px-2 text-sm font-medium text-gray-900 hover:bg-gray-900 hover:text-white focus:z-10 focus:bg-gray-900 focus:text-white focus:ring-gray-500 dark:border-[#374151] dark:text-white dark:hover:bg-gray-700 dark:hover:text-white",
+                        hours === '720' ? 'dark:bg-cyan-600/50' : 'dark:focus:bg-gray-700'
+                      )}
+                      onClick={() => { setHours('720'); }}
+                    >
+                      1M
+                    </button>
+                    <button
+                      type="button"
+                      className={cn("rounded-r-md border border-gray-900 bg-transparent py-1 px-2 text-sm font-medium text-gray-900 hover:bg-gray-900 hover:text-white focus:z-10 focus:bg-gray-900 focus:text-white focus:ring-gray-500 dark:border-[#374151] dark:text-white dark:hover:bg-gray-700 dark:hover:text-white",
+                        hours === '4320' ? 'dark:bg-cyan-600/50' : 'dark:focus:bg-gray-700'
+                      )}
+                      onClick={() => { setHours('4320'); }}
+                    >
+                      6M
+                    </button>
+                  </div>
+                </div>
+                <LineChart timeprices1={timePrices1} timeprices2={timePrices2} tokenIn={coinList[tokenInIndex].name} tokenOut={coinList[tokenOutIndex].name} />
               </div>
               <div className="">
                 <div className="mt-6 w-full shrink">

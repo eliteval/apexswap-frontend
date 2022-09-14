@@ -17,7 +17,7 @@ export default function WalletConnect() {
         <div className="flex items-center gap-3 sm:gap-6 lg:gap-8">
           <div className="relative">
             <Menu>
-              <Menu.Button className="block h-10 w-100 overflow-hidden rounded-full border-3 border-solid border-white bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 shadow-main transition-all hover:-translate-y-0.5 hover:shadow-large dark:border-gray-700 sm:h-12 sm:w-12">
+              <Menu.Button className="block h-10 w-[150px] overflow-hidden rounded-full border-3 border-solid border-white bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 shadow-main transition-all hover:-translate-y-0.5 hover:shadow-large dark:border-gray-700">
                 {address.slice(0, 6)}
                 {'...'}
                 {address.slice(address.length - 4)}

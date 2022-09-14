@@ -14,15 +14,16 @@ const CoinSelectView = dynamic(() =>
 
 interface CoinInputTypes extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
-  editable?: boolean;
+  isInbox?: boolean;
   onToggleTokens?: boolean;
   usdPrice?: number;
   defaultValue?: number;
-  defaultCoinIndex?: number;
+  coinIndex?: number;
   showvalue?: number;
   // className?: string;
   onChangeTokenIndex: (param: number) => void;
   onchangeAmount: (param: string) => void;
+  onClickMaxButton: (param: string) => void;
   data?: object;
 }
 
@@ -30,21 +31,22 @@ const decimalPattern = /^[0-9]*[.,]?[0-9]*$/;
 
 export default function CoinInput({
   label,
-  editable,
+  isInbox = false,
   onToggleTokens,
   showvalue,
   onChangeTokenIndex,
   onchangeAmount,
+  onClickMaxButton,
   data,
   defaultValue = 0,
-  defaultCoinIndex = 0,
+  coinIndex = 0,
   usdPrice,
   // className,
   ...rest
 }: CoinInputTypes) {
   let [focused, setFocused] = useState(false);
   let [value, setValue] = useState(defaultValue);
-  let [selectedCoin, setSelectedCoin] = useState(coinList[defaultCoinIndex]);
+  let [selectedCoin, setSelectedCoin] = useState(coinList[coinIndex]);
   let [visibleCoinList, setVisibleCoinList] = useState(false);
   const modalContainerRef = useRef<HTMLDivElement>(null);
   useClickAway(modalContainerRef, () => {
@@ -67,27 +69,33 @@ export default function CoinInput({
   return (
     <>
       <div className="dark:focus-within:border-blue-600 dark:focus-within:bg-[#0f0f0e] block px-4 min-h-[70px] rounded-lg border border-gray-200  transition-colors duration-200 hover:border-gray-900 dark:border-gray-700 dark:bg-[#0f1112]">
-        <span className="mt-2 mb-0.5 min-h-[10px] block text-xs text-gray-600 dark:text-gray-400">
-          {label}
-        </span>
+        <div className="mt-0.5 mb-0.5 min-h-[10px] flex flex-row justify-between">
+          <span className="mt-2 mb-0.5 min-h-[10px] block text-xs text-gray-600 dark:text-gray-400">{label} </span>
+          {isInbox ? <div className="mt-2 mb-0.5 min-h-[10px] block text-xs text-gray-600 text-right dark:text-gray-400 border-b border-b-gray-400" style={{ cursor: "pointer" }}
+            onClick={() => onClickMaxButton()}
+          >
+            Max
+          </div> : <></>}
+
+        </div>
         <div className="min-h-[60px] flex flex-row justify-between">
           <button
             onClick={() => setVisibleCoinList(true)}
             className="min-w-[80px] flex items-center font-medium outline-none dark:text-gray-100"
           >
-            {onToggleTokens ? coinList[defaultCoinIndex]?.icon : selectedCoin?.icon}{' '}
-            <span className="ltr:ml-2 rtl:mr-2">{onToggleTokens ? coinList[defaultCoinIndex]?.code : selectedCoin?.code}</span>
+            {onToggleTokens ? coinList[coinIndex]?.icon : selectedCoin?.icon}{' '}
+            <span className="ltr:ml-2 rtl:mr-2">{onToggleTokens ? coinList[coinIndex]?.code : selectedCoin?.code}</span>
             <ChevronDown className="ltr:ml-1.5 rtl:mr-1.5" />
           </button>
           <input
             type="text"
-            value={!editable ? (value) : Number(showvalue).toFixed(6)}
+            value={isInbox?showvalue:showvalue?.toFixed(6)}
             placeholder="0.0"
             inputMode="decimal"
-            disabled={editable}
+            disabled={!isInbox}
             onChange={handleOnChange}
             className={cn('w-full rounded-tr-lg rounded-br-lg border-0 text-right text-lg outline-none dark:focus:ring-0 dark:bg-inherit',
-              !editable
+              isInbox
                 ? ''
                 : 'cursor-not-allowed bg-gray-100 text-gray-400'
             )}
@@ -95,7 +103,7 @@ export default function CoinInput({
           />
         </div>
         <div className="mt-0.5 mb-2 min-h-[10px] flex flex-row justify-between">
-          <span>{onToggleTokens ? coinList[defaultCoinIndex]?.name : selectedCoin?.name}</span>
+          <span>{onToggleTokens ? coinList[coinIndex]?.name : selectedCoin?.name}</span>
           <div className="font-xs text-gray-400 text-right">
             = ${showvalue ? Number(showvalue * usdPrice).toFixed(6) : usdPrice ? Number(value) * usdPrice : '0.00'}
           </div>

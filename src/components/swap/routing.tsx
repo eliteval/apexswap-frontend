@@ -16,44 +16,15 @@ export default function Routing({ ...props }) {
   console.log('routingAtom => ', routingAtom?.init);
   const adapters = routingAtom?.init.adapters;
   const path = routingAtom?.init.path;
-  // const { block_chains } = nftData;
   const breakpoint = useBreakpoint();
-  // const item1 = {
-  //   coin: "AVAX",
-  //   dex: [
-  //     ['DexA', 10],
-  //     ['DexB', 20],
-  //     ['DexC', 30],
-  //   ]
-  // };
-  // const item2 = {
-  //   coin: "USDC",
-  //   dex: [
-  //     ['DexD', 30],
-  //     ['DexE', 40],
-  //   ]
-  // };
-  // const item3 = {
-  //   coin: "DAIe",
-  //   dex: [
-  //     ['DexG', 30],
-  //   ]
-  // };
-
-  // const routes = [
-  //   ["0xd586E7F844cEa2F87f50152665BCbc2C279D8d70"],
-  // ];
   const routes = path.slice(1);
-  // const adapters = ["0x623DC9E82F055471B7675503e8deF05A35EBeA19"];
-  
   const percent = [100];
   const coin_in = path[0];
-  const coin_out = path[path?.length-1];
+  const coin_out = path[path?.length - 1];
   const coins = coinList;
-  const inCoin = coins.filter(ele => ele.address === coin_in);
-  const outCoin = coins.filter(ele => ele.address === coin_out);
-  console.log(outCoin[0]?.code);
-  // let [selectedCoin, setSelectedCoin] = useState(inCoin);
+  const inCoin = coins.filter(ele => ele.address.toLowerCase()  == coin_in.toLowerCase() );
+  const outCoin = coins.filter(ele => ele.address.toLowerCase()  == coin_out.toLowerCase() );
+
 
   return (
     <div
@@ -89,23 +60,23 @@ export default function Routing({ ...props }) {
 
               <div className="col-span-10 text-sm tracking-tighter text-gray-600 dark:text-blue-400">
                 <div className="flex items-center gap-4 ">
-                {routes?.map((element, index) => (
-                  // 
-                  <div key={index} className="mr-2">
-                    {/* {element.map((item, id) => ( */}
+                  {routes?.map((element, index) => (
+                    // 
+                    <div key={index} className="mr-2">
+                      {/* {element.map((item, id) => ( */}
                       <div className="h-36 max-h-full grid grid-cols-1 place-items-center tracking-tighter text-gray-600 dark:text-blue-400">
                         <div className="grid grid-cols-12 gap-1">
                           <div className="col-span-11 ">
                             <div className="grid grid-cols-1 gap-2 rounded-md p-2 outline outline-offset-2 outline-1">
                               <div className="flex items-center">
-                                {coins.filter(ele => ele.address === element)[0].icon}
-                                <p className="w-10 max-w-full px-2 text-lg text-gray-900 dark:text-white">{coins.filter(ele => ele.address === element)[0].code}</p>
+                                {coins.filter(ele => ele.address.toLowerCase() == element.toLowerCase())[0].icon}
+                                <p className="w-10 max-w-full px-2 text-lg text-gray-900 dark:text-white">{coins.filter(ele => ele.address.toLowerCase() == element.toLowerCase())[0].code}</p>
                               </div>
                               {/* {item.dex.map((ele, id) => ( */}
-                                <div className="flex flex-row rounded-md dark:bg-[#334155]">
-                                  <p className="ml-2 max-w-full text-center">{dexList.filter(ele => ele.address === adapters[index])[0].dex}</p>
-                                  {/* <p className="w-20 max-w-full text-center">{`${'100'}%`}</p> */}
-                                </div>
+                              <div className="flex flex-row rounded-md dark:bg-[#334155]">
+                                <p className="ml-2 max-w-full text-center">{dexList.filter(ele => ele.address.toLowerCase() == adapters[index].toLowerCase())[0].dex}</p>
+                                {/* <p className="w-20 max-w-full text-center">{`${'100'}%`}</p> */}
+                              </div>
                               {/* ))} */}
                             </div>
                           </div>
@@ -116,9 +87,9 @@ export default function Routing({ ...props }) {
                           </div>
                         </div>
                       </div>
-                    {/* ))} */}
-                  </div>
-                ))}
+                      {/* ))} */}
+                    </div>
+                  ))}
                 </div>
               </div>
 
