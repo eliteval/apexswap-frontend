@@ -452,7 +452,7 @@ const SwapPage: NextPageWithLayout = () => {
         title="Apexswap - Trade"
         description="Apexswap - Avalanche DEX"
       />
-      <div className="xl:grid-rows-7 grid grid-cols-1 gap-4 xl:grid-cols-4">
+      <div className="xl:grid-rows-7 grid grid-cols-1 gap-4 xl:grid-cols-3">
         {/* Swap box min-w-[410px] max-w-[410px] */}
         <div className="xl:col-span-1 xl:row-span-5 xl:row-start-1 xl:row-end-6">
           <TradeContainer>
@@ -541,7 +541,7 @@ const SwapPage: NextPageWithLayout = () => {
               id=""
               shape="rounded"
               fullWidth={true}
-              className=" mt-3 uppercase dark:bg-gradient-to-r dark:from-cyan-400 dark:to-blue-500 xs:mt-4 xs:tracking-widest"
+              className="mt-3 uppercase bg-gradient-to-r from-[#312e81] to-[#1e3a8a] xs:mt-4 xs:tracking-widest"
               onClick={() => { swap() }}
             >
               SWAP
@@ -549,7 +549,7 @@ const SwapPage: NextPageWithLayout = () => {
               size="large"
               shape="rounded"
               fullWidth={true}
-              className="mt-3 uppercase dark:bg-gradient-to-r dark:from-cyan-300 dark:to-blue-300 xs:mt-4 xs:tracking-widest"
+              className="mt-3 uppercase dark:bg-gradient-to-r dark:from-[#475569] dark:to-[#334155] xs:mt-4 xs:tracking-widest"
               disabled={true}
             >
               Insufficient Balance
@@ -583,8 +583,8 @@ const SwapPage: NextPageWithLayout = () => {
           </TradeContainer>
         </div>
 
-        {/* Trading View */}
-        <div className="xl:row-end-8 xl:row-span-7 text-large mt-5 w-full rounded-lg border border-[#374151] pb-5 text-center shadow-card dark:bg-[#161b1d] xs:mb-2 xs:pb-6 xl:col-span-3 xl:row-start-1">
+        {/* Rigth side */}
+        <div className="xl:row-end-8 xl:row-span-7 text-large mt-6 w-full rounded-lg border border-[#374151] pb-5 text-center shadow-card dark:bg-[#161b1d] xs:mb-2 xs:pb-6 xl:col-span-3 xl:row-start-1">
           <div className="flex min-h-[50px] flex-row border-b border-b-[#374151]">
             <div className="flex items-center p-2">
               {coinList[tokenInIndex].icon}
@@ -644,7 +644,7 @@ const SwapPage: NextPageWithLayout = () => {
           </div>
           <div className="grid grid-cols-1 divide-x divide-[#374151] lg:grid-cols-3">
             <div className="grid grid-cols-1 divide-y divide-[#374151] lg:col-span-3">
-              <div className="mb-2 min-h-[620px]">
+              <div className="mb-2 min-h-[500px]">
                 {/* <AdvancedRealTimeChart
                   theme="dark"
                   height="97%"
