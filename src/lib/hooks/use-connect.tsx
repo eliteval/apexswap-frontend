@@ -9,6 +9,7 @@ export const WalletContext = createContext<any>({});
 export const WalletProvider = ({ children }: { children: ReactNode }) => {
   const [address, setAddress] = useState<string | undefined>(undefined);
   const [balance, setBalance] = useState<string | undefined>(undefined);
+  const [chainId, setChainID] = useState<number | undefined>(undefined);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
   const web3Modal =
@@ -37,6 +38,8 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
   const setWalletAddress = async (provider: any) => {
     try {
       const signer = provider.getSigner();
+      const { chainId } = await provider.getNetwork();
+      setChainID(chainId)
       if (signer) {
         const web3Address = await signer.getAddress();
         setAddress(web3Address);
@@ -108,6 +111,7 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
     <WalletContext.Provider
       value={{
         address,
+        chainId,
         balance,
         loading,
         error,

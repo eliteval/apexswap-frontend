@@ -535,7 +535,7 @@ const SwapPage: NextPageWithLayout = () => {
               id=""
               shape="rounded"
               fullWidth={true}
-              className="mt-3 uppercase bg-gradient-to-r from-[#312e81] to-[#1e3a8a] xs:mt-4 xs:tracking-widest"
+              className="mt-3 uppercase bg-gradient-to-r from-[#312e81] to-[#1e3a8a]  xs:mt-4 xs:tracking-widest"
               onClick={() => { swap() }}
             >
               SWAP
