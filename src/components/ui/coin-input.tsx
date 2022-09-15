@@ -20,10 +20,10 @@ interface CoinInputTypes extends React.InputHTMLAttributes<HTMLInputElement> {
   defaultValue?: number;
   coinIndex?: number;
   showvalue?: number;
+  tokenInBalance?: number;
   // className?: string;
   onChangeTokenIndex: (param: number) => void;
   onchangeAmount: (param: string) => void;
-  onClickMaxButton: (param: string) => void;
   data?: object;
 }
 
@@ -34,9 +34,9 @@ export default function CoinInput({
   isInbox = false,
   onToggleTokens,
   showvalue,
+  tokenInBalance,
   onChangeTokenIndex,
   onchangeAmount,
-  onClickMaxButton,
   data,
   defaultValue = 0,
   coinIndex = 0,
@@ -72,7 +72,7 @@ export default function CoinInput({
         <div className="mt-0.5 mb-0.5 min-h-[10px] flex flex-row justify-between">
           <span className="mt-2 mb-0.5 min-h-[10px] block text-xs text-gray-600 dark:text-gray-400">{label} </span>
           {isInbox ? <div className="mt-2 mb-0.5 min-h-[10px] block text-xs text-gray-600 text-right dark:text-gray-400 border-b border-b-gray-400" style={{ cursor: "pointer" }}
-            onClick={() => onClickMaxButton()}
+            onClick={() => setValue(tokenInBalance)}
           >
             Max
           </div> : <></>}
@@ -89,7 +89,7 @@ export default function CoinInput({
           </button>
           <input
             type="text"
-            value={isInbox?showvalue:showvalue?.toFixed(6)}
+            value={isInbox?value:showvalue?.toFixed(6)}
             placeholder="0.0"
             inputMode="decimal"
             disabled={!isInbox}

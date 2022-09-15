@@ -438,12 +438,6 @@ const SwapPage: NextPageWithLayout = () => {
     return Number(ethers.utils.formatUnits(balance, getCoinDecimals(token_address)));
   }
 
-  const onClickMaxButton = async () => {
-    var balance = await getBalance(tokenIn);
-    clearOutput();
-    setAmountIn(balance);
-  }
-
   const { openModal } = useModal();
 
   return (
@@ -485,7 +479,7 @@ const SwapPage: NextPageWithLayout = () => {
                   coinIndex={tokenInIndex}
                   onChangeTokenIndex={(tokenIndex) => { clearOutput(); setTokenInIndex(tokenIndex); }}
                   onchangeAmount={(value) => { clearOutput(); setAmountIn(Number(value)); }}
-                  onClickMaxButton={onClickMaxButton}
+                  tokenInBalance={tokenInBalance}
                   onToggleTokens={toggleCoin}
                 />
                 <div className="grid grid-cols-1 place-items-center my-2">
