@@ -147,7 +147,7 @@ const SwapPage: NextPageWithLayout = () => {
 
       if (chainId != 43114) await swtichNetwork();
     }
-    // myfunc();
+    myfunc();
   })
 
   const getCoinName = (address: string) => {
@@ -642,7 +642,7 @@ const SwapPage: NextPageWithLayout = () => {
               </div>
             </div>
           </div>
-          <div className="grid grid-cols-1 divide-x divide-[#374151] lg:grid-cols-4">
+          <div className="grid grid-cols-1 divide-x divide-[#374151] lg:grid-cols-3">
             <div className="grid grid-cols-1 divide-y divide-[#374151] lg:col-span-3">
               <div className="mb-2 min-h-[620px]">
                 {/* <AdvancedRealTimeChart
@@ -820,7 +820,7 @@ const SwapPage: NextPageWithLayout = () => {
                 </div>
               </div>
             </div>
-            <div className="lg:col-span-1 ">
+            {/* <div className="lg:col-span-1 ">
               <div className="flex min-h-[50px] w-full items-center justify-around border-b border-b-[#374151]">
                 <Button
                   size="mini"
@@ -1370,7 +1370,7 @@ const SwapPage: NextPageWithLayout = () => {
                   </Scrollbar>
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
 
