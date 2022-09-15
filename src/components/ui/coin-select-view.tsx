@@ -15,9 +15,11 @@ export default function CoinSelectView({ onSelect }: CoinSelectViewTypes) {
   if (searchKeyword.length > 0) {
     coinListData = coinList.filter(function (item) {
       const name = item.name;
+      const address = item.address;
       return (
         name.match(searchKeyword) ||
-        (name.toLowerCase().match(searchKeyword) && name)
+        (name.toLowerCase().match(searchKeyword) && name) ||
+        address.toLowerCase()== searchKeyword.toLowerCase()
       );
     });
   }
@@ -45,7 +47,7 @@ export default function CoinSelectView({ onSelect }: CoinSelectViewTypes) {
           type="search"
           autoFocus={true}
           onChange={(e) => setSearchKeyword(e.target.value)}
-          placeholder="Search Your Coin by Name"
+          placeholder="Search name or paste address"
           className="w-full border-y border-x-0 border-dashed border-gray-200 py-3.5 pl-14 pr-6 text-sm focus:border-gray-300 focus:ring-0 dark:border-gray-700 dark:bg-light-dark focus:dark:border-gray-600"
         />
       </div>
