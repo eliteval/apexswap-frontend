@@ -72,7 +72,7 @@ export default function CoinInput({
         <div className="mt-0.5 mb-0.5 min-h-[10px] flex flex-row justify-between">
           <span className="mt-2 mb-0.5 min-h-[10px] block text-xs text-gray-600 dark:text-gray-400">{label} </span>
           {isInbox ? <div className="mt-2 mb-0.5 min-h-[10px] block text-xs text-gray-600 text-right dark:text-gray-400 border-b border-b-gray-400" style={{ cursor: "pointer" }}
-            onClick={() => setValue(tokenInBalance)}
+            onClick={() => { setValue(tokenInBalance); onchangeAmount(tokenInBalance); }}
           >
             Max
           </div> : <></>}
@@ -89,7 +89,7 @@ export default function CoinInput({
           </button>
           <input
             type="text"
-            value={isInbox?value:showvalue?.toFixed(6)}
+            value={isInbox ? value : showvalue?.toFixed(6)}
             placeholder="0.0"
             inputMode="decimal"
             disabled={!isInbox}

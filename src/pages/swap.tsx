@@ -186,12 +186,12 @@ const SwapPage: NextPageWithLayout = () => {
   const [settings, setSettings] = useState({})
   const [marketData, setMarketData] = useState({})
 
-  const [tokenInIndex, setTokenInIndex] = useState(0)
+  const [tokenInIndex, setTokenInIndex] = useState(0) //wavax
   const [tokenInPrice, setTokenInPrice] = useState(0)
   const [tokenIn, setTokenIn] = useState("")
   const [tokenInBalance, setTokenInBalance] = useState(0)
 
-  const [tokenOutIndex, setTokenOutIndex] = useState(1)
+  const [tokenOutIndex, setTokenOutIndex] = useState(3) //USDC
   const [tokenOutPrice, setTokenOutPrice] = useState(0)
   const [tokenOut, setTokenOut] = useState("")
 
