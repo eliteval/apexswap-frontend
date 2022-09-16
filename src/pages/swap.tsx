@@ -298,7 +298,7 @@ const SwapPage: NextPageWithLayout = () => {
       />
       <div className="xl:grid-rows-7 grid grid-cols-1 gap-4 xl:grid-cols-3">
         {/* Swap box */}
-        <div className="xl:col-span-1 xl:row-span-5 xl:row-start-1 xl:row-end-6">
+        <div className="mx-auto xl:col-span-1 xl:row-span-5 xl:row-start-1 xl:row-end-6">
           <TradeContainer>
             <div className=" dark:border-gray-800 xs:mb-2 xs:pb-6 ">
               <div className="my-4 flex w-[105%] flex-row justify-between">
@@ -432,7 +432,7 @@ const SwapPage: NextPageWithLayout = () => {
           </div>
           <div className="grid grid-cols-1 divide-x divide-[#374151] lg:grid-cols-3">
             <div className="grid grid-cols-1 divide-y divide-[#374151] lg:col-span-3">
-              <div className="mb-2 min-h-[500px]">                            
+              <div className="mb-2 min-h-[250px] lg:min-h-[500px]">                         
                 <PairPriceChart tokenIn={tokenIn} tokenOut={tokenOut} />
               </div>
               <div>

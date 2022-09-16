@@ -101,8 +101,8 @@ export default function Orders({ ...props }) {
     return (
         <>
             <div className="mt-6 w-full shrink">
-                <div className="mt-1 w-full shrink lg:flex lg:flex-row lg:justify-between">
-                    <div className="flex max-w-[40%] shrink flex-row px-4">
+                <div className="mt-1 w-full shrink md:flex md:flex-row md:justify-between">
+                    <div className="flex w-full md:max-w-[40%] shrink flex-row px-4">
                         <Button
                             size="mini"
                             color="primary"
@@ -117,12 +117,12 @@ export default function Orders({ ...props }) {
                             color="gray"
                             shape="rounded"
                             variant="ghost"
-                            className="mx-1 text-sm xs:tracking-widest"
+                            className="mx-1 text-sm xs:tracking-widest ml-4 md:ml-2"
                         >
                             Order History
                         </Button>
                     </div>
-                    <div className="flex shrink flex-row items-center px-4">
+                    <div className="flex shrink flex-row items-center px-2 mt-4 sm:px-4 md:mt-0">
                         <div className=" flex flex-row items-center">
                             <SortList />
                         </div>

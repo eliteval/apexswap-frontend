@@ -61,7 +61,7 @@ export default function MarketData({ ...props }) {
               </div>
             </div>
           </div>
-          <div className="ml-4 flex items-center ">
+          <div className="ml-4 flex items-center mt-2 sm:mt-0">
             <div className="flex flex-col">
               <span className="text-left text-xs text-[#8d8d8d]">
                 Total Supply
@@ -70,7 +70,7 @@ export default function MarketData({ ...props }) {
                 ${marketData.total_supply}
               </span>
             </div>
-            <div className="flex flex-col pl-4">
+            <div className="flex flex-col pl-20 sm:pl-4">
               <span className="text-left text-xs text-[#8d8d8d]">
                 Total Volume
               </span>
