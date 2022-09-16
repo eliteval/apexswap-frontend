@@ -133,11 +133,13 @@ export default function LineChart({
           const gradient = ctx.createLinearGradient(0, 0, 0, 500);
           if (bgStatus > 0) {
             gradient.addColorStop(0, 'rgba(90,232,219,0.2)');
-            gradient.addColorStop(0.6, 'rgba(90,232,219,0.08)');
+            gradient.addColorStop(0.4, 'rgba(90,232,219,0.08)');
+            gradient.addColorStop(0.8, 'rgba(90,232,219,0)');
             gradient.addColorStop(1, 'rgba(90,232,219,0)');
           } else {
             gradient.addColorStop(0, 'rgba(245,99,132,0.2)');
-            gradient.addColorStop(0.6, 'rgba(245,99,132,0.08)');
+            gradient.addColorStop(0.4, 'rgba(245,99,132,0.08)');
+            gradient.addColorStop(0.8, 'rgba(245,99,132,0)');
             gradient.addColorStop(1, 'rgba(245,99,132,0)');
           }
           return gradient;

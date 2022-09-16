@@ -22,8 +22,8 @@ interface CoinInputTypes extends React.InputHTMLAttributes<HTMLInputElement> {
   showvalue?: number;
   tokenInBalance?: number;
   // className?: string;
-  onChangeTokenIndex: (param: number) => void;
-  onchangeAmount: (param: string) => void;
+  onChangeTokenIndex?: (param: number) => void;
+  onchangeAmount?: (param: string) => void;
   data?: object;
 }
 

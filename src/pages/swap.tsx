@@ -9,12 +9,6 @@ import { InfoCircle } from '@/components/icons/info-circle';
 import CoinInput from '@/components/ui/coin-input';
 import TransactionInfo from '@/components/ui/transaction-info';
 import { SwapIcon } from '@/components/icons/swap-icon';
-import { ChevronDown } from '@/components/icons/chevron-down';
-import ParamTab, { TabPanel } from '@/components/ui/param-tab';
-import AllTokens from '@/components/ui/all-tokens';
-import { Listbox } from '@/components/ui/listbox';
-import { Transition } from '@/components/ui/transition';
-import NftDropDown from '@/components/nft/nft-dropdown';
 import Image from '@/components/ui/image';
 import { coinList } from '@/data/static/coin-list';
 import { dexList } from '@/data/static/dex-list';
@@ -27,9 +21,12 @@ import { atom, useAtom } from 'jotai';
 import { useTextAtom } from '@/components/swap/settings';
 // import { AdvancedRealTimeChart } from 'react-ts-tradingview-widgets';
 import LineChart from '@/components/ui/pair-price-chart';
+import Orders from '@/components/swap/orders';
+import MarketTrade from '@/components/swap/market-trade';
 import { ethers } from "ethers";
 import ERC20 from "@/abi/ERC20.json";
 import VixRouter from "@/abi/VixRouter.json";
+import { getCoinDecimals, getCoinName, getDexName } from '@/lib/utils/swap-utils';
 
 // Create your atoms and derivatives
 var routingAtom, toSettingsAtom;
@@ -40,100 +37,7 @@ export function useSettingsAtom() {
   return { toSettingsAtom };
 }
 
-const sort1 = [
-  { id: 1, name: 'All Types' },
-  { id: 2, name: 'Limit' },
-  { id: 3, name: 'Stop-Limit' },
-];
-function SortList() {
-  const [selectedItem, setSelectedItem] = useState(sort1[0]);
-
-  return (
-    <div className="relative w-full">
-      <Listbox value={selectedItem} onChange={setSelectedItem}>
-        <Listbox.Button className=" flex h-full items-center rounded-lg bg-gray-100 px-4 text-xs text-gray-900 dark:bg-[#161b1d] dark:text-white">
-          <div className="mr-2">{selectedItem.name}</div>
-          <ChevronDown />
-        </Listbox.Button>
-        <Transition
-          enter="ease-out duration-200"
-          enterFrom="opacity-0 translate-y-2"
-          enterTo="opacity-100"
-          leave="ease-in duration-200"
-          leaveFrom="opacity-100 -translate-y-0"
-          leaveTo="opacity-0 translate-y-2"
-        >
-          <Listbox.Options className="absolute w-[120px] left-0 z-10 mt-2 origin-top-right rounded-md bg-white shadow-large dark:bg-[#303030]">
-            {sort1.map((item) => (
-              <Listbox.Option key={item.id} value={item}>
-                {({ selected }) => (
-                  <div
-                    className={`block cursor-pointer rounded-md px-3 py-2 text-xs font-medium text-gray-900 transition dark:text-white  ${selected
-                      ? 'my-1 bg-gray-100 dark:bg-gray-600'
-                      : 'hover:bg-gray-50 dark:hover:bg-gray-700'
-                      }`}
-                  >
-                    {item.name}
-                  </div>
-                )}
-              </Listbox.Option>
-            ))}
-          </Listbox.Options>
-        </Transition>
-      </Listbox>
-    </div>
-  );
-}
-
-const sort2 = [
-  { id: 1, name: 'All Statuses' },
-  { id: 2, name: 'Open' },
-  { id: 3, name: 'Expired' },
-  { id: 4, name: 'Failed' },
-];
-function SortList2() {
-  const [selectedItem, setSelectedItem] = useState(sort2[0]);
-
-  return (
-    <div className="relative w-full">
-      <Listbox value={selectedItem} onChange={setSelectedItem}>
-        <Listbox.Button className=" flex h-full items-center rounded-lg bg-gray-100 px-4 text-xs text-gray-900 dark:bg-[#161b1d] dark:text-white">
-          <div className="mr-2">{selectedItem.name}</div>
-          <ChevronDown />
-        </Listbox.Button>
-        <Transition
-          enter="ease-out duration-200"
-          enterFrom="opacity-0 translate-y-2"
-          enterTo="opacity-100"
-          leave="ease-in duration-200"
-          leaveFrom="opacity-100 -translate-y-0"
-          leaveTo="opacity-0 translate-y-2"
-        >
-          <Listbox.Options className="absolute w-[120px] left-0 z-10 mt-2 origin-top-right rounded-md bg-white shadow-large dark:bg-[#303030]">
-            {sort2.map((item) => (
-              <Listbox.Option key={item.id} value={item}>
-                {({ selected }) => (
-                  <div
-                    className={`block cursor-pointer rounded-md px-3 py-2 text-xs font-medium text-gray-900 transition dark:text-white  ${selected
-                      ? 'my-1 bg-gray-100 dark:bg-gray-600'
-                      : 'hover:bg-gray-50 dark:hover:bg-gray-700'
-                      }`}
-                  >
-                    {item.name}
-                  </div>
-                )}
-              </Listbox.Option>
-            ))}
-          </Listbox.Options>
-        </Transition>
-      </Listbox>
-    </div>
-  );
-}
-
 const SwapPage: NextPageWithLayout = () => {
-  //new
-  const [balance, setBalance] = useState<String | undefined>()
 
   useEffect(() => {
     const myfunc = async () => {
@@ -142,46 +46,11 @@ const SwapPage: NextPageWithLayout = () => {
       const provider = new ethers.providers.Web3Provider(window.ethereum)
       await provider.send("eth_requestAccounts", []);
       const { chainId } = await provider.getNetwork()
-      const signer = provider.getSigner();
-      let userAddress = await signer.getAddress();
 
       if (chainId != 43114) await swtichNetwork();
     }
     myfunc();
   })
-
-  const getCoinName = (address: string) => {
-    const index = coinList.findIndex(
-      (item) => item.address.toLowerCase() === address.toLowerCase()
-    );
-    if (index !== -1) {
-      return coinList[index].name;
-    } else {
-      return "Unknown";
-    }
-  }
-
-  const getCoinDecimals = (address: any) => {
-    const index = coinList.findIndex(
-      (item) => item.address === address
-    );
-    if (index !== -1) {
-      return coinList[index].decimals;
-    } else {
-      return 18;
-    }
-  }
-
-  const getDexName = (address: any) => {
-    const index = dexList.findIndex(
-      (item) => item.address.toLowerCase() === address.toLowerCase()
-    );
-    if (index !== -1) {
-      return dexList[index].dex;
-    } else {
-      return "Unknown";
-    }
-  }
 
   const [settings, setSettings] = useState({})
   const [marketData, setMarketData] = useState({})
@@ -195,22 +64,20 @@ const SwapPage: NextPageWithLayout = () => {
   const [tokenOutPrice, setTokenOutPrice] = useState(0)
   const [tokenOut, setTokenOut] = useState("")
 
-  const [amountIn, setAmountIn] = useState(0)
+  const [amountIn, setAmountIn] = useState(1)
   const [amountOut, setAmountOut] = useState(0)
-  const [adapter, setAdapter] = useState("")
 
   const [adapters, setAdapters] = useState([])
   const [path, setPath] = useState([])
   const [amounts, setAmounts] = useState([])
 
-  const [tempdev] = useState(false)
+  const [devenv] = useState(false)
 
   useEffect(() => {
     (async () => {
       var tokenin_address = coinList[tokenInIndex].address
       setTokenIn(tokenin_address);
       var balance = await getBalance(tokenin_address);
-      console.log('123213', balance)
       setTokenInBalance(balance)
     })()
   }, [tokenInIndex])
@@ -220,7 +87,7 @@ const SwapPage: NextPageWithLayout = () => {
     setTokenOut(coinList[tokenOutIndex].address);
   }, [tokenOutIndex])
 
-
+  //Query
   useEffect(() => {
     const getAmountOut = async () => {
       try {
@@ -251,7 +118,7 @@ const SwapPage: NextPageWithLayout = () => {
     getAmountOut();
   }, [tokenIn, tokenOut, amountIn])
 
-  // angel work
+  // marketdata
   useEffect(() => {
     const getPrice = async () => {
       try {
@@ -280,8 +147,6 @@ const SwapPage: NextPageWithLayout = () => {
       }
     }
     getPrice();
-
-
 
     const formatNumber = (n) => {
       var ranges = [
@@ -314,6 +179,7 @@ const SwapPage: NextPageWithLayout = () => {
     }
     getPrice();
   }, [tokenOutIndex]);
+  //~~ marketdata
 
   //price chart
   const [hours, setHours] = useState('24');
@@ -570,7 +436,7 @@ const SwapPage: NextPageWithLayout = () => {
             }
 
             <br></br>
-            {tempdev ? <div>
+            {devenv ? <div>
               <br></br>
               <hr></hr>
               <h1>tokenInIndex: {tokenInIndex}</h1>
@@ -725,668 +591,17 @@ const SwapPage: NextPageWithLayout = () => {
                 </div>
                 <LineChart timeprices1={timePrices1} timeprices2={timePrices2} tokenIn={coinList[tokenInIndex].name} tokenOut={coinList[tokenOutIndex].name} />
               </div>
-              <div className="">
-                <div className="mt-6 w-full shrink">
-                  <div className="mt-1 w-full shrink lg:flex lg:flex-row lg:justify-between">
-                    <div className="flex max-w-[40%] shrink flex-row px-4">
-                      <Button
-                        size="mini"
-                        color="primary"
-                        shape="rounded"
-                        variant="transparent"
-                        className="text-sm xs:tracking-widest"
-                      >
-                        Active Orders
-                      </Button>
-                      <Button
-                        size="mini"
-                        color="gray"
-                        shape="rounded"
-                        variant="ghost"
-                        className="mx-1 text-sm xs:tracking-widest"
-                      >
-                        Order History
-                      </Button>
-                    </div>
-                    <div className="flex shrink flex-row items-center px-4">
-                      <div className=" flex flex-row items-center">
-                        <SortList />
-                      </div>
-                      <div className="mx-5 flex flex-row items-center">
-                        <SortList2 />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="mt-6 h-[200px] max-h-[220px] w-full px-8">
-                  <Scrollbar style={{ height: 'calc(100% - 32px)' }}>
-                    <table>
-                      <thead>
-                        <tr>
-                          <th style={{ textAlign: 'left' }}>Token Pair</th>
-                          <th>Amount</th>
-                          <th>Limit Price</th>
-                          <th>Filled Price</th>
-                          <th>Status</th>
-                          <th>Created At</th>
-                          <th style={{ textAlign: 'right' }}>Fee</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {/* <tr>
-                          <td style={{ textAlign: 'left' }}>{coinList[0].code} / {coinList[1].code}</td>
-                          <td>1.3 {coinList[0].code}</td>
-                          <td>1580</td>
-                          <td>1588</td>
-                          <td>completed</td>
-                          <td>2022-9-3 1:27:46</td>
-                          <td style={{ textAlign: 'right' }}>0.0014 {coinList[0].code}</td>
-                        </tr>
-                        <tr>
-                          <td style={{ textAlign: 'left' }}>{coinList[0].code} / {coinList[1].code}</td>
-                          <td>1.5 {coinList[0].code}</td>
-                          <td>1580</td>
-                          <td></td>
-                          <td>pending</td>
-                          <td>2022-9-3 1:27:46</td>
-                          <td style={{ textAlign: 'right' }}>0.0014 {coinList[0].code}</td>
-                        </tr>
-                        <tr>
-                          <td style={{ textAlign: 'left' }}>{coinList[0].code} / {coinList[1].code}</td>
-                          <td>1.4 {coinList[0].code}</td>
-                          <td>1580</td>
-                          <td></td>
-                          <td>pending</td>
-                          <td>2022-9-3 1:27:46</td>
-                          <td style={{ textAlign: 'right' }}>0.0014 {coinList[0].code}</td>
-                        </tr>
-                        <tr>
-                          <td style={{ textAlign: 'left' }}>{coinList[0].code} / {coinList[1].code}</td>
-                          <td>1.4 {coinList[0].code}</td>
-                          <td>1580</td>
-                          <td></td>
-                          <td>pending</td>
-                          <td>2022-9-3 1:27:46</td>
-                          <td style={{ textAlign: 'right' }}>0.0014 {coinList[0].code}</td>
-                        </tr>
-                        <tr>
-                          <td style={{ textAlign: 'left' }}>{coinList[0].code} / {coinList[1].code}</td>
-                          <td>1.4 {coinList[0].code}</td>
-                          <td>1580</td>
-                          <td></td>
-                          <td>pending</td>
-                          <td>2022-9-3 1:27:46</td>
-                          <td style={{ textAlign: 'right' }}>0.0014 {coinList[0].code}</td>
-                        </tr>
-                        <tr>
-                          <td style={{ textAlign: 'left' }}>{coinList[0].code} / {coinList[1].code}</td>
-                          <td>1.4 {coinList[0].code}</td>
-                          <td>1580</td>
-                          <td></td>
-                          <td>pending</td>
-                          <td>2022-9-3 1:27:46</td>
-                          <td style={{ textAlign: 'right' }}>0.0014 {coinList[0].code}</td>
-                        </tr> */}
-                      </tbody>
-                    </table>
-                  </Scrollbar>
-                </div>
+              <div>
+                <Orders />
               </div>
             </div>
+
+            {/* Market Trades */}
             {/* <div className="lg:col-span-1 ">
-              <div className="flex min-h-[50px] w-full items-center justify-around border-b border-b-[#374151]">
-                <Button
-                  size="mini"
-                  color="gray"
-                  shape="rounded"
-                  variant="ghost"
-                  className="mx-1 w-[90%] text-sm xs:tracking-widest"
-                >
-                  Favorites
-                </Button>
-                <Button
-                  size="mini"
-                  color="gray"
-                  shape="rounded"
-                  variant="ghost"
-                  className="mx-1 w-[90%] text-sm xs:tracking-widest"
-                >
-                  My Wallet
-                </Button>
-                <Button
-                  size="mini"
-                  color="primary"
-                  shape="rounded"
-                  variant="transparent"
-                  className="w-[90%] text-sm xs:tracking-widest"
-                >
-                  Market
-                </Button>
-              </div>
-              <div className="flex resize-y flex-col divide-y divide-[#374151]">
-                <div className="text-xs">
-                  <ParamTab
-                    tabMenu={[
-                      {
-                        title: 'All Tokens',
-                        path: 'tokens',
-                      },
-                      {
-                        title: 'Imported',
-                        path: 'imported',
-                      },
-                      {
-                        title: 'DeFi',
-                        path: 'defi',
-                      },
-                    ]}
-                  >
-                    <Scrollbar style={{ height: 'calc(100% - 32px)' }}>
-                      <TabPanel className="h-[240px] max-h-[240px] focus:outline-none">
-                        <div className="flex flex-row">
-                          <div className="w-3/5">
-                            <div className="mb-2 text-xs text-gray-900 dark:text-white">
-                              <div className="px-1">
-                                <AllTokens
-                                  from={'ETH'}
-                                  to={'USDT'}
-                                  price={174655397.13}
-                                />
-                              </div>
-                            </div>
-                          </div>
-                          <div className="w-2/5">
-                            <div className=" mb-2 flex flex-col">
-                              <span className="pr-1 text-right text-sm dark:text-white">
-                                ${273.815}
-                              </span>
-                              <div className="mt-1 px-1 text-right text-xs text-red-400 text-gray-900">
-                                {-3.04}%
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="flex flex-row">
-                          <div className="w-3/5">
-                            <div className="mb-2 text-xs text-gray-900 dark:text-white">
-                              <div className="px-1">
-                                <AllTokens
-                                  from={'ETH'}
-                                  to={'USDT'}
-                                  price={174655397.13}
-                                />
-                              </div>
-                            </div>
-                          </div>
-                          <div className="w-2/5">
-                            <div className=" mb-2 flex flex-col">
-                              <span className="pr-1 text-right text-sm dark:text-white">
-                                ${273.815}
-                              </span>
-                              <div className="mt-1 px-1 text-right text-xs text-red-400 text-gray-900">
-                                {-3.04}%
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="flex flex-row">
-                          <div className="w-3/5">
-                            <div className="mb-2 text-xs text-gray-900 dark:text-white">
-                              <div className="px-1">
-                                <AllTokens
-                                  from={'ETH'}
-                                  to={'USDC'}
-                                  price={174655397.13}
-                                />
-                              </div>
-                            </div>
-                          </div>
-                          <div className="w-2/5">
-                            <div className=" mb-2 flex flex-col">
-                              <span className="pr-1 text-right text-sm dark:text-white">
-                                ${273.815}
-                              </span>
-                              <div className="mt-1 px-1 text-right text-xs text-red-400 text-gray-900">
-                                {-3.04}%
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="flex flex-row">
-                          <div className="w-3/5">
-                            <div className="mb-2 text-xs text-gray-900 dark:text-white">
-                              <div className="px-1">
-                                <AllTokens
-                                  from={'BTC'}
-                                  to={'USDT'}
-                                  price={174655397.13}
-                                />
-                              </div>
-                            </div>
-                          </div>
-                          <div className="w-2/5">
-                            <div className=" mb-2 flex flex-col">
-                              <span className="pr-1 text-right text-sm dark:text-white">
-                                ${273.815}
-                              </span>
-                              <div className="mt-1 px-1 text-right text-xs text-red-400 text-gray-900">
-                                {-3.04}%
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="flex flex-row">
-                          <div className="w-3/5">
-                            <div className="mb-2 text-xs text-gray-900 dark:text-white">
-                              <div className="px-1">
-                                <AllTokens
-                                  from={'ETH'}
-                                  to={'USDT'}
-                                  price={174655397.13}
-                                />
-                              </div>
-                            </div>
-                          </div>
-                          <div className="w-2/5">
-                            <div className=" mb-2 flex flex-col">
-                              <span className="pr-1 text-right text-sm dark:text-white">
-                                ${273.815}
-                              </span>
-                              <div className="mt-1 px-1 text-right text-xs text-red-400 text-gray-900">
-                                {-3.04}%
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="flex flex-row">
-                          <div className="w-3/5">
-                            <div className="mb-2 text-xs text-gray-900 dark:text-white">
-                              <div className="px-1">
-                                <AllTokens
-                                  from={'BTC'}
-                                  to={'USDT'}
-                                  price={174655397.13}
-                                />
-                              </div>
-                            </div>
-                          </div>
-                          <div className="w-2/5">
-                            <div className=" mb-2 flex flex-col">
-                              <span className="pr-1 text-right text-sm dark:text-white">
-                                ${273.815}
-                              </span>
-                              <div className="mt-1 px-1 text-right text-xs text-red-400 text-gray-900">
-                                {-3.04}%
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="flex flex-row">
-                          <div className="w-3/5">
-                            <div className="mb-2 text-xs text-gray-900 dark:text-white">
-                              <div className="px-1">
-                                <AllTokens
-                                  from={'BTC'}
-                                  to={'USDT'}
-                                  price={174655397.13}
-                                />
-                              </div>
-                            </div>
-                          </div>
-                          <div className="w-2/5">
-                            <div className=" mb-2 flex flex-col">
-                              <span className="pr-1 text-right text-sm dark:text-white">
-                                ${273.815}
-                              </span>
-                              <div className="mt-1 px-1 text-right text-xs text-red-400 text-gray-900">
-                                {-3.04}%
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </TabPanel>
-                    </Scrollbar>
-                    <TabPanel className="h-[240px] max-h-[240px] focus:outline-none">
-                      <div className="space-y-6">
-                        <div className="block">
-                          <div className="mb-2 text-xs text-gray-900 dark:text-white">
-                            Imported
-                          </div>
-                        </div>
-                      </div>
-                    </TabPanel>
-                    <TabPanel className="h-[240px] max-h-[240px] focus:outline-none">
-                      <div className="space-y-6">
-                        <div className="block">
-                          <div className="mb-2 text-xs text-gray-900 dark:text-white">
-                            DeFi
-                          </div>
-                        </div>
-                      </div>
-                    </TabPanel>
-                  </ParamTab>
-                </div>
-                <div className="">
-                  <div className="w-full px-4 py-2 text-left">Market Trade</div>
-                  <div className="px-2 flex flex-row items-center pb-1">
-                    <div className="w-[35%] text-right text-xs text-stone-400">
-                      <span>Price</span>
-                      <span>(USD)</span>
-                    </div>
-                    <div className="w-[35%] text-right text-xs text-stone-400">
-                      Total(USD)
-                    </div>
-                    <div className="w-[30%] text-right text-xs text-stone-400">
-                      Time
-                    </div>
-                  </div>
-                  <Scrollbar style={{ height: 'calc(100% - 32px)' }}>
-                    <div className="h-[460px] max-h-[480px] flex w-full flex-col px-2">
-                      <div className="flex flex-row text-sm">
-                        <div className="w-[35%] text-right text-green-400">
-                          1555.809
-                        </div>
-                        <div className="w-[35%] text-right text-green-400">
-                          2.97
-                        </div>
-                        <div className="w-[30%] text-right text-stone-400">
-                          1:27:46
-                        </div>
-                      </div>
-                      <div className="flex flex-row text-sm">
-                        <div className="w-[35%] text-right text-red-400">
-                          1555.810
-                        </div>
-                        <div className="w-[35%] text-right text-red-400">
-                          116.01
-                        </div>
-                        <div className="w-[30%] text-right text-stone-400">
-                          1:27:46
-                        </div>
-                      </div>
-                      <div className="flex flex-row text-sm">
-                        <div className="w-[35%] text-right text-red-400">
-                          1555.810
-                        </div>
-                        <div className="w-[35%] text-right text-red-400">
-                          232.47
-                        </div>
-                        <div className="w-[30%] text-right text-stone-400">
-                          1:27:46
-                        </div>
-                      </div>
-                      <div className="flex flex-row text-sm">
-                        <div className="w-[35%] text-right text-red-400">
-                          1555.810
-                        </div>
-                        <div className="w-[35%] text-right text-red-400">
-                          122.71
-                        </div>
-                        <div className="w-[30%] text-right text-stone-400">
-                          1:27:46
-                        </div>
-                      </div>
-                      <div className="flex flex-row text-sm">
-                        <div className="w-[35%] text-right text-green-400">
-                          1555.810
-                        </div>
-                        <div className="w-[35%] text-right text-green-400">
-                          232.26
-                        </div>
-                        <div className="w-[30%] text-right text-stone-400">
-                          1:27:46
-                        </div>
-                      </div>
-                      <div className="flex flex-row text-sm">
-                        <div className="w-[35%] text-right text-green-400">
-                          1555.810
-                        </div>
-                        <div className="w-[35%] text-right text-green-400">
-                          82.84
-                        </div>
-                        <div className="w-[30%] text-right text-stone-400">
-                          1:27:46
-                        </div>
-                      </div>
-                      <div className="flex flex-row text-sm">
-                        <div className="w-[35%] text-right text-red-400">
-                          1555.810
-                        </div>
-                        <div className="w-[35%] text-right text-red-400">
-                          132.62
-                        </div>
-                        <div className="w-[30%] text-right text-stone-400">
-                          1:27:46
-                        </div>
-                      </div>
-                      <div className="flex flex-row text-sm">
-                        <div className="w-[35%] text-right text-red-400">
-                          1555.810
-                        </div>
-                        <div className="w-[35%] text-right text-red-400">
-                          262.02
-                        </div>
-                        <div className="w-[30%] text-right text-stone-400">
-                          1:27:46
-                        </div>
-                      </div>
-                      <div className="flex flex-row text-sm">
-                        <div className="w-[35%] text-right text-green-400">
-                          1555.810
-                        </div>
-                        <div className="w-[35%] text-right text-green-400">
-                          212.53
-                        </div>
-                        <div className="w-[30%] text-right text-stone-400">
-                          1:27:46
-                        </div>
-                      </div>
-                      <div className="flex flex-row text-sm">
-                        <div className="w-[35%] text-right text-red-400">
-                          1555.810
-                        </div>
-                        <div className="w-[35%] text-right text-red-400">
-                          232.47
-                        </div>
-                        <div className="w-[30%] text-right text-stone-400">
-                          1:27:46
-                        </div>
-                      </div>
-                      <div className="flex flex-row text-sm">
-                        <div className="w-[35%] text-right text-red-400">
-                          1555.810
-                        </div>
-                        <div className="w-[35%] text-right text-red-400">
-                          232.47
-                        </div>
-                        <div className="w-[30%] text-right text-stone-400">
-                          1:27:46
-                        </div>
-                      </div>
-                      <div className="flex flex-row text-sm">
-                        <div className="w-[35%] text-right text-red-400">
-                          1555.810
-                        </div>
-                        <div className="w-[35%] text-right text-red-400">
-                          232.47
-                        </div>
-                        <div className="w-[30%] text-right text-stone-400">
-                          1:28:04
-                        </div>
-                      </div>
-                      <div className="flex flex-row text-sm">
-                        <div className="w-[35%] text-right text-green-400">
-                          1555.810
-                        </div>
-                        <div className="w-[35%] text-right text-green-400">
-                          232.47
-                        </div>
-                        <div className="w-[30%] text-right text-stone-400">
-                          1:28:04
-                        </div>
-                      </div>
-                      <div className="flex flex-row text-sm">
-                        <div className="w-[35%] text-right text-red-400">
-                          1555.810
-                        </div>
-                        <div className="w-[35%] text-right text-red-400">
-                          232.47
-                        </div>
-                        <div className="w-[30%] text-right text-stone-400">
-                          1:28:04
-                        </div>
-                      </div>
-                      <div className="flex flex-row text-sm">
-                        <div className="w-[35%] text-right text-green-400">
-                          1555.810
-                        </div>
-                        <div className="w-[35%] text-right text-green-400">
-                          232.47
-                        </div>
-                        <div className="w-[30%] text-right text-stone-400">
-                          1:28:04
-                        </div>
-                      </div>
-                      <div className="flex flex-row text-sm">
-                        <div className="w-[35%] text-right text-red-400">
-                          1555.810
-                        </div>
-                        <div className="w-[35%] text-right text-red-400">
-                          232.47
-                        </div>
-                        <div className="w-[30%] text-right text-stone-400">
-                          1:28:04
-                        </div>
-                      </div>
-                      <div className="flex flex-row text-sm">
-                        <div className="w-[35%] text-right text-red-400">
-                          1555.810
-                        </div>
-                        <div className="w-[35%] text-right text-red-400">
-                          232.47
-                        </div>
-                        <div className="w-[30%] text-right text-stone-400">
-                          1:28:04
-                        </div>
-                      </div>
-                      <div className="flex flex-row text-sm">
-                        <div className="w-[35%] text-right text-green-400">
-                          1555.810
-                        </div>
-                        <div className="w-[35%] text-right text-green-400">
-                          82.84
-                        </div>
-                        <div className="w-[30%] text-right text-stone-400">
-                          1:27:46
-                        </div>
-                      </div>
-                      <div className="flex flex-row text-sm">
-                        <div className="w-[35%] text-right text-red-400">
-                          1555.810
-                        </div>
-                        <div className="w-[35%] text-right text-red-400">
-                          132.62
-                        </div>
-                        <div className="w-[30%] text-right text-stone-400">
-                          1:27:46
-                        </div>
-                      </div>
-                      <div className="flex flex-row text-sm">
-                        <div className="w-[35%] text-right text-red-400">
-                          1555.810
-                        </div>
-                        <div className="w-[35%] text-right text-red-400">
-                          262.02
-                        </div>
-                        <div className="w-[30%] text-right text-stone-400">
-                          1:27:46
-                        </div>
-                      </div>
-                      <div className="flex flex-row text-sm">
-                        <div className="w-[35%] text-right text-red-400">
-                          1555.810
-                        </div>
-                        <div className="w-[35%] text-right text-red-400">
-                          262.02
-                        </div>
-                        <div className="w-[30%] text-right text-stone-400">
-                          1:27:46
-                        </div>
-                      </div>
-                      <div className="flex flex-row text-sm">
-                        <div className="w-[35%] text-right text-red-400">
-                          1555.910
-                        </div>
-                        <div className="w-[35%] text-right text-red-400">
-                          262.02
-                        </div>
-                        <div className="w-[30%] text-right text-stone-400">
-                          1:27:46
-                        </div>
-                      </div>
-                      <div className="flex flex-row text-sm">
-                        <div className="w-[35%] text-right text-red-400">
-                          1555.710
-                        </div>
-                        <div className="w-[35%] text-right text-red-400">
-                          262.02
-                        </div>
-                        <div className="w-[30%] text-right text-stone-400">
-                          1:27:46
-                        </div>
-                      </div>
-                      <div className="flex flex-row text-sm">
-                        <div className="w-[35%] text-right text-red-400">
-                          1555.710
-                        </div>
-                        <div className="w-[35%] text-right text-red-400">
-                          262.02
-                        </div>
-                        <div className="w-[30%] text-right text-stone-400">
-                          1:27:46
-                        </div>
-                      </div>
-                      <div className="flex flex-row text-sm">
-                        <div className="w-[35%] text-right text-red-400">
-                          1555.710
-                        </div>
-                        <div className="w-[35%] text-right text-red-400">
-                          262.02
-                        </div>
-                        <div className="w-[30%] text-right text-stone-400">
-                          1:27:46
-                        </div>
-                      </div>
-                      <div className="flex flex-row text-sm">
-                        <div className="w-[35%] text-right text-red-400">
-                          1555.710
-                        </div>
-                        <div className="w-[35%] text-right text-red-400">
-                          262.02
-                        </div>
-                        <div className="w-[30%] text-right text-stone-400">
-                          1:27:46
-                        </div>
-                      </div>
-                      <div className="flex flex-row text-sm">
-                        <div className="w-[35%] text-right text-red-400">
-                          1555.710
-                        </div>
-                        <div className="w-[35%] text-right text-red-400">
-                          262.02
-                        </div>
-                        <div className="w-[30%] text-right text-stone-400">
-                          1:27:46
-                        </div>
-                      </div>
-                    </div>
-                  </Scrollbar>
-                </div>
-              </div>
+              <MarketTrade />
             </div> */}
           </div>
         </div>
-
       </div>
     </>
   );
