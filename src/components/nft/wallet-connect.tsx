@@ -32,10 +32,8 @@ export default function WalletConnect() {
 
           <div className="relative">
             <Menu>
-              <Menu.Button className="block h-10 w-[130px] text-sm overflow-hidden rounded-full border-2 border-solid border-white bg-gradient-to-r from-[#1e40af] to-[#1e3a8a] shadow-main transition-all hover:-translate-y-0.5 hover:shadow-large dark:border-gray-700">
-                {address.slice(0, 6)}
-                {'...'}
-                {address.slice(address.length - 4)}
+              <Menu.Button className="block h-10 w-[140px] text-sm overflow-hidden rounded-full border-2 border-solid border-white bg-gradient-to-r from-[#1e40af] to-[#1e3a8a] shadow-main transition-all hover:-translate-y-0.5 hover:shadow-large dark:border-gray-700">
+                {address.slice(0, 5)}{'...'}{address.slice(address.length - 4)}
               </Menu.Button>
               <Transition
                 enter="ease-out duration-300"

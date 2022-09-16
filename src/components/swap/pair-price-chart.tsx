@@ -80,6 +80,9 @@ export default function PairPriceChart({
   const [labels, setLables] = useState<string[]>([]);
   const [prices, setPrices] = useState<number[]>([]);
 
+  var new_tokenIn = tokenIn == "0x0000000000000000000000000000000000000000" ? "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7" : tokenIn;
+  var new_tokenOut = tokenOut == "0x0000000000000000000000000000000000000000" ? "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7" : tokenOut;
+
   useEffect(() => {
     const getPrice = async () => {
       try {
@@ -95,10 +98,10 @@ export default function PairPriceChart({
 
         const from = xHourAgo(xhours);
         const response1 = await axios.get(
-          `https://api.coingecko.com/api/v3/coins/avalanche/contract/${tokenIn.toLowerCase()}/market_chart/range?vs_currency=usd&from=${from}&to=${to}`
+          `https://api.coingecko.com/api/v3/coins/avalanche/contract/${new_tokenIn.toLowerCase()}/market_chart/range?vs_currency=usd&from=${from}&to=${to}`
         );
         const response2 = await axios.get(
-          `https://api.coingecko.com/api/v3/coins/avalanche/contract/${tokenOut.toLowerCase()}/market_chart/range?vs_currency=usd&from=${from}&to=${to}`
+          `https://api.coingecko.com/api/v3/coins/avalanche/contract/${new_tokenOut.toLowerCase()}/market_chart/range?vs_currency=usd&from=${from}&to=${to}`
         );
         setTimePrices1(response1?.data.prices);
         setTimePrices2(response2?.data.prices);

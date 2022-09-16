@@ -47,10 +47,19 @@ import KNC from '@/assets/images/coin/kyber-network-crystal-v2.png';
 export const coinList = [
   //trusted tokens
   {
-    code: 'WAVAX',
-    name: 'WAVAX',
-    address: '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7',
+    code: 'AVAX',
+    name: 'Avalanche',
+    address: '0x0000000000000000000000000000000000000000',
     icon: <Image src={Avalanche} alt="Criptic" width='24px' height='24px' />,
+    tradingviewcode: 'AVAX',
+    coinGeckoCoinsId: 'avalanche-2',
+    decimals: 18
+  },
+  {
+    code: 'WAVAX',
+    name: 'Wrapped AvAX',
+    address: '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7',
+    icon: <Image src="/assets/coins/wavax.png" alt="Criptic" width='24px' height='24px' />,
     tradingviewcode: 'AVAX',
     coinGeckoCoinsId: 'avalanche-2',
     decimals: 18

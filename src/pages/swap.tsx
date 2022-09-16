@@ -26,6 +26,7 @@ import MarketTrade from '@/components/swap/market-trade';
 import MarketData from '@/components/swap/market-data';
 import { ethers } from "ethers";
 import ERC20 from "@/abi/ERC20.json";
+import WAVAX from "@/abi/WAVAX.json";
 import VixRouter from "@/abi/VixRouter.json";
 import { getCoinDecimals, getCoinName, getDexName } from '@/lib/utils/swap-utils';
 import { chain } from 'lodash';
@@ -43,17 +44,19 @@ const SwapPage: NextPageWithLayout = () => {
 
   const [marketData, setMarketData] = useState({})
 
-  const [tokenInIndex, setTokenInIndex] = useState(0) //wavax
+  const [tokenInIndex, setTokenInIndex] = useState(0) //avax
   const [tokenInPrice, setTokenInPrice] = useState(0)
   const [tokenIn, setTokenIn] = useState("")
   const [tokenInBalance, setTokenInBalance] = useState(0)
 
-  const [tokenOutIndex, setTokenOutIndex] = useState(3) //USDC
+  const [tokenOutIndex, setTokenOutIndex] = useState(4) //USDC
   const [tokenOutPrice, setTokenOutPrice] = useState(0)
   const [tokenOut, setTokenOut] = useState("")
 
   const [amountIn, setAmountIn] = useState(1)
   const [amountOut, setAmountOut] = useState(0)
+
+  const [loading, setLoading] = useState(false)
 
   const [adapters, setAdapters] = useState([])
   const [path, setPath] = useState([])
@@ -69,11 +72,17 @@ const SwapPage: NextPageWithLayout = () => {
       const provider = new ethers.providers.Web3Provider(window.ethereum)
       await provider.send("eth_requestAccounts", []);
       const signer = provider.getSigner();
-      let userAddress = await signer.getAddress();
+      if (token_address == "0x0000000000000000000000000000000000000000") {
+        let userAddress = await signer.getAddress();
+        const balance = await provider.getBalance(userAddress);
+        return Number(ethers.utils.formatUnits(balance, getCoinDecimals(token_address)));
+      } else {
+        let userAddress = await signer.getAddress();
 
-      const tokenContract = new ethers.Contract(token_address, ERC20.abi, signer);
-      var balance = await tokenContract.balanceOf(userAddress);
-      return Number(ethers.utils.formatUnits(balance, getCoinDecimals(token_address)));
+        const tokenContract = new ethers.Contract(token_address, ERC20.abi, signer);
+        var balance = await tokenContract.balanceOf(userAddress);
+        return Number(ethers.utils.formatUnits(balance, getCoinDecimals(token_address)));
+      }
     }
 
     (async () => {
@@ -172,18 +181,31 @@ const SwapPage: NextPageWithLayout = () => {
   //query
   useEffect(() => {
     const getAmountOut = async () => {
+      var new_tokenIn = tokenIn == "0x0000000000000000000000000000000000000000" ? "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7" : tokenIn;
+      var new_tokenOut = tokenOut == "0x0000000000000000000000000000000000000000" ? "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7" : tokenOut;
+      if ((tokenIn == "0x0000000000000000000000000000000000000000" && tokenOut == "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7") ||
+        (tokenOut == "0x0000000000000000000000000000000000000000" && tokenIn == "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7")) {
+        setAdapters([])
+        setPath([])
+        setAmounts([])
+        setAmountOut(amountIn)
+        return;
+      }
+      
+      setLoading(true);
       try {
         const provider = new ethers.providers.JsonRpcProvider("https://rpc.ankr.com/avalanche")
 
         const vixrouterContract = new ethers.Contract(VixRouter.address, VixRouter.abi, provider);
-        var inamount = ethers.utils.parseUnits(String(amountIn), getCoinDecimals(tokenIn));
+        var inamount = ethers.utils.parseUnits(String(amountIn), getCoinDecimals(new_tokenIn));
 
         //query one dex
-        let { amountOut, adapter } = await vixrouterContract.queryNoSplit(inamount, tokenIn, tokenOut);
-        amountOut = ethers.utils.formatUnits(amountOut, getCoinDecimals(tokenOut));
-        console.log("@@@@@@@@@ Query", amountIn, getCoinName(tokenIn), "=>", amountOut, getCoinName(tokenOut), " || ", getDexName(adapter))
+        // let { amountOut, adapter } = await vixrouterContract.queryNoSplit(inamount, new_tokenIn, new_tokenOut);
+        // amountOut = ethers.utils.formatUnits(amountOut, getCoinDecimals(new_tokenOut));
+        // console.log("@@@@@@@@@ Query", amountIn, getCoinName(new_tokenIn), "=>", amountOut, getCoinName(new_tokenOut), " || ", getDexName(adapter))
 
-        let { adapters, path, amounts } = await vixrouterContract.findBestPath(inamount, tokenIn, tokenOut, 4);
+        //findbestpath
+        let { adapters, path, amounts } = await vixrouterContract.findBestPath(inamount, new_tokenIn, new_tokenOut, 4);
         setAdapters(adapters)
         setPath(path)
         setAmounts(amounts)
@@ -191,13 +213,18 @@ const SwapPage: NextPageWithLayout = () => {
           adapters: adapters,
           path: path
         })
-        var final_amount = Number(ethers.utils.formatUnits(amounts[amounts.length - 1], getCoinDecimals(tokenOut)));
+        var final_amount = Number(ethers.utils.formatUnits(amounts[amounts.length - 1], getCoinDecimals(new_tokenOut)));
         setAmountOut(final_amount)
+        setLoading(false)
       } catch (e) {
-        console.log(e)
+        setLoading(false)
+        console.log('query', e)
       }
     }
-    getAmountOut();
+    if (tokenIn && tokenOut && amountIn) {
+      getAmountOut();
+    }
+
   }, [tokenIn, tokenOut, amountIn])
 
   //swap
@@ -207,30 +234,48 @@ const SwapPage: NextPageWithLayout = () => {
     const signer = provider.getSigner();
     let userAddress = await signer.getAddress();
 
-    //approve
-    const tokenContract = new ethers.Contract(tokenIn, ERC20.abi, signer);
-    var balance = await tokenContract.balanceOf(userAddress);
-    if (Number(ethers.utils.formatUnits(balance, getCoinDecimals(tokenIn))) < amountIn) {
-      alert('Not enough balance');
+
+    //wrap,unwrap
+    const wavaxContract = new ethers.Contract(WAVAX.address, WAVAX.abi, signer);
+    if (tokenIn == "0x0000000000000000000000000000000000000000" && tokenOut == "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7") {
+      await wavaxContract.deposit({ value: ethers.utils.parseEther(String(amountIn)) });
       return;
     }
-    var approved_amount = await tokenContract.allowance(userAddress, VixRouter.address);
-    if (Number(ethers.utils.formatUnits(approved_amount, getCoinDecimals(tokenIn))) < amountIn) {
-      var approving_amount = ethers.utils.parseUnits("9999999", getCoinDecimals(tokenIn));
-      await tokenContract.approve(VixRouter.address, approving_amount);
+    if ((tokenOut == "0x0000000000000000000000000000000000000000" && tokenIn == "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7")) {
+      await wavaxContract.withdraw(ethers.utils.parseEther(String(amountIn)));
+      return;
+    }
+
+    //approve for tokens
+    if (tokenIn != "0x0000000000000000000000000000000000000000") {
+      const tokenContract = new ethers.Contract(tokenIn, ERC20.abi, signer);
+      var approved_amount = await tokenContract.allowance(userAddress, VixRouter.address);
+      if (Number(ethers.utils.formatUnits(approved_amount, getCoinDecimals(tokenIn))) < amountIn) {
+        // var approving_amount = ethers.utils.parseUnits(String(amountIn), getCoinDecimals(tokenIn));
+        var approving_amount = ethers.utils.parseUnits("9999999", getCoinDecimals(tokenIn));
+        await tokenContract.approve(VixRouter.address, approving_amount);
+      }
     }
 
     //swap
+    var new_tokenIn = tokenIn == "0x0000000000000000000000000000000000000000" ? "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7" : tokenIn;
+
     const vixrouterContract = new ethers.Contract(VixRouter.address, VixRouter.abi, signer);
-    var parsed_amountIn = ethers.utils.parseUnits(String(amountIn), getCoinDecimals(tokenIn));
+    var parsed_amountIn = ethers.utils.parseUnits(String(amountIn), getCoinDecimals(new_tokenIn));
     var parsed_amountOut = ethers.utils.parseEther("0");
     var _trade = [parsed_amountIn, parsed_amountOut, path, adapters];
     var _to = userAddress;
     var _fee = ethers.utils.parseEther("0");
-    await vixrouterContract.swapNoSplit(_trade, _to, _fee);
+    if (tokenIn == "0x0000000000000000000000000000000000000000")
+      await vixrouterContract.swapNoSplitFromAVAX(_trade, _to, _fee, { value: ethers.utils.parseEther(String(amountIn)) });
+    else if (tokenOut == "0x0000000000000000000000000000000000000000") {
+      await vixrouterContract.swapNoSplitToAVAX(_trade, _to, _fee);
+    } else
+      await vixrouterContract.swapNoSplit(_trade, _to, _fee);
   }
 
   const toggleTokens = () => {
+    clearOutput();
     var dish = tokenInIndex;
     setTokenInIndex(tokenOutIndex);
     setTokenOutIndex(dish);
@@ -337,7 +382,15 @@ const SwapPage: NextPageWithLayout = () => {
                 </div>
               </div>
             </div>
-            {tokenInBalance >= amountIn ? <Button
+            {loading ? <Button
+              size="large"
+              shape="rounded"
+              fullWidth={true}
+              className="mt-3 uppercase dark:bg-gradient-to-r dark:from-[#475569] dark:to-[#334155] xs:mt-4 xs:tracking-widest"
+              disabled={true}
+            >
+              Loading ...
+            </Button> : tokenInBalance >= amountIn ? <Button
               size="large"
               id=""
               shape="rounded"
