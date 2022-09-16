@@ -28,6 +28,7 @@ import { ethers } from "ethers";
 import ERC20 from "@/abi/ERC20.json";
 import VixRouter from "@/abi/VixRouter.json";
 import { getCoinDecimals, getCoinName, getDexName } from '@/lib/utils/swap-utils';
+import { chain } from 'lodash';
 
 // Create your atoms and derivatives
 var routingAtom, toSettingsAtom;
@@ -39,19 +40,6 @@ export function useSettingsAtom() {
 }
 
 const SwapPage: NextPageWithLayout = () => {
-
-  useEffect(() => {
-    const myfunc = async () => {
-      if (!window.ethereum) return
-
-      const provider = new ethers.providers.Web3Provider(window.ethereum)
-      await provider.send("eth_requestAccounts", []);
-      const { chainId } = await provider.getNetwork()
-
-      if (chainId != 43114) await swtichNetwork();
-    }
-    myfunc();
-  })
 
   const [marketData, setMarketData] = useState({})
 
@@ -71,9 +59,23 @@ const SwapPage: NextPageWithLayout = () => {
   const [path, setPath] = useState([])
   const [amounts, setAmounts] = useState([])
 
+  const [toggleCoin, setToggleCoin] = useState(false);
+
   const [devenv] = useState(false)
 
+  //set tokenin, tokeninbalance
   useEffect(() => {
+    const getBalance = async (token_address: string) => {
+      const provider = new ethers.providers.Web3Provider(window.ethereum)
+      await provider.send("eth_requestAccounts", []);
+      const signer = provider.getSigner();
+      let userAddress = await signer.getAddress();
+
+      const tokenContract = new ethers.Contract(token_address, ERC20.abi, signer);
+      var balance = await tokenContract.balanceOf(userAddress);
+      return Number(ethers.utils.formatUnits(balance, getCoinDecimals(token_address)));
+    }
+
     (async () => {
       var tokenin_address = coinList[tokenInIndex].address
       setTokenIn(tokenin_address);
@@ -81,42 +83,10 @@ const SwapPage: NextPageWithLayout = () => {
       setTokenInBalance(balance)
     })()
   }, [tokenInIndex])
-
-
+  //set tokenout
   useEffect(() => {
     setTokenOut(coinList[tokenOutIndex].address);
   }, [tokenOutIndex])
-
-  //Query
-  useEffect(() => {
-    const getAmountOut = async () => {
-      try {
-        const provider = new ethers.providers.JsonRpcProvider("https://rpc.ankr.com/avalanche")
-
-        const vixrouterContract = new ethers.Contract(VixRouter.address, VixRouter.abi, provider);
-        var inamount = ethers.utils.parseUnits(String(amountIn), getCoinDecimals(tokenIn));
-
-        //query one dex
-        let { amountOut, adapter } = await vixrouterContract.queryNoSplit(inamount, tokenIn, tokenOut);
-        amountOut = ethers.utils.formatUnits(amountOut, getCoinDecimals(tokenOut));
-        console.log("@@@@@@@@@ Query", amountIn, getCoinName(tokenIn), "=>", amountOut, getCoinName(tokenOut), " || ", getDexName(adapter))
-
-        let { adapters, path, amounts } = await vixrouterContract.findBestPath(inamount, tokenIn, tokenOut, 4);
-        setAdapters(adapters)
-        setPath(path)
-        setAmounts(amounts)
-        routingAtom = atom({
-          adapters: adapters,
-          path: path
-        })
-        var final_amount = Number(ethers.utils.formatUnits(amounts[amounts.length - 1], getCoinDecimals(tokenOut)));
-        setAmountOut(final_amount)
-      } catch (e) {
-        console.log(e)
-      }
-    }
-    getAmountOut();
-  }, [tokenIn, tokenOut, amountIn])
 
   // marketdata, tokenIn Price
   useEffect(() => {
@@ -145,9 +115,9 @@ const SwapPage: NextPageWithLayout = () => {
       } catch (err) {
         console.error(err.message);
       }
-    }   
+    }
 
-    const formatNumber = (n:any) => {
+    const formatNumber = (n: any) => {
       var ranges = [
         { divider: 1e18, suffix: 'E' },
         { divider: 1e15, suffix: 'P' },
@@ -180,15 +150,8 @@ const SwapPage: NextPageWithLayout = () => {
     }
     getPrice();
   }, [tokenOutIndex]);
-  
-  let [toggleCoin, setToggleCoin] = useState(false);
-  const toggleTokens = () => {
-    var dish = tokenInIndex;
-    setTokenInIndex(tokenOutIndex);
-    setTokenOutIndex(dish);
-    setToggleCoin(!toggleCoin);
-  }
 
+  //Setting
   const { settingsAtom } = useTextAtom();
   const [txSpeed, setTxSpeed] = useState('Standard');
   const [tolerance, setTolerance] = useState('0.1%');
@@ -204,7 +167,40 @@ const SwapPage: NextPageWithLayout = () => {
       setTolerance(settingsAtom?.init.tolerance);
     }
   }, [settingsAtom?.init.tolerance]);
+  //~Setting
 
+  //query
+  useEffect(() => {
+    const getAmountOut = async () => {
+      try {
+        const provider = new ethers.providers.JsonRpcProvider("https://rpc.ankr.com/avalanche")
+
+        const vixrouterContract = new ethers.Contract(VixRouter.address, VixRouter.abi, provider);
+        var inamount = ethers.utils.parseUnits(String(amountIn), getCoinDecimals(tokenIn));
+
+        //query one dex
+        let { amountOut, adapter } = await vixrouterContract.queryNoSplit(inamount, tokenIn, tokenOut);
+        amountOut = ethers.utils.formatUnits(amountOut, getCoinDecimals(tokenOut));
+        console.log("@@@@@@@@@ Query", amountIn, getCoinName(tokenIn), "=>", amountOut, getCoinName(tokenOut), " || ", getDexName(adapter))
+
+        let { adapters, path, amounts } = await vixrouterContract.findBestPath(inamount, tokenIn, tokenOut, 4);
+        setAdapters(adapters)
+        setPath(path)
+        setAmounts(amounts)
+        routingAtom = atom({
+          adapters: adapters,
+          path: path
+        })
+        var final_amount = Number(ethers.utils.formatUnits(amounts[amounts.length - 1], getCoinDecimals(tokenOut)));
+        setAmountOut(final_amount)
+      } catch (e) {
+        console.log(e)
+      }
+    }
+    getAmountOut();
+  }, [tokenIn, tokenOut, amountIn])
+
+  //swap
   const swap = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum)
     await provider.send("eth_requestAccounts", []);
@@ -234,41 +230,12 @@ const SwapPage: NextPageWithLayout = () => {
     await vixrouterContract.swapNoSplit(_trade, _to, _fee);
   }
 
-  const swtichNetwork = async () => {
-    console.log("swtichNetwork");
-    try {
-      await window.ethereum.request({
-        method: "wallet_switchEthereumChain",
-        params: [{ chainId: "0xa86a" }],
-      });
-    } catch (switchError) {
-      // This error code indicates that the chain has not been added to MetaMask.
-      if (switchError.code === 4902) {
-        try {
-          await window.ethereum.request({
-            method: "wallet_addEthereumChain",
-            params: [
-              {
-                chainId: "0xa86a",
-                chainName: "Avalanche C-Chain",
-                nativeCurrency: {
-                  name: "AVAX",
-                  symbol: "AVAX",
-                  decimals: 18,
-                },
-                rpcUrls: ["https://api.avax.network/ext/bc/C/rpc"] /* ... */,
-                blockExplorerUrls: ["https://snowtrace.io"],
-              },
-            ],
-          });
-        } catch (addError) {
-          // handle "add" error
-        }
-      }
-      // handle other "switch" errors
-    }
-    window.location.reload();
-  };
+  const toggleTokens = () => {
+    var dish = tokenInIndex;
+    setTokenInIndex(tokenOutIndex);
+    setTokenOutIndex(dish);
+    setToggleCoin(!toggleCoin);
+  }
 
   const clearOutput = async () => {
     setAmountOut(0)
@@ -277,16 +244,7 @@ const SwapPage: NextPageWithLayout = () => {
     setAmounts([])
   }
 
-  const getBalance = async (token_address: string) => {
-    const provider = new ethers.providers.Web3Provider(window.ethereum)
-    await provider.send("eth_requestAccounts", []);
-    const signer = provider.getSigner();
-    let userAddress = await signer.getAddress();
 
-    const tokenContract = new ethers.Contract(token_address, ERC20.abi, signer);
-    var balance = await tokenContract.balanceOf(userAddress);
-    return Number(ethers.utils.formatUnits(balance, getCoinDecimals(token_address)));
-  }
 
   const { openModal } = useModal();
 
@@ -432,7 +390,7 @@ const SwapPage: NextPageWithLayout = () => {
           </div>
           <div className="grid grid-cols-1 divide-x divide-[#374151] lg:grid-cols-3">
             <div className="grid grid-cols-1 divide-y divide-[#374151] lg:col-span-3">
-              <div className="mb-2 min-h-[250px] lg:min-h-[500px]">                         
+              <div className="mb-2 min-h-[250px] lg:min-h-[500px]">
                 <PairPriceChart tokenIn={tokenIn} tokenOut={tokenOut} />
               </div>
               <div>

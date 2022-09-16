@@ -10,7 +10,7 @@ import { useContext } from 'react';
 
 export default function WalletConnect() {
   const { openModal } = useModal();
-  const { address, disconnectWallet, balance, chainId } = useContext(WalletContext);
+  const { address, disconnectWallet, balance, chainId, swtichNetwork } = useContext(WalletContext);
   return (
     <>
       {address ? (
@@ -21,7 +21,9 @@ export default function WalletConnect() {
                 Avalanche
               </Menu.Button>
             </Menu> : <Menu>
-              <Menu.Button className="block h-10 w-[130px] text-sm overflow-hidden rounded-full border-2 border-solid border-white bg-gradient-to-r from-[#ab3c00] to-[#852504] shadow-main transition-all hover:-translate-y-0.5 hover:shadow-large dark:border-gray-700">
+              <Menu.Button className="block h-10 w-[130px] text-sm overflow-hidden rounded-full border-2 border-solid border-white bg-gradient-to-r from-[#ab3c00] to-[#852504] shadow-main transition-all hover:-translate-y-0.5 hover:shadow-large dark:border-gray-700"
+                onClick={() => swtichNetwork()}
+              >
                 Wrong Network
               </Menu.Button>
             </Menu>}
