@@ -1,5 +1,6 @@
 import { coinList } from '@/data/static/coin-list';
 import { dexList } from '@/data/static/dex-list';
+import Image from '@/components/ui/image';
 
 export const getCoinName = (address: string) => {
     const index = coinList.findIndex(
@@ -9,6 +10,17 @@ export const getCoinName = (address: string) => {
         return coinList[index].name;
     } else {
         return "Unknown";
+    }
+}
+
+export const getCoinIcon = (address: string) => {
+    const index = coinList.findIndex(
+        (item) => item.address.toLowerCase() === address.toLowerCase()
+    );
+    if (index !== -1) {
+        return coinList[index].icon;
+    } else {
+        return <Image src="/assets/coins/unknown.png" alt="Criptic" width='24px' height='24px' />;
     }
 }
 

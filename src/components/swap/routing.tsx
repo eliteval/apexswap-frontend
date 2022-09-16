@@ -22,8 +22,8 @@ export default function Routing({ ...props }) {
   const coin_in = path[0];
   const coin_out = path[path?.length - 1];
   const coins = coinList;
-  const inCoin = coins.filter(ele => ele.address.toLowerCase()  == coin_in.toLowerCase() );
-  const outCoin = coins.filter(ele => ele.address.toLowerCase()  == coin_out.toLowerCase() );
+  const inCoin = coins.filter(ele => ele.address.toLowerCase() == coin_in.toLowerCase());
+  const outCoin = coins.filter(ele => ele.address.toLowerCase() == coin_out.toLowerCase());
 
 
   return (
@@ -60,7 +60,7 @@ export default function Routing({ ...props }) {
 
               <div className="col-span-10 text-sm tracking-tighter text-gray-600 dark:text-blue-400">
                 <div className="flex items-center gap-4 ">
-                  {routes?.map((element, index) => (
+                  {routes?.map((element: string, index: number) => (
                     // 
                     <div key={index} className="mr-2">
                       {/* {element.map((item, id) => ( */}

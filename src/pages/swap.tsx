@@ -20,9 +20,10 @@ import { useModal } from '@/components/modal-views/context';
 import { atom, useAtom } from 'jotai';
 import { useTextAtom } from '@/components/swap/settings';
 // import { AdvancedRealTimeChart } from 'react-ts-tradingview-widgets';
-import LineChart from '@/components/ui/pair-price-chart';
+import PairPriceChart from '@/components/swap/pair-price-chart';
 import Orders from '@/components/swap/orders';
 import MarketTrade from '@/components/swap/market-trade';
+import MarketData from '@/components/swap/market-data';
 import { ethers } from "ethers";
 import ERC20 from "@/abi/ERC20.json";
 import VixRouter from "@/abi/VixRouter.json";
@@ -52,7 +53,6 @@ const SwapPage: NextPageWithLayout = () => {
     myfunc();
   })
 
-  const [settings, setSettings] = useState({})
   const [marketData, setMarketData] = useState({})
 
   const [tokenInIndex, setTokenInIndex] = useState(0) //wavax
@@ -118,7 +118,7 @@ const SwapPage: NextPageWithLayout = () => {
     getAmountOut();
   }, [tokenIn, tokenOut, amountIn])
 
-  // marketdata
+  // marketdata, tokenIn Price
   useEffect(() => {
     const getPrice = async () => {
       try {
@@ -145,10 +145,9 @@ const SwapPage: NextPageWithLayout = () => {
       } catch (err) {
         console.error(err.message);
       }
-    }
-    getPrice();
+    }   
 
-    const formatNumber = (n) => {
+    const formatNumber = (n:any) => {
       var ranges = [
         { divider: 1e18, suffix: 'E' },
         { divider: 1e15, suffix: 'P' },
@@ -165,6 +164,8 @@ const SwapPage: NextPageWithLayout = () => {
       }
       return n.toString();
     }
+
+    getPrice();
   }, [tokenInIndex]);
 
   useEffect(() => {
@@ -179,43 +180,7 @@ const SwapPage: NextPageWithLayout = () => {
     }
     getPrice();
   }, [tokenOutIndex]);
-  //~~ marketdata
-
-  //price chart
-  const [hours, setHours] = useState('24');
-  const [timePrices1, setTimePrices1] = useState([]);
-  const [timePrices2, setTimePrices2] = useState([]);
-
-  useEffect(() => {
-    const getPrice = async () => {
-      try {
-        const xhours = Number(hours);
-        const to = Math.round(new Date().getTime() / 1000);
-        const xHourAgo = (xhours) => {
-          const date = new Date();
-          const timeAgo = Math.round(
-            date.setTime(date.getTime() - xhours * 60 * 60 * 1000) / 1000
-          );
-          return timeAgo;
-        };
-
-        const from = xHourAgo(xhours);
-        const response1 = await axios.get(
-          `https://api.coingecko.com/api/v3/coins/avalanche/contract/${coinList[tokenInIndex].address.toLowerCase()}/market_chart/range?vs_currency=usd&from=${from}&to=${to}`
-        );
-        const response2 = await axios.get(
-          `https://api.coingecko.com/api/v3/coins/avalanche/contract/${coinList[tokenOutIndex].address.toLowerCase()}/market_chart/range?vs_currency=usd&from=${from}&to=${to}`
-        );
-        setTimePrices1(response1?.data.prices);
-        setTimePrices2(response2?.data.prices);
-      } catch (err) {
-        console.error(err.message);
-      }
-    };
-    getPrice();
-  }, [hours, tokenInIndex, tokenOutIndex]);
-  //~price chart
-
+  
   let [toggleCoin, setToggleCoin] = useState(false);
   const toggleTokens = () => {
     var dish = tokenInIndex;
@@ -332,7 +297,7 @@ const SwapPage: NextPageWithLayout = () => {
         description="Apexswap - Avalanche DEX"
       />
       <div className="xl:grid-rows-7 grid grid-cols-1 gap-4 xl:grid-cols-3">
-        {/* Swap box min-w-[410px] max-w-[410px] */}
+        {/* Swap box */}
         <div className="xl:col-span-1 xl:row-span-5 xl:row-start-1 xl:row-end-6">
           <TradeContainer>
             <div className=" dark:border-gray-800 xs:mb-2 xs:pb-6 ">
@@ -411,7 +376,6 @@ const SwapPage: NextPageWithLayout = () => {
                   style={{ cursor: 'pointer' }}
                 >
                   {adapters.length} steps in the route
-
                 </div>
               </div>
             </div>
@@ -434,7 +398,6 @@ const SwapPage: NextPageWithLayout = () => {
               Insufficient Balance
             </Button>
             }
-
             <br></br>
             {devenv ? <div>
               <br></br>
@@ -464,132 +427,13 @@ const SwapPage: NextPageWithLayout = () => {
 
         {/* Rigth side */}
         <div className="xl:row-end-8 xl:row-span-7 text-large mt-6 w-full rounded-lg border border-[#374151] pb-5 text-center shadow-card dark:bg-[#161b1d] xs:mb-2 xs:pb-6 xl:col-span-3 xl:row-start-1">
-          <div className="flex min-h-[50px] flex-row border-b border-b-[#374151]">
-            <div className="flex items-center p-2">
-              {coinList[tokenInIndex].icon}
-              <span className="ml-4 text-xl">{coinList[tokenInIndex].name}</span>
-            </div>
-            <div className=" flex">
-              <div className="mr-4 flex items-center px-2">
-                <div className="flex flex-col">
-                  <span className="text-left text-lg font-semibold">
-                    $ {marketData.currentPrice}
-                  </span>
-                  {/* <span className="text-left text-xs text-green-400">
-                    {0.31}%
-                  </span> */}
-                </div>
-              </div>
-              <div className="flex items-center">
-                <div className="h-1/3 w-[5px] border-l border-l-[#374151]"></div>
-              </div>
-              <div className="flex items-center ml-4">
-                <div className="flex flex-col">
-                  <span className="text-left text-xs text-[#8d8d8d]">
-                    24h Price Change(USD)
-                  </span>
-                  <div className="flex items-center">
-                    <span className="text-left text-sm">${Number(marketData.price_change).toFixed(3)}</span>
-                    <span className={cn("text-xs", marketData.price_change_p1 > 0 ? 'text-green-400' : 'text-red-400')}>{`(${marketData.price_change_p1}%)`}</span>
-                  </div>
-                </div>
-                <div className="flex flex-col pl-4">
-                  <span className="text-left text-xs text-[#8d8d8d]">
-                    Fully Dilluted Market Cap
-                  </span>
-                  <div className="flex items-center">
-                    <span className="text-left text-sm">${marketData.market_cap}</span>
-                    <span className={cn("text-xs",
-                      (marketData.market_cap_change_p > 0 ? 'text-green-400' : 'text-red-400'))}>
-
-                      {`(${marketData.market_cap_change_p}%)`}
-                    </span>
-                  </div>
-                </div>
-                <div className="flex flex-col pl-4">
-                  <span className="text-left text-xs text-[#8d8d8d]">
-                    Total Supply
-                  </span>
-                  <span className="text-left text-sm">${marketData.total_supply}</span>
-                </div>
-                <div className="flex flex-col pl-4">
-                  <span className="text-left text-xs text-[#8d8d8d]">
-                    Total Volume
-                  </span>
-                  <span className="text-left text-sm">${marketData.total_volume}</span>
-                </div>
-              </div>
-            </div>
+          <div className="min-h-[50px] border-b border-b-[#374151]">
+            <MarketData token_address={tokenIn} marketData={marketData} />
           </div>
           <div className="grid grid-cols-1 divide-x divide-[#374151] lg:grid-cols-3">
             <div className="grid grid-cols-1 divide-y divide-[#374151] lg:col-span-3">
-              <div className="mb-2 min-h-[500px]">
-                {/* <AdvancedRealTimeChart
-                  theme="dark"
-                  height="97%"
-                  width="100%"
-                  symbol={`${coinList[tokenInIndex].tradingviewcode}USD`}
-                  interval="1"
-                ></AdvancedRealTimeChart> */}
-                <div className="mt-5 mb-2 flex flex-row-reverse">
-                  <div className="inline-flex rounded-md shadow-sm mr-3" role="group">
-                    <button
-                      type="button"
-                      className={cn("rounded-l-lg border border-gray-900 bg-transparent py-1 px-2 text-sm font-medium text-gray-900 hover:bg-gray-900 hover:text-white focus:z-10 focus:bg-gray-900 focus:text-white focus:ring-gray-500 dark:border-[#374151] dark:text-white dark:hover:bg-gray-700 dark:hover:text-white",
-                        hours === '1' ? 'dark:bg-cyan-600/50' : 'dark:focus:bg-gray-700'
-                      )}
-                      onClick={() => { setHours('1'); }}
-                    >
-                      1H
-                    </button>
-                    <button
-                      type="button"
-                      className={cn("border-t border-b border-r border-gray-900 bg-transparent py-1 px-2 text-sm font-medium text-gray-900 hover:bg-gray-900 hover:text-white focus:z-10 focus:bg-gray-900 focus:text-white focus:ring-gray-500 dark:border-[#374151] dark:text-white dark:hover:bg-gray-700 dark:hover:text-white",
-                        hours === '4' ? 'dark:bg-cyan-600/50' : 'dark:focus:bg-gray-700'
-                      )}
-                      onClick={() => { setHours('4'); }}
-                    >
-                      4H
-                    </button>
-                    <button
-                      type="button"
-                      className={cn("border-t border-b border-r border-gray-900 bg-transparent py-1 px-2 text-sm font-medium text-gray-900 hover:bg-gray-900 hover:text-white focus:z-10 focus:bg-gray-900 focus:text-white focus:ring-gray-500 dark:border-[#374151] dark:text-white dark:hover:bg-gray-700 dark:hover:text-white",
-                        hours === '24' ? 'dark:bg-cyan-600/50' : 'dark:focus:bg-gray-700'
-                      )}
-                      onClick={() => { setHours('24'); }}
-                    >
-                      1D
-                    </button>
-                    <button
-                      type="button"
-                      className={cn("border-t border-b border-r border-gray-900 bg-transparent py-1 px-2 text-sm font-medium text-gray-900 hover:bg-gray-900 hover:text-white focus:z-10 focus:bg-gray-900 focus:text-white focus:ring-gray-500 dark:border-[#374151] dark:text-white dark:hover:bg-gray-700 dark:hover:text-white",
-                        hours === '168' ? 'dark:bg-cyan-600/50' : 'dark:focus:bg-gray-700'
-                      )}
-                      onClick={() => { setHours('168'); }}
-                    >
-                      1W
-                    </button>
-                    <button
-                      type="button"
-                      className={cn("border-t border-b border-gray-900 bg-transparent py-1 px-2 text-sm font-medium text-gray-900 hover:bg-gray-900 hover:text-white focus:z-10 focus:bg-gray-900 focus:text-white focus:ring-gray-500 dark:border-[#374151] dark:text-white dark:hover:bg-gray-700 dark:hover:text-white",
-                        hours === '720' ? 'dark:bg-cyan-600/50' : 'dark:focus:bg-gray-700'
-                      )}
-                      onClick={() => { setHours('720'); }}
-                    >
-                      1M
-                    </button>
-                    <button
-                      type="button"
-                      className={cn("rounded-r-md border border-gray-900 bg-transparent py-1 px-2 text-sm font-medium text-gray-900 hover:bg-gray-900 hover:text-white focus:z-10 focus:bg-gray-900 focus:text-white focus:ring-gray-500 dark:border-[#374151] dark:text-white dark:hover:bg-gray-700 dark:hover:text-white",
-                        hours === '4320' ? 'dark:bg-cyan-600/50' : 'dark:focus:bg-gray-700'
-                      )}
-                      onClick={() => { setHours('4320'); }}
-                    >
-                      6M
-                    </button>
-                  </div>
-                </div>
-                <LineChart timeprices1={timePrices1} timeprices2={timePrices2} tokenIn={coinList[tokenInIndex].name} tokenOut={coinList[tokenOutIndex].name} />
+              <div className="mb-2 min-h-[500px]">                            
+                <PairPriceChart tokenIn={tokenIn} tokenOut={tokenOut} />
               </div>
               <div>
                 <Orders />

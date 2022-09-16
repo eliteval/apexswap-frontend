@@ -39,7 +39,7 @@ export default function CoinSelectView({ onSelect }: CoinSelectViewTypes) {
   return (
     <div className="w-full rounded-lg bg-white text-sm shadow-large dark:bg-dark xs:w-[400px]">
       <h2 className="p-6 text-lg font-medium uppercase text-gray-900 dark:text-white">
-        Pay with
+        Select a token
       </h2>
       <div className="relative">
         <SearchIcon className="absolute left-6 h-full text-gray-700" />
