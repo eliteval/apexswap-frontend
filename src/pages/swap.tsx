@@ -6,6 +6,7 @@ import { NextSeo } from 'next-seo';
 import Button from '@/components/ui/button';
 import { OptionIcon } from '@/components/icons/option';
 import { InfoCircle } from '@/components/icons/info-circle';
+import { LoopIcon } from '@/components/icons/loop-icon';
 import CoinInput from '@/components/ui/coin-input';
 import TransactionInfo from '@/components/ui/transaction-info';
 import { SwapIcon } from '@/components/icons/swap-icon';
@@ -180,53 +181,53 @@ const SwapPage: NextPageWithLayout = () => {
 
   //query
   useEffect(() => {
-    const getAmountOut = async () => {
-      var new_tokenIn = tokenIn == "0x0000000000000000000000000000000000000000" ? "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7" : tokenIn;
-      var new_tokenOut = tokenOut == "0x0000000000000000000000000000000000000000" ? "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7" : tokenOut;
-      if ((tokenIn == "0x0000000000000000000000000000000000000000" && tokenOut == "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7") ||
-        (tokenOut == "0x0000000000000000000000000000000000000000" && tokenIn == "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7")) {
-        setAdapters([])
-        setPath([])
-        setAmounts([])
-        setAmountOut(amountIn)
-        return;
-      }
-      
-      setLoading(true);
-      try {
-        const provider = new ethers.providers.JsonRpcProvider("https://rpc.ankr.com/avalanche")
-
-        const vixrouterContract = new ethers.Contract(VixRouter.address, VixRouter.abi, provider);
-        var inamount = ethers.utils.parseUnits(String(amountIn), getCoinDecimals(new_tokenIn));
-
-        //query one dex
-        // let { amountOut, adapter } = await vixrouterContract.queryNoSplit(inamount, new_tokenIn, new_tokenOut);
-        // amountOut = ethers.utils.formatUnits(amountOut, getCoinDecimals(new_tokenOut));
-        // console.log("@@@@@@@@@ Query", amountIn, getCoinName(new_tokenIn), "=>", amountOut, getCoinName(new_tokenOut), " || ", getDexName(adapter))
-
-        //findbestpath
-        let { adapters, path, amounts } = await vixrouterContract.findBestPath(inamount, new_tokenIn, new_tokenOut, 4);
-        setAdapters(adapters)
-        setPath(path)
-        setAmounts(amounts)
-        routingAtom = atom({
-          adapters: adapters,
-          path: path
-        })
-        var final_amount = Number(ethers.utils.formatUnits(amounts[amounts.length - 1], getCoinDecimals(new_tokenOut)));
-        setAmountOut(final_amount)
-        setLoading(false)
-      } catch (e) {
-        setLoading(false)
-        console.log('query', e)
-      }
-    }
     if (tokenIn && tokenOut && amountIn) {
-      getAmountOut();
+      query();
     }
-
   }, [tokenIn, tokenOut, amountIn])
 
+  //query
+  const query = async () => {
+    var new_tokenIn = tokenIn == "0x0000000000000000000000000000000000000000" ? "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7" : tokenIn;
+    var new_tokenOut = tokenOut == "0x0000000000000000000000000000000000000000" ? "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7" : tokenOut;
+    if ((tokenIn == "0x0000000000000000000000000000000000000000" && tokenOut == "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7") ||
+      (tokenOut == "0x0000000000000000000000000000000000000000" && tokenIn == "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7")) {
+      setAdapters([])
+      setPath([])
+      setAmounts([])
+      setAmountOut(amountIn)
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const provider = new ethers.providers.JsonRpcProvider("https://rpc.ankr.com/avalanche")
+
+      const vixrouterContract = new ethers.Contract(VixRouter.address, VixRouter.abi, provider);
+      var inamount = ethers.utils.parseUnits(String(amountIn), getCoinDecimals(new_tokenIn));
+
+      //query one dex
+      // let { amountOut, adapter } = await vixrouterContract.queryNoSplit(inamount, new_tokenIn, new_tokenOut);
+      // amountOut = ethers.utils.formatUnits(amountOut, getCoinDecimals(new_tokenOut));
+      // console.log("@@@@@@@@@ Query", amountIn, getCoinName(new_tokenIn), "=>", amountOut, getCoinName(new_tokenOut), " || ", getDexName(adapter))
+
+      //findbestpath
+      let { adapters, path, amounts } = await vixrouterContract.findBestPath(inamount, new_tokenIn, new_tokenOut, 4);
+      setAdapters(adapters)
+      setPath(path)
+      setAmounts(amounts)
+      routingAtom = atom({
+        adapters: adapters,
+        path: path
+      })
+      var final_amount = Number(ethers.utils.formatUnits(amounts[amounts.length - 1], getCoinDecimals(new_tokenOut)));
+      setAmountOut(final_amount)
+      setLoading(false)
+    } catch (e) {
+      setLoading(false)
+      console.log('query', e)
+    }
+  }
   //swap
   const swap = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum)
@@ -309,9 +310,13 @@ const SwapPage: NextPageWithLayout = () => {
                   <div className="font-medium">Dex Aggregator</div>
                 </div>
                 <div className="flex flex-row pr-5">
-                  <InfoCircle
+                  <LoopIcon
                     className="mr-3 h-auto w-4"
                     style={{ cursor: 'pointer' }}
+                    onClick={() => {
+                      clearOutput()
+                      query()
+                    }}
                   />
                   <OptionIcon
                     className="mr-1 h-auto w-4"
@@ -374,7 +379,8 @@ const SwapPage: NextPageWithLayout = () => {
                 <div
                   className="pr-5 text-sm"
                   onClick={() => {
-                    openModal('ROUTING');
+                    if (adapters.length)
+                      openModal('ROUTING');
                   }}
                   style={{ cursor: 'pointer' }}
                 >
