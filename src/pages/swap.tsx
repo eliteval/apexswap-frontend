@@ -224,10 +224,9 @@ const SwapPage: NextPageWithLayout = () => {
   useEffect(() => {
     const getAmountOut = async () => {
       try {
-        const provider = new ethers.providers.Web3Provider(window.ethereum)
-        const signer = provider.getSigner();
+        const provider = new ethers.providers.JsonRpcProvider("https://rpc.ankr.com/avalanche")
 
-        const vixrouterContract = new ethers.Contract(VixRouter.address, VixRouter.abi, signer);
+        const vixrouterContract = new ethers.Contract(VixRouter.address, VixRouter.abi, provider);
         var inamount = ethers.utils.parseUnits(String(amountIn), getCoinDecimals(tokenIn));
 
         //query one dex
@@ -268,12 +267,12 @@ const SwapPage: NextPageWithLayout = () => {
         setMarketData({
           currentPrice: currentPrice.toFixed(3),
           price_change: price_change,
-          price_change_p1: price_change_p1.toFixed(3),
-          price_change_p7: price_change_p7.toFixed(3),
-          market_cap: market_cap.toLocaleString('en-US'),
-          market_cap_change_p: market_cap_change_p,
-          total_supply: total_supply.toLocaleString('en-US'),
-          total_volume: total_volume.toLocaleString('en-US'),
+          price_change_p1: price_change_p1.toFixed(1),
+          price_change_p7: price_change_p7.toFixed(1),
+          market_cap: formatNumber(market_cap),
+          market_cap_change_p: market_cap_change_p.toFixed(1),
+          total_supply: formatNumber(total_supply),
+          total_volume: formatNumber(total_volume),
         })
         setTokenInPrice(currentPrice);
       } catch (err) {
@@ -281,6 +280,26 @@ const SwapPage: NextPageWithLayout = () => {
       }
     }
     getPrice();
+
+
+
+    const formatNumber = (n) => {
+      var ranges = [
+        { divider: 1e18, suffix: 'E' },
+        { divider: 1e15, suffix: 'P' },
+        { divider: 1e12, suffix: 'T' },
+        { divider: 1e9, suffix: 'G' },
+        { divider: 1e6, suffix: 'M' },
+        { divider: 1e3, suffix: 'k' }
+      ];
+      for (var i = 0; i < ranges.length; i++) {
+        if (n >= ranges[i].divider) {
+          var number = n / ranges[i].divider;
+          return (number.toFixed(2)).toString() + ranges[i].suffix;
+        }
+      }
+      return n.toString();
+    }
   }, [tokenInIndex]);
 
   useEffect(() => {
@@ -604,7 +623,7 @@ const SwapPage: NextPageWithLayout = () => {
                     24h Price Change(USD)
                   </span>
                   <div className="flex items-center">
-                    <span className="text-left text-sm">${marketData.price_change}</span>
+                    <span className="text-left text-sm">${Number(marketData.price_change).toFixed(3)}</span>
                     <span className={cn("text-xs", marketData.price_change_p1 > 0 ? 'text-green-400' : 'text-red-400')}>{`(${marketData.price_change_p1}%)`}</span>
                   </div>
                 </div>

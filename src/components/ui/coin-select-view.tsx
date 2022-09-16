@@ -19,7 +19,7 @@ export default function CoinSelectView({ onSelect }: CoinSelectViewTypes) {
       return (
         name.match(searchKeyword) ||
         (name.toLowerCase().match(searchKeyword) && name) ||
-        address.toLowerCase()== searchKeyword.toLowerCase()
+        address.toLowerCase() == searchKeyword.toLowerCase()
       );
     });
   }
@@ -51,7 +51,7 @@ export default function CoinSelectView({ onSelect }: CoinSelectViewTypes) {
           className="w-full border-y border-x-0 border-dashed border-gray-200 py-3.5 pl-14 pr-6 text-sm focus:border-gray-300 focus:ring-0 dark:border-gray-700 dark:bg-light-dark focus:dark:border-gray-600"
         />
       </div>
-      <ul role="listbox" className="min-h-[200px] py-3">
+      <ul role="listbox" className="min-h-[200px] max-h-[500px]  py-3" style={{ overflow: "auto" }}>
         {coinListData.length > 0 ? (
           coinListData.map((item, index) => (
             <li
