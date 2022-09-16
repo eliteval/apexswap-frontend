@@ -395,7 +395,7 @@ export const coinList = [
     name: 'STG',
     code: 'STG',
     address: '0x2F6F07CDcf3588944Bf4C42aC74ff24bF56e7590',
-    icon: <Image src="/assets/coins/fraxfinanceshare2_32.png" alt="Criptic" width='24px' height='24px' />,
+    icon: <Image src="/assets/coins/stargate_32.png" alt="Criptic" width='24px' height='24px' />,
     coinGeckoCoinsId: 'stargate-finance',
     decimals: 18
   },
@@ -509,6 +509,743 @@ export const coinList = [
     address: '0x60781c2586d68229fde47564546784ab3faca982',
     icon: <Image src="/assets/coins/pangolin_32.png" alt="Criptic" width='24px' height='24px' />,
     coinGeckoCoinsId: 'pangolin',
+    decimals: 18
+  },
+  //no coingecko
+  {
+    name: 'OOE',
+    code: 'OOE',
+    address: '0x0ebd9537a25f56713e34c45b38f421a1e7191469',
+    icon: <Image src="/assets/coins/openocean_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'INSUR',
+    code: 'INSUR',
+    address: '0x544c42fbb96b39b21df61cf322b5edc285ee7429',
+    icon: <Image src="/assets/coins/insurace_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'DYP',
+    code: 'DYP',
+    address: '0x961c8c0b1aad0c0b10a51fef6a867e3091bcef17',
+    icon: <Image src="/assets/coins/defiyieldprotocol_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'ZOO',
+    code: 'ZOO',
+    address: '0x1B88D7aD51626044Ec62eF9803EA264DA4442F32',
+    icon: <Image src="/assets/coins/zookeeperfin_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'NFTD',
+    code: 'NFTD',
+    address: '0x9e3ca00f2d4a9e5d4f0add0900de5f15050812cf',
+    icon: <Image src="/assets/coins/nfttrade_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'CLY',
+    code: 'CLY',
+    address: '0xec3492a2508ddf4fdc0cd76f31f340b30d1793e6',
+    icon: <Image src="/assets/coins/colony_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'FRM',
+    code: 'FRM',
+    address: '0xE5CAeF4Af8780E59Df925470b050Fb23C43CA68C',
+    icon: <Image src="/assets/coins/ferrumnetwork2_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'UNCL',
+    code: 'UNCL',
+    address: '0x7D86F1eafF29F076576b2Ff09CE3bcC7533fD2C5',
+    icon: <Image src="/assets/coins/unicrypt-uncl_32.webp" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'ODDZ',
+    code: 'ODDZ',
+    address: '0xb0a6e056b587d0a85640b39b1cb44086f7a26a1e',
+    icon: <Image src="/assets/coins/oddzfi2_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'ROOBEE',
+    code: 'ROOBEE',
+    address: '0x4036f3d9c45a20f44f0b8B85dD6CA33005fF9654',
+    icon: <Image src="/assets/coins/roobeefin_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'KLO',
+    code: 'KLO',
+    address: '0xb27c8941a7df8958a1778c0259f76d1f8b711c35',
+    icon: <Image src="/assets/coins/kalao_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'ACRE',
+    code: 'ACRE',
+    address: '0x00ee200df31b869a321b10400da10b561f3ee60d',
+    icon: <Image src="/assets/coins/arablest_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'PRX',
+    code: 'PRX',
+    address: '0x08287930ca952673B02D3B70eEc2893Dd7846743',
+    icon: <Image src="/assets/coins/parexmarket_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'SPORE',
+    code: 'SPORE',
+    address: '0x6e7f5c0b9f4432716bdd0a77a3601291b9d9e985',
+    icon: <Image src="/assets/coins/sporeearth_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'TUS',
+    code: 'TUS',
+    address: '0xf693248F96Fe03422FEa95aC0aFbBBc4a8FdD172',
+    icon: <Image src="/assets/coins/treasureunderthesea_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'MELT',
+    code: 'MELT',
+    address: '0x47eb6f7525c1aa999fbc9ee92715f5231eb1241d',
+    icon: <Image src="/assets/coins/defrostfinance_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'VSO',
+    code: 'VSO',
+    address: '0x846d50248baf8b7ceaa9d9b53bfd12d7d7fbb25a',
+    icon: <Image src="/assets/coins/verso_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'IME',
+    code: 'IME',
+    address: '0xf891214fdcf9cdaa5fdc42369ee4f27f226adad6',
+    icon: <Image src="/assets/coins/imperiumempires_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'SHIBX',
+    code: 'SHIBX',
+    address: '0x440abbf18c54b2782a4917b80a1746d3a2c2cce1',
+    icon: <Image src="/assets/coins/shibavax_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'ATL',
+    code: 'ATL',
+    address: '0x90fbe9dfe76f6ef971c7a297641dfa397099a13e',
+    icon: <Image src="/assets/coins/atlantisloans2_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'DFIAT',
+    code: 'DFIAT',
+    address: '0xafe3d2a31231230875dee1fa1eef14a412443d22',
+    icon: <Image src="/assets/coins/defiato_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'ETHM',
+    code: 'ETHM',
+    address: '0x55b1a124c04a54eefdefe5fa2ef5f852fb5f2f26',
+    icon: <Image src="/assets/coins/ethereummeta_32.webp" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'WOW',
+    code: 'WOW',
+    address: '0xa384bc7cdc0a93e686da9e7b8c0807cd040f4e0b',
+    icon: <Image src="/assets/coins/wowswap_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'ncash',
+    code: 'ncash',
+    address: '0xc69Eba65e87889f0805dB717Af06797055A0BA07',
+    icon: <Image src="/assets/coins/nitronetwork_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'MORE',
+    code: 'MORE',
+    address: '0xd9d90f882cddd6063959a9d837b05cb748718a05',
+    icon: <Image src="/assets/coins/moremoneyfi_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'SNOB',
+    code: 'SNOB',
+    address: '0xc38f41a296a4493ff429f1238e030924a1542e50',
+    icon: <Image src="/assets/coins/snowball_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'BOOFI',
+    code: 'BOOFI',
+    address: '0xb00f1ad977a949a3ccc389ca1d1282a2946963b0',
+    icon: <Image src="/assets/coins/boofinance_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'GAJ',
+    code: 'GAJ',
+    address: '0x595c8481c48894771ce8fade54ac6bf59093f9e8',
+    icon: <Image src="/assets/coins/gajfinance_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'LESS',
+    code: 'LESS',
+    address: '0x4a4f77d74cf5fd4ea4ab71ba79988c055a5c27b2',
+    icon: <Image src="/assets/coins/lesstokenftm_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'HERMES',
+    code: 'HERMES',
+    address: '0xb15f02f9da8cd1f99e9dd375f21dc96d25ddd82c',
+    icon: <Image src="/assets/coins/hermesfinance_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'BLIZZ',
+    code: 'BLIZZ',
+    address: '0xb147656604217a03fe2c73c4838770df8d9d21b8',
+    icon: <Image src="/assets/coins/blizz_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'AVXT',
+    code: 'AVXT',
+    address: '0x397bbd6a0e41bdf4c3f971731e180db8ad06ebc1',
+    icon: <Image src="/assets/coins/avaxtars_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'BTC.b',
+    code: 'BTC.b',
+    address: '0x152b9d0FdC40C096757F570A51E494bd4b943E50',
+    icon: <Image src="/assets/coins/bitcoinb_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'gOHM',
+    code: 'gOHM',
+    address: '0x321E7092a180BB43555132ec53AaA65a5bF84251',
+    icon: <Image src="/assets/coins/governanceohm_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'YAK',
+    code: 'YAK',
+    address: '0x59414b3089ce2af0010e7523dea7e2b35d776ec7',
+    icon: <Image src="/assets/coins/yieldyak_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'aAVAXb',
+    code: 'aAVAXb',
+    address: '0x6c6f910a79639dcc94b4feef59ff507c2e843929',
+    icon: <Image src="/assets/coins/ankravaxbond_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'TIME',
+    code: 'TIME',
+    address: '0xb54f16fb19478766a268f172c9480f8da1a7c9c3',
+    icon: <Image src="/assets/coins/wonderland-time_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'WSHARE',
+    code: 'WSHARE',
+    address: '0xe6d1aFea0B76C8f51024683DD27FA446dDAF34B6',
+    icon: <Image src="/assets/coins/walrusfinanceshare_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'KITTY',
+    code: 'KITTY',
+    address: '0x788ae3b5d153d49f8db649aacba1857f744b739e',
+    icon: <Image src="/assets/coins/kittyfinance_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'CAT',
+    code: 'CAT',
+    address: '0x094bfac9894d2a2a35771d0bd6d2447689190f32',
+    icon: <Image src="/assets/coins/kittyfinancecat_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'H2O',
+    code: 'H2O',
+    address: '0x026187bdbc6b751003517bcb30ac7817d5b766f8',
+    icon: <Image src="/assets/coins/defrostfinance_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'CREAM',
+    code: 'CREAM',
+    address: '0xae21d31a6494829a9e4b2b291f4984aae8121757',
+    icon: <Image src="/assets/coins/icecreamfinance_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'PIGGY',
+    code: 'PIGGY',
+    address: '0x1a877b68bda77d78eea607443ccde667b31b0cdf',
+    icon: <Image src="/assets/coins/piggyfinancest_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'PSHARE',
+    code: 'PSHARE',
+    address: '0xa5e2cfe48fe8c4abd682ca2b10fcaafe34b8774c',
+    icon: <Image src="/assets/coins/piggyfinanceshare_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'CSHARE',
+    code: 'CSHARE',
+    address: '0x155f794b56353533e0afbf76e1b1fc57dfad5bd7',
+    icon: <Image src="/assets/coins/icecreamfinance_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'PURCHASE',
+    code: 'PURCHASE',
+    address: '0xd1c3f94de7e5b45fa4edbba472491a9f4b166fc4',
+    icon: <Image src="/assets/coins/avalaunch_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'WLRS',
+    code: 'WLRS',
+    address: '0x395908aeb53d33A9B8ac35e148E9805D34A555D3',
+    icon: <Image src="/assets/coins/frozenwalrus_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'START',
+    code: 'START',
+    address: '0xf44fb887334fa17d2c5c0f970b5d320ab53ed557',
+    icon: <Image src="/assets/coins/starterxyz_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'HSHARES',
+    code: 'HSHARES',
+    address: '0xfa4b6db72a650601e7bd50a0a9f537c9e98311b2',
+    icon: <Image src="/assets/coins/hermesshares_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'xPTP',
+    code: 'xPTP',
+    address: '0x060556209E507d30f2167a101bFC6D256Ed2f3e1',
+    icon: <Image src="/assets/coins/vectorxptp_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'ULX',
+    code: 'ULX',
+    address: '0xC685E8EDDC9f078666794CbfcD8D8351bac404eF',
+    icon: <Image src="/assets/coins/ultronfoundation_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'JNS',
+    code: 'JNS',
+    address: '0x7A023A408F51c23760Eb31190fc731bc12B52954',
+    icon: <Image src="/assets/coins/janusnetwork_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'TRYB',
+    code: 'TRYB',
+    address: '0x564a341df6c126f90cf3ecb92120fd7190acb401',
+    icon: <Image src="/assets/coins/bilira_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'A4',
+    code: 'A4',
+    address: '0x9767203e89dcD34851240B3919d4900d3E5069f1',
+    icon: <Image src="/assets/coins/a4finance_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'PEFI',
+    code: 'PEFI',
+    address: '0xe896cdeaac9615145c0ca09c8cd5c25bced6384c',
+    icon: <Image src="/assets/coins/penguinfinance_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'OML',
+    code: 'OML',
+    address: '0x979fFD8eEd7a43629eA29581DF4Bfe2b3F224e47',
+    icon: <Image src="/assets/coins/omlira_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'HON',
+    code: 'HON',
+    address: '0xed2b42d3c9c6e97e11755bb37df29b6375ede3eb',
+    icon: <Image src="/assets/coins/heroesofnft_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'OH',
+    code: 'OH',
+    address: '0x937e077abaea52d3abf879c9b9d3f2ebd15baa21',
+    icon: <Image src="/assets/coins/ohfinance_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'AVE',
+    code: 'AVE',
+    address: '0x78ea17559b3d2cf85a7f9c2c704eda119db5e6de',
+    icon: <Image src="/assets/coins/avaware_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'CHRO',
+    code: 'CHRO',
+    address: '0xbf1230bb63bfD7F5D628AB7B543Bcefa8a24B81B',
+    icon: <Image src="/assets/coins/chronicum_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'TEDDY',
+    code: 'TEDDY',
+    address: '0x094bd7b2d99711a1486fb94d4395801c6d0fddcc',
+    icon: <Image src="/assets/coins/teddycash_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'ORBIT',
+    code: 'ORBIT',
+    address: '0x4bf5cd1AC6FfF12E88AEDD3c70EB4148F90F8894',
+    icon: <Image src="/assets/coins/orbitlaunch_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'HCT',
+    code: 'HCT',
+    address: '0x45c13620b55c35a5f539d26e88247011eb10fdbd',
+    icon: <Image src="/assets/coins/hurricaneswap_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'JPEG',
+    code: 'JPEG',
+    address: '0x6241af3817db48a7f9e19fd9446d78e50936d275',
+    icon: <Image src="/assets/coins/jpegvault_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'CNR',
+    code: 'CNR',
+    address: '0x8d88e48465f30acfb8dac0b3e35c9d6d7d36abaf',
+    icon: <Image src="/assets/coins/canary_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'BPT',
+    code: 'BPT',
+    address: '0x1111111111182587795eF1098ac7da81a108C97a',
+    icon: <Image src="/assets/coins/boldpoint_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'VEE',
+    code: 'VEE',
+    address: '0x3709e8615e02c15b096f8a9b460ccb8ca8194e86',
+    icon: <Image src="/assets/coins/veefinance_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'BLZZ',
+    code: 'BLZZ',
+    address: '0x0f34919404a290e71fc6a510cb4a6acb8d764b24',
+    icon: <Image src="/assets/coins/blzz_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'SMRT',
+    code: 'SMRT',
+    address: '0xcc2f1d827b18321254223df4e84de399d9ff116c',
+    icon: <Image src="/assets/coins/smartcoin_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'BETS',
+    code: 'BETS',
+    address: '0xc763f8570A48c4c00C80B76107cbE744dDa67b79',
+    icon: <Image src="/assets/coins/betswirl_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'TRACTOR',
+    code: 'TRACTOR',
+    address: '0x542fa0b261503333b90fe60c78f2beed16b7b7fd',
+    icon: <Image src="/assets/coins/tractorjoe_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'XCRS',
+    code: 'XCRS',
+    address: '0x70b4ae8eb7bd572fc0eb244cd8021066b3ce7ee4',
+    icon: <Image src="/assets/coins/novax-xcrs_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'XSLR',
+    code: 'XSLR',
+    address: '0xe6ee049183b474ecf7704da3f6f555a1dcaf240f',
+    icon: <Image src="/assets/coins/novax-xslr_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'XMTL',
+    code: 'XMTL',
+    address: '0x4c1057455747e3ee5871d374fdd77a304ce10989',
+    icon: <Image src="/assets/coins/novax-xmtl_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'DEATH',
+    code: 'DEATH',
+    address: '0x6d923f688c7ff287dc3a5943caeefc994f97b290',
+    icon: <Image src="/assets/coins/smartcoin_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'HUSKY',
+    code: 'HUSKY',
+    address: '0x65378b697853568da9ff8eab60c13e1ee9f4a654',
+    icon: <Image src="/assets/coins/huskyavax_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: '$ALPHA',
+    code: '$ALPHA',
+    address: '0x325a98f258a5732c7b06555603f6af5bc1c17f0a',
+    icon: <Image src="/assets/coins/alphanodes_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'aAVAXc',
+    code: 'aAVAXc',
+    address: '0xc3344870d52688874b06d844e0c36cc39fc727f6',
+    icon: <Image src="/assets/coins/ankravaxrbc_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'bAVAX',
+    code: 'bAVAX',
+    address: '0xb2ac04b71888e17aa2c5102cf3d0215467d74100',
+    icon: <Image src="/assets/coins/bAVAX_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'bDAI',
+    code: 'bDAI',
+    address: '0x6807ed4369d9399847f306d7d835538915fa749d',
+    icon: <Image src="/assets/coins/bDAI_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'bUSDC',
+    code: 'bUSDC',
+    address: '0xc25ff1af397b76252d6975b4d7649b35c0e60f69',
+    icon: <Image src="/assets/coins/bUSDC_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'bUSDT',
+    code: 'bUSDT',
+    address: '0x18cb11c9f2b6f45a7ac0a95efd322ed4cf9eeebf',
+    icon: <Image src="/assets/coins/bUSDT_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'bWBTC',
+    code: 'bWBTC',
+    address: '0x81ccdd9e44c518caee2f720c43cd0853032a1779',
+    icon: <Image src="/assets/coins/bWBTC_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'bWETH',
+    code: 'bWETH',
+    address: '0xccc9b2c9d96c33cecc064ddd444b132eff56e232',
+    icon: <Image src="/assets/coins/bWETH_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'BLIGHT',
+    code: 'BLIGHT',
+    address: '0x350b3Ff32ab1b6BeaBec41aBCEbff682e0F37A3B',
+    icon: <Image src="/assets/coins/empty-token.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'sBLIGHT ',
+    code: 'sBLIGHT ',
+    address: '0xa6772f1efedef231a3d92851470bd73316ddeaa9',
+    icon: <Image src="/assets/coins/empty-token.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'sSPELL',
+    code: 'sSPELL',
+    address: '0x3ee97d514bbef95a2f110e6b9b73824719030f7a',
+    icon: <Image src="/assets/coins/sspelltoken_32.webp" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'FITFI',
+    code: 'FITFI',
+    address: '0x714f020C54cc9D104B6F4f6998C63ce2a31D1888',
+    icon: <Image src="/assets/coins/stepapp_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'SaAVAXb',
+    code: 'SaAVAXb',
+    address: '0x298c5c64eba94b8dd425582e4266a882db6d9848',
+    icon: <Image src="/assets/coins/empty-token.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'SUSHI',
+    code: 'SUSHI',
+    address: '0x39cf1bd5f15fb22ec3d9ff86b0727afc203427cc',
+    icon: <Image src="/assets/coins/empty-token.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'TSD',
+    code: 'TSD',
+    address: '0x4fbf0429599460d327bd5f55625e30e4fc066095',
+    icon: <Image src="/assets/coins/teddy-tsd_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
+    decimals: 18
+  },
+  {
+    name: 'WOO.e',
+    code: 'WOO.e',
+    address: '0xabc9547b534519ff73921b1fba6e672b5f58d083',
+    icon: <Image src="/assets/coins/wootradenetwork_32.png" alt="Criptic" width='24px' height='24px' />,
+    coinGeckoCoinsId: '',
     decimals: 18
   },
 ];

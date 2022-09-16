@@ -63,7 +63,7 @@ export default function CoinSelectView({ onSelect }: CoinSelectViewTypes) {
               className="flex cursor-pointer items-center gap-2 py-3 px-6 outline-none hover:bg-gray-100 focus:bg-gray-200 dark:hover:bg-gray-800 dark:focus:bg-gray-900"
             >
               {item.icon}
-              <span className="uppercase">{item.name}</span>
+              <span className="">{item.name}</span>
             </li>
           ))
         ) : (
