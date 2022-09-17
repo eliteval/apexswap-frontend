@@ -7,7 +7,7 @@ import { HookContext } from '@/lib/hooks/use-hook';
 
 
 export default function Routing({ ...props }) {
-  const { coinslist } = useContext(HookContext);
+  const { coinslist, getCoinIcon, getCoinCode } = useContext(HookContext);
   const { routingAtom } = useRoutingAtom();
   const adapters = routingAtom?.init.adapters;
   const path = routingAtom?.init.path;
@@ -61,8 +61,10 @@ export default function Routing({ ...props }) {
                           <div className="col-span-11 ">
                             <div className="grid grid-cols-1 gap-2 rounded-md p-2 outline outline-offset-2 outline-1">
                               <div className="flex items-center">
-                                {coinslist.filter(ele => ele.address.toLowerCase() == element.toLowerCase())[0].icon}
-                                <p className="w-10 max-w-full px-2 text-lg text-gray-900 dark:text-white">{coinslist.filter(ele => ele.address.toLowerCase() == element.toLowerCase())[0].code}</p>
+                                {getCoinIcon(element)}
+                                <p className="w-10 max-w-full px-2 text-lg text-gray-900 dark:text-white">
+                                  {getCoinCode(element)}
+                                </p>
                               </div>
                               {/* {item.dex.map((ele, id) => ( */}
                               <div className="flex flex-row rounded-md dark:bg-[#334155]">

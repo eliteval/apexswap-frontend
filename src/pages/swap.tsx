@@ -58,6 +58,9 @@ const SwapPage: NextPageWithLayout = () => {
   const [path, setPath] = useState([])
   const [amounts, setAmounts] = useState([])
 
+  const [bestDex, setBestDex] = useState('')
+  const [bestAmountOut, setBestAmountOut] = useState(0)
+
   const [toggleCoin, setToggleCoin] = useState(false);
 
   const [devenv] = useState(false)
@@ -206,17 +209,18 @@ const SwapPage: NextPageWithLayout = () => {
       var inamount = ethers.utils.parseUnits(String(amountIn), getCoinDecimals(new_tokenIn));
 
       //query one dex
-      // let { amountOut, adapter } = await vixrouterContract.queryNoSplit(inamount, new_tokenIn, new_tokenOut);
-      // amountOut = ethers.utils.formatUnits(amountOut, getCoinDecimals(new_tokenOut));
-      // console.log("@@@@@@@@@ Query", amountIn, getCoinName(new_tokenIn), "=>", amountOut, getCoinName(new_tokenOut), " || ", getDexName(adapter))
+      let { amountOut, adapter } = await vixrouterContract.queryNoSplit(inamount, new_tokenIn, new_tokenOut);
+      amountOut = ethers.utils.formatUnits(amountOut, getCoinDecimals(new_tokenOut));
+      console.log("@@@@@@@@@ Query", amountIn, getCoinName(new_tokenIn), "=>", amountOut, getCoinName(new_tokenOut), " || ", getDexName(adapter))
+      // setBestDex(adapter)
+      // setBestAmountOut(amountOut)
 
       //findbestpath
       let { adapters, path, amounts } = await vixrouterContract.findBestPath(inamount, new_tokenIn, new_tokenOut, 4);
       setAdapters(adapters)
       setPath(path)
       setAmounts(amounts)
-      // console.log('query, path, ', path)
-      // console.log('query, amounts, ', amounts)
+      console.log(path)
       routingAtom = atom({
         adapters: adapters,
         path: path
@@ -371,6 +375,7 @@ const SwapPage: NextPageWithLayout = () => {
               <TransactionInfo label={'TxSpeed'} value={txSpeed} />
               <TransactionInfo label={'Price Slippage'} value={tolerance} />
               <TransactionInfo label={'Network Fee'} value={'0.04$'} />
+              {/* <TransactionInfo label={'Best Dex'} value={getDexName(bestDex) + " : " + Number(bestAmountOut).toFixed(6) + " " + getCoinName(tokenOut)} /> */}
             </div>
             <div className="mt-6 flex w-[105%] flex-row justify-between px-2">
               <div className="grid grid-cols-1 place-items-center">

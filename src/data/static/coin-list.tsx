@@ -100,15 +100,15 @@ export const coinList = [
     coinGeckoCoinsId: 'usd-coin',
     decimals: 6
   },
-  // {
-  //   code: 'MIM',
-  //   name: 'MIM',
-  //   address: '0x130966628846BFd36ff31a822705796e8cb8C18D',
-  //   icon: <Image src={MIM}  width='24px' height='24px' />,
-  //   tradingviewcode: 'MIM',
-  //   coinGeckoCoinsId: 'magic-internet-money',
-  //   decimals: 18
-  // },
+  {
+    code: 'MIM',
+    name: 'MIM',
+    address: '0x130966628846BFd36ff31a822705796e8cb8C18D',
+    icon: <Image src={MIM}  width='24px' height='24px' />,
+    tradingviewcode: 'MIM',
+    coinGeckoCoinsId: 'magic-internet-money',
+    decimals: 18
+  },
   {
     code: 'WBTC.e',
     name: 'WBTC.e',
