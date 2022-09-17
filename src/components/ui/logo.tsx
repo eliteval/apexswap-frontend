@@ -17,10 +17,10 @@ const Logo: React.FC<React.SVGAttributes<{}>> = (props) => {
     >
       <span className="relative flex overflow-hidden">
         {isMounted && isDarkMode && (
-          <Image src={darkLogo} alt="Criptic" priority />
+          <Image src={darkLogo}  priority />
         )}
         {isMounted && !isDarkMode && (
-          <Image src={lightLogo} alt="Criptic" priority />
+          <Image src={lightLogo}  priority />
         )}
       </span>
     </AnchorLink>

@@ -6,8 +6,8 @@ import { OptionIcon } from '@/components/icons/option';
 
 export default function SettingsButton() {
   const { opeSettings } = useSettingsDrawer();
-  const [layout] = useLocalStorage<string>('criptic-layout');
-  const [themeColor] = useLocalStorage<string>('criptic-color');
+  const [layout] = useLocalStorage<string>('apex-layout');
+  const [themeColor] = useLocalStorage<string>('apex-color');
 
   useDirection(layout ? layout : 'ltr');
   useThemeColor(themeColor ? themeColor : '#2563eb');

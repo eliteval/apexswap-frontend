@@ -20,8 +20,8 @@ const actionOptions = [
     value: 'custom_contact',
   },
   {
-    name: 'CRIPTIC Token',
-    value: 'criptic_token',
+    name: 'APEX Token',
+    value: 'apex_token',
   },
   {
     name: 'Reserve',
@@ -217,7 +217,7 @@ function ActionFields() {
               placeholder="Enter contact address 0x1f9840a85..."
             />
           )}
-          {actionType.value === 'criptic_token' && (
+          {actionType.value === 'apex_token' && (
             <div className="rtl:xs:mlr6 rtl:sm:mlr12 mt-4 ltr:xs:ml-6 ltr:sm:ml-12">
               <CripticTokenAction
                 selectedOption={cripticTokenAction}
@@ -269,7 +269,7 @@ const CreateProposalPage: NextPageWithLayout = () => {
               </h2>
               <p className="leading-[1.8] text-gray-600 dark:text-gray-400">
                 In order to submit a proposal you must have at least 10,000
-                CRIPTIC tokens <br className="hidden xl:inline-block" />{' '}
+                APEX tokens <br className="hidden xl:inline-block" />{' '}
                 delegated to you{' '}
                 <a
                   target="_blank"

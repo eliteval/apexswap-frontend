@@ -109,7 +109,7 @@ function ThemeSwitcher() {
 }
 
 // function LayoutSwitcher() {
-//   const [layout, setLayout] = useLocalStorage('criptic-layout', 'ltr');
+//   const [layout, setLayout] = useLocalStorage('apex-layout', 'ltr');
 //   useDirection(layout ? layout : 'ltr');
 
 //   return (
@@ -177,7 +177,7 @@ function ThemeSwitcher() {
 
 function ColorSwitcher() {
   const [themeColor, setThemeColor] = useLocalStorage(
-    'criptic-color',
+    'apex-color',
     '#2a2a2e'
   );
   useThemeColor(themeColor ? themeColor : '#000000');

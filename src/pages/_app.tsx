@@ -10,6 +10,7 @@ import DrawersContainer from '@/components/drawer-views/container';
 import SettingsButton from '@/components/settings/settings-button';
 import SettingsDrawer from '@/components/settings/settings-drawer';
 import { WalletProvider } from '@/lib/hooks/use-connect';
+import { HookProvider } from '@/lib/hooks/use-hook';
 // base css file
 import 'swiper/css';
 import '@/assets/css/scrollbar.css';
@@ -41,11 +42,13 @@ function CustomApp({ Component, pageProps }: AppPropsWithLayout) {
             defaultTheme="dark"
           >
             <WalletProvider>
-              {getLayout(<Component {...pageProps} />)}
-              <SettingsButton />
-              <SettingsDrawer />
-              <ModalsContainer />
-              <DrawersContainer />
+              <HookProvider>
+                {getLayout(<Component {...pageProps} />)}
+                <SettingsButton />
+                <SettingsDrawer />
+                <ModalsContainer />
+                <DrawersContainer />
+              </HookProvider>
             </WalletProvider>
           </ThemeProvider>
         </Hydrate>

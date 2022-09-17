@@ -1,30 +1,22 @@
-import Button from '@/components/ui/button';
-import { InfoIcon } from '@/components/icons/info-icon';
-import { Switch } from '@/components/ui/switch';
-import cn from 'classnames';
-import { useState } from 'react';
-import Scrollbar from '@/components/ui/scrollbar';
-import { nftData } from '@/data/static/single-nft';
-import { coinList } from '@/data/static/coin-list';
+import { useEffect, useState, useMemo, useContext } from 'react';
 import { dexList } from '@/data/static/dex-list';
 import { useBreakpoint } from '@/lib/hooks/use-breakpoint';
 import { atom, useAtom } from 'jotai';
 import { useRoutingAtom } from '@/pages/swap';
+import { HookContext } from '@/lib/hooks/use-hook';
+
 
 export default function Routing({ ...props }) {
+  const { coinslist } = useContext(HookContext);
   const { routingAtom } = useRoutingAtom();
-  console.log('routingAtom => ', routingAtom?.init);
   const adapters = routingAtom?.init.adapters;
   const path = routingAtom?.init.path;
-  const breakpoint = useBreakpoint();
   const routes = path.slice(1);
   const percent = [100];
   const coin_in = path[0];
   const coin_out = path[path?.length - 1];
-  const coins = coinList;
-  const inCoin = coins.filter(ele => ele.address.toLowerCase() == coin_in.toLowerCase());
-  const outCoin = coins.filter(ele => ele.address.toLowerCase() == coin_out.toLowerCase());
-
+  const inCoin = coinslist.filter(ele => ele.address.toLowerCase() == coin_in.toLowerCase());
+  const outCoin = coinslist.filter(ele => ele.address.toLowerCase() == coin_out.toLowerCase());
 
   return (
     <div
@@ -69,8 +61,8 @@ export default function Routing({ ...props }) {
                           <div className="col-span-11 ">
                             <div className="grid grid-cols-1 gap-2 rounded-md p-2 outline outline-offset-2 outline-1">
                               <div className="flex items-center">
-                                {coins.filter(ele => ele.address.toLowerCase() == element.toLowerCase())[0].icon}
-                                <p className="w-10 max-w-full px-2 text-lg text-gray-900 dark:text-white">{coins.filter(ele => ele.address.toLowerCase() == element.toLowerCase())[0].code}</p>
+                                {coinslist.filter(ele => ele.address.toLowerCase() == element.toLowerCase())[0].icon}
+                                <p className="w-10 max-w-full px-2 text-lg text-gray-900 dark:text-white">{coinslist.filter(ele => ele.address.toLowerCase() == element.toLowerCase())[0].code}</p>
                               </div>
                               {/* {item.dex.map((ele, id) => ( */}
                               <div className="flex flex-row rounded-md dark:bg-[#334155]">

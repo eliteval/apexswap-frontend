@@ -1,12 +1,13 @@
+import { useEffect, useState, useRef, useMemo, useContext } from 'react';
 import type { CoinTypes } from '@/types';
-import { useState, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import { motion, AnimatePresence } from 'framer-motion';
 import cn from 'classnames';
 import { ChevronDown } from '@/components/icons/chevron-down';
 import { useClickAway } from '@/lib/hooks/use-click-away';
 import { useLockBodyScroll } from '@/lib/hooks/use-lock-body-scroll';
-import { coinList } from '@/data/static/coin-list';
+import { HookContext } from '@/lib/hooks/use-hook';
+
 // dynamic import
 const CoinSelectView = dynamic(() =>
   import('@/components/ui/coin-select-view')
@@ -44,9 +45,10 @@ export default function CoinInput({
   // className,
   ...rest
 }: CoinInputTypes) {
-  let [focused, setFocused] = useState(false);
+  const { coinslist, getCoinDecimals, getCoinName, } = useContext(HookContext);
+
   let [value, setValue] = useState(defaultValue);
-  let [selectedCoin, setSelectedCoin] = useState(coinList[coinIndex]);
+  let [selectedCoin, setSelectedCoin] = useState(coinslist[coinIndex]);
   let [visibleCoinList, setVisibleCoinList] = useState(false);
   const modalContainerRef = useRef<HTMLDivElement>(null);
   useClickAway(modalContainerRef, () => {
@@ -62,7 +64,7 @@ export default function CoinInput({
   };
   function handleSelectedCoin(coin: CoinTypes) {
     setSelectedCoin(coin);
-    var coinIndex = coinList.findIndex((element) => element.address == coin.address)
+    var coinIndex = coinslist.findIndex((element) => element.address == coin.address)
     onChangeTokenIndex(coinIndex);
     setVisibleCoinList(false);
   }
@@ -83,8 +85,8 @@ export default function CoinInput({
             onClick={() => setVisibleCoinList(true)}
             className="min-w-[80px] flex items-center font-medium outline-none dark:text-gray-100"
           >
-            {onToggleTokens ? coinList[coinIndex]?.icon : selectedCoin?.icon}{' '}
-            <span className="ltr:ml-2 rtl:mr-2">{onToggleTokens ? coinList[coinIndex]?.code : selectedCoin?.code}</span>
+            {onToggleTokens ? coinslist[coinIndex]?.icon : selectedCoin?.icon}{' '}
+            <span className="ltr:ml-2 rtl:mr-2">{onToggleTokens ? coinslist[coinIndex]?.code : selectedCoin?.code}</span>
             <ChevronDown className="ltr:ml-1.5 rtl:mr-1.5" />
           </button>
           <input
@@ -103,7 +105,7 @@ export default function CoinInput({
           />
         </div>
         <div className="mt-0.5 mb-2 min-h-[10px] flex flex-row justify-between">
-          <span>{onToggleTokens ? coinList[coinIndex]?.name : selectedCoin?.name}</span>
+          <span>{onToggleTokens ? coinslist[coinIndex]?.name : selectedCoin?.name}</span>
           <div className="font-xs text-gray-400 text-right">
             = ${showvalue ? Number(showvalue * usdPrice).toFixed(6) : usdPrice ? Number(value) * usdPrice : '0.00'}
           </div>

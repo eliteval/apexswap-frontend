@@ -10,11 +10,11 @@ export type CoinTypes = {
   icon: JSX.Element;
   code: string;
   coinGeckoCoinsId: string;
-  tradingviewcode: string;
   name: string;
-  address: string;
-  price: number;
+  address: string;  
   decimals: number;
+  tradingviewcode?: string;
+  price?: number;
 };
 
 export interface Attachment {

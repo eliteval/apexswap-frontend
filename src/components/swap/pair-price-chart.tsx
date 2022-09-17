@@ -1,4 +1,5 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useContext } from 'react';
+import { HookContext } from '@/lib/hooks/use-hook';
 import cn from 'classnames';
 import React from 'react';
 import {
@@ -14,8 +15,6 @@ import {
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 import axios from 'axios';
-import { getCoinName } from '@/lib/utils/swap-utils';
-
 
 const plugin = {
   id: 'custom_canvas_background_color',
@@ -73,6 +72,8 @@ export default function PairPriceChart({
   tokenIn,
   tokenOut,
 }: PairPriceCharTypes) {
+  const { coinslist, getCoinDecimals, getCoinName, } = useContext(HookContext);
+
   const [hours, setHours] = useState('24');
   const [timeprices1, setTimePrices1] = useState([]);
   const [timeprices2, setTimePrices2] = useState([]);

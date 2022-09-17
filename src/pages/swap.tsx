@@ -1,20 +1,14 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useContext } from 'react';
 import axios from 'axios';
 import type { NextPageWithLayout } from '@/types';
 import cn from 'classnames';
 import { NextSeo } from 'next-seo';
 import Button from '@/components/ui/button';
 import { OptionIcon } from '@/components/icons/option';
-import { InfoCircle } from '@/components/icons/info-circle';
 import { LoopIcon } from '@/components/icons/loop-icon';
 import CoinInput from '@/components/ui/coin-input';
 import TransactionInfo from '@/components/ui/transaction-info';
 import { SwapIcon } from '@/components/icons/swap-icon';
-import Image from '@/components/ui/image';
-import { coinList } from '@/data/static/coin-list';
-import { dexList } from '@/data/static/dex-list';
-import Scrollbar from '@/components/ui/scrollbar';
-import DashboardLayout from '@/layouts/_dashboard';
 import Layout from '@/layouts/_layout';
 import TradeContainer from '@/components/ui/trade';
 import { useModal } from '@/components/modal-views/context';
@@ -29,8 +23,8 @@ import { ethers } from "ethers";
 import ERC20 from "@/abi/ERC20.json";
 import WAVAX from "@/abi/WAVAX.json";
 import VixRouter from "@/abi/VixRouter.json";
-import { getCoinDecimals, getCoinName, getDexName } from '@/lib/utils/swap-utils';
-import { chain } from 'lodash';
+import { getDexName } from '@/lib/utils/swap-utils';
+import { HookContext } from '@/lib/hooks/use-hook';
 
 // Create your atoms and derivatives
 var routingAtom, toSettingsAtom;
@@ -42,6 +36,7 @@ export function useSettingsAtom() {
 }
 
 const SwapPage: NextPageWithLayout = () => {
+  const { coinslist, getCoinDecimals, getCoinName, } = useContext(HookContext);
 
   const [marketData, setMarketData] = useState({})
 
@@ -87,7 +82,7 @@ const SwapPage: NextPageWithLayout = () => {
     }
 
     (async () => {
-      var tokenin_address = coinList[tokenInIndex].address
+      var tokenin_address = coinslist[tokenInIndex].address
       setTokenIn(tokenin_address);
       var balance = await getBalance(tokenin_address);
       setTokenInBalance(balance)
@@ -95,14 +90,16 @@ const SwapPage: NextPageWithLayout = () => {
   }, [tokenInIndex])
   //set tokenout
   useEffect(() => {
-    setTokenOut(coinList[tokenOutIndex].address);
+    setTokenOut(coinslist[tokenOutIndex].address);
   }, [tokenOutIndex])
 
   // marketdata, tokenIn Price
   useEffect(() => {
     const getPrice = async () => {
+      var coingeckoid = coinslist[tokenInIndex].coinGeckoCoinsId
+
       try {
-        const { data } = await axios.get(`https://api.coingecko.com/api/v3/coins/${coinList[tokenInIndex].coinGeckoCoinsId}`);
+        const { data } = await axios.get(`https://api.coingecko.com/api/v3/coins/${coingeckoid}`);
         const currentPrice = data?.market_data.current_price.usd;
         const price_change = data?.market_data.price_change_24h_in_currency.usd;
         const price_change_p1 = data?.market_data.price_change_percentage_24h_in_currency.usd;
@@ -123,6 +120,8 @@ const SwapPage: NextPageWithLayout = () => {
         })
         setTokenInPrice(currentPrice);
       } catch (err) {
+        setMarketData({})
+        setTokenInPrice(0);
         console.error(err.message);
       }
     }
@@ -151,7 +150,7 @@ const SwapPage: NextPageWithLayout = () => {
   useEffect(() => {
     const getPrice = async () => {
       try {
-        const { data } = await axios.get(`https://api.coingecko.com/api/v3/coins/${coinList[tokenOutIndex].coinGeckoCoinsId}`);
+        const { data } = await axios.get(`https://api.coingecko.com/api/v3/coins/${coinslist[tokenOutIndex].coinGeckoCoinsId}`);
         const currentPrice = data?.market_data.current_price.usd;
         setTokenOutPrice(currentPrice);
       } catch (err) {
@@ -216,6 +215,8 @@ const SwapPage: NextPageWithLayout = () => {
       setAdapters(adapters)
       setPath(path)
       setAmounts(amounts)
+      // console.log('query, path, ', path)
+      // console.log('query, amounts, ', amounts)
       routingAtom = atom({
         adapters: adapters,
         path: path
@@ -252,8 +253,10 @@ const SwapPage: NextPageWithLayout = () => {
       const tokenContract = new ethers.Contract(tokenIn, ERC20.abi, signer);
       var approved_amount = await tokenContract.allowance(userAddress, VixRouter.address);
       if (Number(ethers.utils.formatUnits(approved_amount, getCoinDecimals(tokenIn))) < amountIn) {
-        // var approving_amount = ethers.utils.parseUnits(String(amountIn), getCoinDecimals(tokenIn));
-        var approving_amount = ethers.utils.parseUnits("9999999", getCoinDecimals(tokenIn));
+        if (devenv)
+          var approving_amount = ethers.utils.parseUnits("9999999", getCoinDecimals(tokenIn));
+        else
+          var approving_amount = ethers.utils.parseUnits(String(amountIn), getCoinDecimals(tokenIn));
         await tokenContract.approve(VixRouter.address, approving_amount);
       }
     }
@@ -289,8 +292,6 @@ const SwapPage: NextPageWithLayout = () => {
     setPath([])
     setAmounts([])
   }
-
-
 
   const { openModal } = useModal();
 
@@ -365,8 +366,8 @@ const SwapPage: NextPageWithLayout = () => {
             </div>
             <div className="flex flex-col gap-4 px-2 xs:gap-[18px]">
               <TransactionInfo label={'Savings'} value={`~$${Number(tokenOutPrice * amountOut * 0.02).toFixed(3)}`} />
-              {/* <TransactionInfo label={'Min. Received'} value={`${amountOut ? Number(amountOut * 0.99).toFixed(2) : 0} ${coinList[tokenOutIndex].code}`} /> */}
-              <TransactionInfo label={'Price'} value={`${(amountOut / amountIn).toFixed(2)} ${coinList[tokenOutIndex].code}/${coinList[tokenInIndex].code}`} />
+              {/* <TransactionInfo label={'Min. Received'} value={`${amountOut ? Number(amountOut * 0.99).toFixed(2) : 0} ${coinslist[tokenOutIndex].code}`} /> */}
+              <TransactionInfo label={'Price'} value={`${(amountOut / amountIn).toFixed(2)} ${coinslist[tokenOutIndex]?.code}/${coinslist[tokenInIndex]?.code}`} />
               <TransactionInfo label={'TxSpeed'} value={txSpeed} />
               <TransactionInfo label={'Price Slippage'} value={tolerance} />
               <TransactionInfo label={'Network Fee'} value={'0.04$'} />
@@ -419,6 +420,7 @@ const SwapPage: NextPageWithLayout = () => {
             {devenv ? <div>
               <br></br>
               <hr></hr>
+              <h1>coinslist: {coinslist.length}</h1>
               <h1>tokenInIndex: {tokenInIndex}</h1>
               <h1>tokenIn: {tokenIn}</h1>
               <h1>tokenInBalance: {tokenInBalance}</h1>
