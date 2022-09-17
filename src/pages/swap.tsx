@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, useContext } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import type { NextPageWithLayout } from '@/types';
 import cn from 'classnames';
