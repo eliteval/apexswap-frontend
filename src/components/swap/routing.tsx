@@ -4,7 +4,7 @@ import { useBreakpoint } from '@/lib/hooks/use-breakpoint';
 import { atom, useAtom } from 'jotai';
 import { useRoutingAtom } from '@/pages/swap';
 import { HookContext } from '@/lib/hooks/use-hook';
-
+import { getDexName } from '@/lib/utils/swap-utils';
 
 export default function Routing({ ...props }) {
   const { coinslist, getCoinIcon, getCoinCode } = useContext(HookContext);
@@ -68,7 +68,9 @@ export default function Routing({ ...props }) {
                               </div>
                               {/* {item.dex.map((ele, id) => ( */}
                               <div className="flex flex-row rounded-md dark:bg-[#334155]">
-                                <p className="ml-2 max-w-full text-center">{dexList.filter(ele => ele.address.toLowerCase() == adapters[index].toLowerCase())[0].dex}</p>
+                                <p className="ml-2 max-w-full text-center">
+                                  {getDexName(adapters[index])}
+                                </p>
                                 {/* <p className="w-20 max-w-full text-center">{`${'100'}%`}</p> */}
                               </div>
                               {/* ))} */}

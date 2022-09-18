@@ -23,4 +23,8 @@ export const dexList = [
     address: '0x9cef6314A4a9Cc6D1DC5099411Bf3Dd3d3c5C170',
     dex: 'Platypus'
   },
+  {
+    address: '0xB6905101ef7E2c294058a29E89eb83e0f2866303',
+    dex: 'GMX'
+  },
 ];
