@@ -12,6 +12,7 @@ export default function Routing({ ...props }) {
   const adapters = routingAtom?.init.adapters;
   const path = routingAtom?.init.path;
   const routes = path.slice(1);
+  console.log('routes => ', routes);
   const percent = [100];
   const coin_in = path[0];
   const coin_out = path[path?.length - 1];

@@ -104,7 +104,7 @@ export const menuItemsOld = [
 
 export const menuItems = [
   {
-    name: 'Trade',
+    name: 'Swap',
     icon: <ExchangeIcon />,
     href: routes.swap,
     dropdownItems: [
@@ -119,20 +119,20 @@ export const menuItems = [
     ],
   },
   {
-    name: 'Bridge',
-    icon: <ExchangeIcon />,
-    href: routes.bridge,
-  },
-  {
-    name: 'Farm',
-    icon: <FarmIcon />,
-    href: routes.farms,
-  },
-  {
     name: 'Liquidity',
     icon: <FarmIcon />,
     href: routes.liquidity,
   },
+  {
+    name: 'Bridge',
+    icon: <ExchangeIcon />,
+    href: routes.bridge,
+  },
+  // {
+  //   name: 'Farm',
+  //   icon: <FarmIcon />,
+  //   href: routes.farms,
+  // },
 ]
 
 type SidebarProps = {

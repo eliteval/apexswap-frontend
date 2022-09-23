@@ -70,44 +70,49 @@ export default function CoinInput({
   }
   return (
     <>
-      <div className="dark:focus-within:border-blue-600 dark:focus-within:bg-[#0f0f0e] block px-4 min-h-[70px] rounded-lg border border-gray-200  transition-colors duration-200 hover:border-gray-900 dark:border-gray-700 dark:bg-[#0f1112]">
-        <div className="mt-0.5 mb-0.5 min-h-[10px] flex flex-row justify-between">
-          <span className="mt-2 mb-0.5 min-h-[10px] block text-xs text-gray-600 dark:text-gray-400">{label} </span>
-          {isInbox ? <div className="mt-2 mb-0.5 min-h-[10px] block text-xs text-gray-600 text-right dark:text-gray-400 border-b border-b-gray-400" style={{ cursor: "pointer" }}
-            onClick={() => { setValue(tokenInBalance); onchangeAmount(tokenInBalance); }}
-          >
-            Max
-          </div> : <></>}
+      <div>
+        <div className=" block px-4 min-h-[70px] rounded-t-[10px]  transition-colors duration-200 dark:bg-[#4910BA]">
+          <div className="mt-0.5 mb-0.5 min-h-[10px] flex flex-row justify-between">
+            <span className="mt-2 mb-0.5 min-h-[10px] block text-xs text-gray-600 dark:text-white">{label} </span>
+            {isInbox ? <div className="mt-2 mb-0.5 min-h-[10px] block text-xs text-gray-600 text-right dark:text-white border-b border-b-white" style={{ cursor: "pointer" }}
+              onClick={() => { setValue(tokenInBalance); onchangeAmount(tokenInBalance); }}
+            >
+              Max
+            </div> : <></>}
 
+          </div>
+          <div className="min-h-[60px] flex flex-row justify-between items-center">
+            <button
+              onClick={() => setVisibleCoinList(true)}
+              className="min-w-[80px] flex items-center font-medium outline-none dark:text-gray-100"
+            >
+              {onToggleTokens ? coinslist[coinIndex]?.icon2 : selectedCoin?.icon2}{' '}
+              <span className="ltr:ml-2 rtl:mr-2">{onToggleTokens ? coinslist[coinIndex]?.code : selectedCoin?.code}</span>
+              <ChevronDown className="ltr:ml-1.5 rtl:mr-1.5" />
+            </button>
+            <input
+              type="text"
+              value={isInbox ? value : showvalue?.toFixed(6)}
+              placeholder="0.0"
+              inputMode="decimal"
+              disabled={!isInbox}
+              onChange={handleOnChange}
+              className={cn('w-1/2 h-[23px] px-4 dark:bg-[#000B2F]/10 rounded-[10px] border-0 text-right outline-none dark:focus:ring-0',
+                isInbox
+                  ? ''
+                  : 'cursor-not-allowed bg-gray-100 text-gray-400'
+              )}
+              // style={{ padding: '0px' }}
+            />
+          </div>
         </div>
-        <div className="min-h-[60px] flex flex-row justify-between">
-          <button
-            onClick={() => setVisibleCoinList(true)}
-            className="min-w-[80px] flex items-center font-medium outline-none dark:text-gray-100"
-          >
-            {onToggleTokens ? coinslist[coinIndex]?.icon : selectedCoin?.icon}{' '}
-            <span className="ltr:ml-2 rtl:mr-2">{onToggleTokens ? coinslist[coinIndex]?.code : selectedCoin?.code}</span>
-            <ChevronDown className="ltr:ml-1.5 rtl:mr-1.5" />
-          </button>
-          <input
-            type="text"
-            value={isInbox ? value : showvalue?.toFixed(6)}
-            placeholder="0.0"
-            inputMode="decimal"
-            disabled={!isInbox}
-            onChange={handleOnChange}
-            className={cn('w-full rounded-tr-lg rounded-br-lg border-0 text-right text-lg outline-none dark:focus:ring-0 dark:bg-inherit',
-              isInbox
-                ? ''
-                : 'cursor-not-allowed bg-gray-100 text-gray-400'
-            )}
-            style={{ padding: '0px' }}
-          />
-        </div>
-        <div className="mt-0.5 mb-2 min-h-[10px] flex flex-row justify-between">
-          <span>{onToggleTokens ? coinslist[coinIndex]?.name : selectedCoin?.name}</span>
-          <div className="font-xs text-gray-400 text-right">
-            = ${showvalue ? Number(showvalue * usdPrice).toFixed(6) : usdPrice ? Number(value) * usdPrice : '0.00'}
+        <div className="block px-4 min-h-[28px] rounded-b-[10px] dark:bg-[#FFFFFF] py-auto">
+          <div className="mb-1 flex flex-row justify-between">
+            <span className="mt-1 text-black" style={{fontFamily: 'Poppins', fontSize: '10px', fontWeight: '500'}}>Balance: ---</span>
+            <div className="mt-1 text-black font-xs text-right" style={{fontFamily: 'Poppins', fontSize: '10px', fontWeight: '500'}}>
+              {/* = ${showvalue ? Number(showvalue * usdPrice).toFixed(6) : usdPrice ? Number(value) * usdPrice : '0.00'} */}
+              50% -100%
+            </div>
           </div>
         </div>
       </div>

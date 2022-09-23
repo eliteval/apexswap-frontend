@@ -131,20 +131,20 @@ Styles for Swiper slider
 /* width */
 /* width */
 ::-webkit-scrollbar {
-  width: 12px;
+  width: 6px;
   height: 8px;
 }
 
 /* Track */
 ::-webkit-scrollbar-track {
-  background: #111827;
+  background: #1B0D6B;
   opacity: 1
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
   border-radius: 10px;
-  background: #8e8ee6;
+  background: #8B76FF;
 }
 
 /* Handle on hover */
@@ -161,6 +161,16 @@ Styles for Swiper slider
 }
 .background{
   background-image: linear-gradient(to right, #F9C72D, #F05A2A, #F1573F, #F147A3, #2EEDE0);
+}
+.vector3{
+  /* position: absolute;
+  width: 1071.79px;
+  height: 1054.88px;
+  left: 1037.49px;
+  top: 1199.28px; */
+  background-image: radial-gradient(111.63% 111.63% at 42.64% -5.82%, #FE8B18 36.35%, #8031FE 76.41%, #7F30FF 100%) /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */;
+  /* filter: blur(300px);
+  transform: rotate(172.68deg); */
 }
 
 table {

@@ -1,4 +1,7 @@
 import Button from '@/components/ui/button';
+import { Gear } from '@/components/icons/gear';
+import { Gear2 } from '@/components/icons/gear2';
+import { Globe } from '@/components/icons/globe';
 import { WalletContext } from '@/lib/hooks/use-connect';
 import { Menu } from '@/components/ui/menu';
 import { Transition } from '@/components/ui/transition';
@@ -88,16 +91,44 @@ export default function WalletConnect() {
 
         </div>
       ) : (
+        <>
         <Button
           // id="MyElement"
-          size="small"
-          shape="pill"
-          fullWidth={true}
-          className="bg-gradient-to-r from-[#312e81] to-[#1e3a8a] mt-1 uppercase xs:tracking-widest"
+          size="mini"
+          shape="circle"
+          // fullWidth={true}
+          // className="bg-gradient-to-r from-[#312e81] to-[#1e3a8a] mt-1 uppercase xs:tracking-widest"
+          className="mt-1 bg-transparent border-2 border-[#0D0C52] rounded-full"
+          style={{fontFamily: 'Poppins', fontSize:'14px'}}
           onClick={() => openModal('WALLET_CONNECT_VIEW')}
         >
-          CONNECT
+          <Globe />
         </Button>
+        <Button
+          // id="MyElement"
+          size="mini"
+          shape="circle"
+          // fullWidth={true}
+          // className="bg-gradient-to-r from-[#312e81] to-[#1e3a8a] mt-1 uppercase xs:tracking-widest"
+          className="mt-1 bg-transparent border-2 border-[#0D0C52] rounded-full"
+          style={{fontFamily: 'Poppins', fontSize:'14px'}}
+          onClick={() => openModal('WALLET_CONNECT_VIEW')}
+        >
+          <Gear2 />
+        </Button>
+        <Button
+          // id="MyElement"
+          size="mini"
+          shape="pill"
+          // fullWidth={true}
+          // className="bg-gradient-to-r from-[#312e81] to-[#1e3a8a] mt-1 uppercase xs:tracking-widest"
+          className="mt-1 py-1 px-3 bg-transparent border-2 border-[#FEB58D] rounded-full"
+          style={{fontFamily: 'Poppins', fontSize:'14px'}}
+          onClick={() => openModal('WALLET_CONNECT_VIEW')}
+        >
+          <span>Connect Wallet</span>
+        </Button>
+        </>
       )}
     </>
   );

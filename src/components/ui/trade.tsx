@@ -69,8 +69,8 @@ export default function TradeContainer({ children }: React.PropsWithChildren<{}>
     setSelectedMenuItem(tradeMenu[currentPath]);
   }, [currentPath]);
   return (
-    <div className="text-sm ">
-      <div className=" mt-6 w-full max-w-lg rounded-xl border border-[#374151] bg-white  shadow-card dark:bg-[#161b1d] xs:p-4 xs:pt-5">
+    <div className="text-sm rounded-[1px] outline outline-[#0D0C52] outline-offset-[16px] outline-1 w-[346px] ">
+      <div className=" w-full max-w-lg border border-[#374151] shadow-card dark:bg-[#0D0C52] rounded-[10px]  xs:px-8">
         {/* <nav className="mb-2 min-h-[40px] border-gray-200 uppercase tracking-wider dark:border-gray-700 xs:mb-2 xs:tracking-wide">
           <div className="rounded-md p-1 bg-[#303030] hidden items-center text-gray-600 dark:text-gray-400 sm:flex">
             {tradeMenu.map((item) => (

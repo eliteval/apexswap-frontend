@@ -27,7 +27,7 @@ const variants: Record<VariantNames, string[]> = {
 };
 const colors: Record<ColorNames, string[]> = {
   primary: ['text-brand', 'bg-brand', 'border-brand'],
-  white: ['text-gray-900', 'bg-white', 'border-white'],
+  white: ['text-yellow-500', 'bg-white', 'border-white'],
   gray: ['text-[#6b7280]', 'bg-gray-500', 'border-gray-100'],
   success: ['text-green-500', 'bg-green-500', 'border-green-500'],
   info: ['text-blue-500', 'bg-cyan-500', 'border-blue-500'],
@@ -107,10 +107,10 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         break;
 
       case 'transparent':
-        buttonColorClassNames = `${colorClassNames[0]} ${
+        buttonColorClassNames = `${colorClassNames[1]} ${
           disabled || isLoading
             ? ''
-            : 'border border-gray-800 hover:bg-gray-100 dark:bg-gray-900 dark:hover:bg-gray-900 focus:bg-gray-100 dark:focus:bg-gray-800'
+            : 'border border-yellow-800 hover:bg-gray-100 dark:bg-white dark:hover:bg-gray-900 focus:bg-gray-100 dark:focus:bg-gray-800'
         } `;
         buttonDripColor = 'rgba(0, 0, 0, 0.1)';
         break;
