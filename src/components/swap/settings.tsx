@@ -32,8 +32,9 @@ export default function Settings({ ...props }) {
     }
   }, [toSettingsAtom?.init.tol]);
   const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.value) {
+    if (event.target.value!=='') {
       setToleranceValue(event.target.value+'%');
+      console.log('toleranceValue => ', toleranceValue);
       setTolerance('');
     }
   };
@@ -125,7 +126,7 @@ export default function Settings({ ...props }) {
           <input
             className="mb-5 max-h-8 w-full rounded-full border border-gray-200 py-1 text-sm text-gray-900 placeholder:text-gray-600 focus:border-gray-900 focus:outline-none ltr:pr-2 ltr:pl-1 rtl:pl-1 rtl:pr-1 dark:border-gray-600 dark:bg-light-dark dark:text-white dark:placeholder:text-gray-400 dark:focus:border-gray-500 sm:ltr:pl-2 sm:rtl:pr-4 xl:ltr:pl-3 xl:rtl:pr-6 md:h-9 md:px-2 lg:mt-6"
             placeholder={"     " + "%"}
-            value={toleranceValue}
+            // value={toleranceValue}
             onChange={handleOnChange}
             autoComplete="off"
             type="search"

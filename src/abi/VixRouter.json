@@ -1,7 +1,7 @@
 {
   "contractName": "VixRouter",
-  "address": "0xC157113836cbb7F2D7231e2eFD5e2C67662D9C93",
-  "abi":[
+  "address": "0xd3196E19b7cB4DD5B71442700b79eE7776B03B1e",
+  "abi": [
     {
       "inputs": [
         {
@@ -22,6 +22,56 @@
       ],
       "stateMutability": "nonpayable",
       "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "_tokenIn",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "_tokenOut",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "_amountIn",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "_amountOut",
+          "type": "uint256"
+        }
+      ],
+      "name": "ApexSwap",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "memo",
+          "type": "string"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "number",
+          "type": "uint256"
+        }
+      ],
+      "name": "Logs",
+      "type": "event"
     },
     {
       "anonymous": false,
@@ -59,6 +109,142 @@
         }
       ],
       "name": "Recovered",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "tokenin",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "tokenout",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amountin",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amountout",
+              "type": "uint256"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "uint256",
+                  "name": "percent",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "srcAmount",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "destAmount",
+                  "type": "uint256"
+                },
+                {
+                  "components": [
+                    {
+                      "internalType": "address",
+                      "name": "srctoken",
+                      "type": "address"
+                    },
+                    {
+                      "internalType": "address",
+                      "name": "desttoken",
+                      "type": "address"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "srcAmount",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "destAmount",
+                      "type": "uint256"
+                    },
+                    {
+                      "components": [
+                        {
+                          "internalType": "address",
+                          "name": "adapter",
+                          "type": "address"
+                        },
+                        {
+                          "internalType": "uint256",
+                          "name": "percent",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "uint256",
+                          "name": "srcAmount",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "uint256",
+                          "name": "destAmount",
+                          "type": "uint256"
+                        }
+                      ],
+                      "internalType": "struct ApexRouter.SwapExchange[]",
+                      "name": "swapexchanges",
+                      "type": "tuple[]"
+                    }
+                  ],
+                  "internalType": "struct ApexRouter.Swap[]",
+                  "name": "swaps",
+                  "type": "tuple[]"
+                }
+              ],
+              "internalType": "struct ApexRouter.Branch[]",
+              "name": "branches",
+              "type": "tuple[]"
+            }
+          ],
+          "indexed": false,
+          "internalType": "struct ApexRouter.Route",
+          "name": "_route",
+          "type": "tuple"
+        }
+      ],
+      "name": "RouteCalculated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "sender",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "receiver",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "SafeTransferFrom",
       "type": "event"
     },
     {
@@ -123,37 +309,6 @@
         }
       ],
       "name": "UpdatedTrustedTokens",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "_tokenIn",
-          "type": "address"
-        },
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "_tokenOut",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "_amountIn",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "_amountOut",
-          "type": "uint256"
-        }
-      ],
-      "name": "VixSwap",
       "type": "event"
     },
     {
@@ -328,7 +483,7 @@
               "type": "address[]"
             }
           ],
-          "internalType": "struct VixRouter.FormattedOffer",
+          "internalType": "struct ApexRouter.FormattedOffer",
           "name": "",
           "type": "tuple"
         }
@@ -399,6 +554,11 @@
           "internalType": "address",
           "name": "_tokenOut",
           "type": "address"
+        },
+        {
+          "internalType": "uint8[]",
+          "name": "_options",
+          "type": "uint8[]"
         }
       ],
       "name": "queryNoSplit",
@@ -426,7 +586,58 @@
               "type": "uint256"
             }
           ],
-          "internalType": "struct VixRouter.Query",
+          "internalType": "struct ApexRouter.Query",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_amountIn",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "_tokenIn",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_tokenOut",
+          "type": "address"
+        }
+      ],
+      "name": "queryNoSplit",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "adapter",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "tokenIn",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "tokenOut",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amountOut",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct ApexRouter.Query",
           "name": "",
           "type": "tuple"
         }
@@ -496,6 +707,333 @@
     {
       "inputs": [
         {
+          "internalType": "address",
+          "name": "tokenin",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "tokenout",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amountin",
+          "type": "uint256"
+        },
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "percent",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "srcAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "destAmount",
+              "type": "uint256"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "address",
+                  "name": "srctoken",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "desttoken",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "srcAmount",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "destAmount",
+                  "type": "uint256"
+                },
+                {
+                  "components": [
+                    {
+                      "internalType": "address",
+                      "name": "adapter",
+                      "type": "address"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "percent",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "srcAmount",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "destAmount",
+                      "type": "uint256"
+                    }
+                  ],
+                  "internalType": "struct ApexRouter.SwapExchange[]",
+                  "name": "swapexchanges",
+                  "type": "tuple[]"
+                }
+              ],
+              "internalType": "struct ApexRouter.Swap[]",
+              "name": "swaps",
+              "type": "tuple[]"
+            }
+          ],
+          "internalType": "struct ApexRouter.Branch[]",
+          "name": "branches",
+          "type": "tuple[]"
+        },
+        {
+          "internalType": "address",
+          "name": "_to",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_fee",
+          "type": "uint256"
+        }
+      ],
+      "name": "swapMultihop",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "tokenin",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "tokenout",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amountin",
+          "type": "uint256"
+        },
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "percent",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "srcAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "destAmount",
+              "type": "uint256"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "address",
+                  "name": "srctoken",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "desttoken",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "srcAmount",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "destAmount",
+                  "type": "uint256"
+                },
+                {
+                  "components": [
+                    {
+                      "internalType": "address",
+                      "name": "adapter",
+                      "type": "address"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "percent",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "srcAmount",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "destAmount",
+                      "type": "uint256"
+                    }
+                  ],
+                  "internalType": "struct ApexRouter.SwapExchange[]",
+                  "name": "swapexchanges",
+                  "type": "tuple[]"
+                }
+              ],
+              "internalType": "struct ApexRouter.Swap[]",
+              "name": "swaps",
+              "type": "tuple[]"
+            }
+          ],
+          "internalType": "struct ApexRouter.Branch[]",
+          "name": "branches",
+          "type": "tuple[]"
+        },
+        {
+          "internalType": "address",
+          "name": "_to",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_fee",
+          "type": "uint256"
+        }
+      ],
+      "name": "swapMultihopFromAvax",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "tokenin",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "tokenout",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amountin",
+          "type": "uint256"
+        },
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "percent",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "srcAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "destAmount",
+              "type": "uint256"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "address",
+                  "name": "srctoken",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "desttoken",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "srcAmount",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "destAmount",
+                  "type": "uint256"
+                },
+                {
+                  "components": [
+                    {
+                      "internalType": "address",
+                      "name": "adapter",
+                      "type": "address"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "percent",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "srcAmount",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "destAmount",
+                      "type": "uint256"
+                    }
+                  ],
+                  "internalType": "struct ApexRouter.SwapExchange[]",
+                  "name": "swapexchanges",
+                  "type": "tuple[]"
+                }
+              ],
+              "internalType": "struct ApexRouter.Swap[]",
+              "name": "swaps",
+              "type": "tuple[]"
+            }
+          ],
+          "internalType": "struct ApexRouter.Branch[]",
+          "name": "branches",
+          "type": "tuple[]"
+        },
+        {
+          "internalType": "address",
+          "name": "_to",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_fee",
+          "type": "uint256"
+        }
+      ],
+      "name": "swapMultihopToAvax",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
           "components": [
             {
               "internalType": "uint256",
@@ -518,7 +1056,7 @@
               "type": "address[]"
             }
           ],
-          "internalType": "struct VixRouter.Trade",
+          "internalType": "struct ApexRouter.Trade",
           "name": "_trade",
           "type": "tuple"
         },
@@ -563,7 +1101,7 @@
               "type": "address[]"
             }
           ],
-          "internalType": "struct VixRouter.Trade",
+          "internalType": "struct ApexRouter.Trade",
           "name": "_trade",
           "type": "tuple"
         },
@@ -608,7 +1146,7 @@
               "type": "address[]"
             }
           ],
-          "internalType": "struct VixRouter.Trade",
+          "internalType": "struct ApexRouter.Trade",
           "name": "_trade",
           "type": "tuple"
         },
@@ -653,7 +1191,7 @@
               "type": "address[]"
             }
           ],
-          "internalType": "struct VixRouter.Trade",
+          "internalType": "struct ApexRouter.Trade",
           "name": "_trade",
           "type": "tuple"
         },
@@ -718,7 +1256,7 @@
               "type": "address[]"
             }
           ],
-          "internalType": "struct VixRouter.Trade",
+          "internalType": "struct ApexRouter.Trade",
           "name": "_trade",
           "type": "tuple"
         },
@@ -756,6 +1294,40 @@
       "name": "swapNoSplitWithPermit",
       "outputs": [],
       "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "adapter",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amountin",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "tokenin",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "tokenout",
+          "type": "address"
+        }
+      ],
+      "name": "testAdapter",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "destAmount",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
       "type": "function"
     },
     {

@@ -25,8 +25,10 @@ import { ethers } from 'ethers';
 import ERC20 from '@/abi/ERC20.json';
 import WAVAX from '@/abi/WAVAX.json';
 import VixRouter from '@/abi/VixRouter.json';
-import { getDexName } from '@/lib/utils/swap-utils';
+import { getDexName, getDexAddress } from '@/lib/utils/swap-utils';
 import { HookContext } from '@/lib/hooks/use-hook';
+import { WalletContext } from '@/lib/hooks/use-connect';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 // Create your atoms and derivatives
 var routingAtom, toSettingsAtom;
@@ -38,9 +40,21 @@ export function useSettingsAtom() {
 }
 
 const SwapPage: NextPageWithLayout = () => {
-  const { coinslist, getCoinDecimals, getCoinName } = useContext(HookContext);
+  const {
+    coinslist,
+    getCoinDecimals,
+    getCoinName,
+    getCoinIcon,
+    getCoinCode,
+    isNatativeToken,
+    isWavax,
+    addressForRoute,
+  } = useContext(HookContext);
+  const { address, disconnectWallet, balance, chainId, swtichNetwork } =
+    useContext(WalletContext);
 
   const [marketData, setMarketData] = useState({});
+  const swap_fee = 0.00045;
 
   const [tokenInIndex, setTokenInIndex] = useState(0); //avax
   const [tokenInPrice, setTokenInPrice] = useState(0);
@@ -50,9 +64,12 @@ const SwapPage: NextPageWithLayout = () => {
   const [tokenOutIndex, setTokenOutIndex] = useState(4); //USDC
   const [tokenOutPrice, setTokenOutPrice] = useState(0);
   const [tokenOut, setTokenOut] = useState('');
+  const [tokenOutBalance, setTokenOutBalance] = useState(0);
 
   const [amountIn, setAmountIn] = useState(1);
   const [amountOut, setAmountOut] = useState(0);
+
+  const [side, setSide] = useState('SELL');
 
   const [loading, setLoading] = useState(false);
 
@@ -67,35 +84,42 @@ const SwapPage: NextPageWithLayout = () => {
   let [swch1, setSwch1] = useState(false);
   const [toggleCoin, setToggleCoin] = useState(false);
 
-  const [devenv] = useState(false);
+  const [smartroute, setSmartroute] = useState({});
+  const [branches, setBranches] = useState([]);
+  const [rouTes, setRouTes] = useState([]);
+  const [routeSwaps, setRouteSwaps] = useState([]);
+  const [finalToken, setFinalToken] = useState('');
 
+  const [devenv] = useState(false);
+  let [isExpertMode, setIsExpertMode] = useState(false);
+  const getBalance = async (token_address: string) => {
+    if (!address) return 0;
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    await provider.send('eth_requestAccounts', []);
+    const signer = provider.getSigner();
+    if (isNatativeToken(token_address)) {
+      let userAddress = await signer.getAddress();
+      console.log('userAddress1 => ', userAddress);
+      const balance = await provider.getBalance(userAddress);
+      return Number(
+        ethers.utils.formatUnits(balance, getCoinDecimals(token_address))
+      );
+    } else {
+      let userAddress = await signer.getAddress();
+
+      const tokenContract = new ethers.Contract(
+        token_address,
+        ERC20.abi,
+        signer
+      );
+      var balance = await tokenContract.balanceOf(userAddress);
+      return Number(
+        ethers.utils.formatUnits(balance, getCoinDecimals(token_address))
+      );
+    }
+  };
   //set tokenin, tokeninbalance
   useEffect(() => {
-    const getBalance = async (token_address: string) => {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      await provider.send('eth_requestAccounts', []);
-      const signer = provider.getSigner();
-      if (token_address == '0x0000000000000000000000000000000000000000') {
-        let userAddress = await signer.getAddress();
-        const balance = await provider.getBalance(userAddress);
-        return Number(
-          ethers.utils.formatUnits(balance, getCoinDecimals(token_address))
-        );
-      } else {
-        let userAddress = await signer.getAddress();
-
-        const tokenContract = new ethers.Contract(
-          token_address,
-          ERC20.abi,
-          signer
-        );
-        var balance = await tokenContract.balanceOf(userAddress);
-        return Number(
-          ethers.utils.formatUnits(balance, getCoinDecimals(token_address))
-        );
-      }
-    };
-
     (async () => {
       var tokenin_address = coinslist[tokenInIndex].address;
       setTokenIn(tokenin_address);
@@ -103,9 +127,16 @@ const SwapPage: NextPageWithLayout = () => {
       setTokenInBalance(balance);
     })();
   }, [tokenInIndex]);
+
   //set tokenout
   useEffect(() => {
     setTokenOut(coinslist[tokenOutIndex].address);
+    (async () => {
+      var tokenout_address = coinslist[tokenOutIndex].address;
+      setTokenOut(tokenout_address);
+      var balance = await getBalance(tokenout_address);
+      setTokenOutBalance(balance);
+    })();
   }, [tokenOutIndex]);
 
   // marketdata, tokenIn Price
@@ -201,27 +232,57 @@ const SwapPage: NextPageWithLayout = () => {
   //~Setting
 
   //query
+  const [seconds, setSeconds] = useState(0);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setSeconds((seconds) => seconds + 1);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+  useEffect(() => {
+    if (seconds % 5 == 0) query();
+  }, [seconds]);
+
   useEffect(() => {
     if (tokenIn && tokenOut && amountIn) {
       query();
     }
   }, [tokenIn, tokenOut, amountIn]);
 
+  //~qqqqqqqqqqq~~~ calculate branch
+  useEffect(() => {
+    if (!smartroute.bestRoute) return;
+    var branches = [];
+    smartroute.bestRoute.map((i_branch) => {
+      var swaps = [];
+      i_branch.swaps.map((i_swap) => {
+        var swapExchanges = [];
+        i_swap.swapExchanges.map((i_swapExchange) => {
+          swapExchanges.push([
+            getDexAddress(i_swapExchange.exchange),
+            Math.floor(i_swapExchange.percent),
+            0,
+            0,
+          ]);
+        });
+        swaps.push([i_swap.srcToken, i_swap.destToken, 0, 0, swapExchanges]);
+      });
+      var branch = [i_branch.percent, 0, 0, swaps];
+      branches.push(branch);
+    });
+    // console.log(smartroute.bestRoute, '-------------->smartroute')
+    // console.log(branches, '-------------->branches')
+    setBranches(branches);
+  }, [smartroute]);
+
   //query
   const query = async () => {
-    var new_tokenIn =
-      tokenIn == '0x0000000000000000000000000000000000000000'
-        ? '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7'
-        : tokenIn;
-    var new_tokenOut =
-      tokenOut == '0x0000000000000000000000000000000000000000'
-        ? '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7'
-        : tokenOut;
+    var new_tokenIn = addressForRoute(tokenIn);
+    var new_tokenOut = addressForRoute(tokenOut);
+    console.log(tokenIn, new_tokenIn, tokenOut, new_tokenOut);
     if (
-      (tokenIn == '0x0000000000000000000000000000000000000000' &&
-        tokenOut == '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7') ||
-      (tokenOut == '0x0000000000000000000000000000000000000000' &&
-        tokenIn == '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7')
+      (isNatativeToken(tokenIn) && isWavax(tokenOut)) ||
+      (isNatativeToken(tokenOut) && isWavax(tokenIn))
     ) {
       setAdapters([]);
       setPath([]);
@@ -230,8 +291,88 @@ const SwapPage: NextPageWithLayout = () => {
       return;
     }
 
-    setLoading(true);
+    const getSmartRoute = async () => {
+      try {
+        var amount =
+          side == 'SELL'
+            ? ethers.utils
+                .parseUnits(String(amountIn), getCoinDecimals(new_tokenIn))
+                .toString()
+            : ethers.utils
+                .parseUnits(String(amountOut), getCoinDecimals(new_tokenOut))
+                .toString();
+
+        var payload = {
+          srcToken: new_tokenIn,
+          destToken: new_tokenOut,
+          amount: amount,
+          side: side,
+          network: 43114,
+        };
+        console.log(payload);
+        const params = new URLSearchParams(payload);
+
+        let res = await axios.post(
+          `http://198.211.100.213:8000/getRate?${params}`
+        );
+
+        let data = res.data;
+        setSmartroute(data);
+        console.log('smartRoute => ', data);
+
+        if (side == 'SELL') {
+          let destAmount = data.destAmount;
+          destAmount = Number(
+            ethers.utils.formatUnits(destAmount, getCoinDecimals(new_tokenOut))
+          );
+          console.log(destAmount);
+          setAmountOut(destAmount);
+        } else {
+          let srcAmount = data.srcAmount;
+          srcAmount = Number(
+            ethers.utils.formatUnits(srcAmount, getCoinDecimals(new_tokenIn))
+          );
+          console.log(srcAmount);
+          setAmountIn(srcAmount);
+        }
+
+        let routes = data.bestRoute;
+        setRouTes(routes);
+        if (data.destToken) {
+          setFinalToken(data.destToken);
+        }
+        let swaps = [];
+        let route_swaps = [];
+        for (let i = 0; i < routes.length; i++) {
+          for (let j = 0; j < routes[i].swaps.length; j++) {
+            let swap = {
+              destToken: routes[i].swaps[j].destToken,
+              swapExchanges: routes[i].swaps[j].swapExchanges,
+            };
+            swaps.push(swap);
+          }
+          route_swaps.push(swaps);
+          swaps = [];
+        }
+        setRouteSwaps(route_swaps);
+      } catch (e) {
+        console.log(e);
+        setSmartroute({});
+      }
+    };
+    await getSmartRoute();
+    return;
+  };
+
+  const route = path.slice(1);
+  // const percent = [100];
+  const coin_in = path[0];
+  const coin_out = path[path?.length - 1];
+
+  const queryOld = async () => {
     try {
+      var new_tokenIn = addressForRoute(tokenIn);
+      var new_tokenOut = addressForRoute(tokenOut);
       const provider = new ethers.providers.JsonRpcProvider(
         'https://rpc.ankr.com/avalanche'
       );
@@ -241,14 +382,14 @@ const SwapPage: NextPageWithLayout = () => {
         VixRouter.abi,
         provider
       );
-      var inamount = ethers.utils.parseUnits(
+      var parsed_amountIn = ethers.utils.parseUnits(
         String(amountIn),
         getCoinDecimals(new_tokenIn)
       );
 
       //query one dex
       let { amountOut, adapter } = await vixrouterContract.queryNoSplit(
-        inamount,
+        parsed_amountIn,
         new_tokenIn,
         new_tokenOut
       );
@@ -256,35 +397,17 @@ const SwapPage: NextPageWithLayout = () => {
         amountOut,
         getCoinDecimals(new_tokenOut)
       );
-      console.log(
-        '@@@@@@@@@ Query',
-        amountIn,
-        getCoinName(new_tokenIn),
-        '=>',
-        amountOut,
-        getCoinName(new_tokenOut),
-        ' || ',
-        getDexName(adapter)
-      );
-      // setBestDex(adapter)
-      // setBestAmountOut(amountOut)
 
       //findbestpath
       let { adapters, path, amounts } = await vixrouterContract.findBestPath(
-        inamount,
+        parsed_amountIn,
         new_tokenIn,
         new_tokenOut,
-        4
+        2
       );
       setAdapters(adapters);
       setPath(path);
       setAmounts(amounts);
-      console.log(path);
-      routingAtom = atom({
-        adapters: adapters,
-        path: path,
-      });
-      console.log('routes', path.slice(1));
       var final_amount = Number(
         ethers.utils.formatUnits(
           amounts[amounts.length - 1],
@@ -292,12 +415,11 @@ const SwapPage: NextPageWithLayout = () => {
         )
       );
       setAmountOut(final_amount);
-      setLoading(false);
     } catch (e) {
-      setLoading(false);
       console.log('query', e);
     }
   };
+
   //swap
   const swap = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -305,27 +427,27 @@ const SwapPage: NextPageWithLayout = () => {
     const signer = provider.getSigner();
     let userAddress = await signer.getAddress();
 
-    //wrap,unwrap
+    const vixrouterContract = new ethers.Contract(
+      VixRouter.address,
+      VixRouter.abi,
+      signer
+    );
+
+    //AVAX <-> WAVAX
     const wavaxContract = new ethers.Contract(WAVAX.address, WAVAX.abi, signer);
-    if (
-      tokenIn == '0x0000000000000000000000000000000000000000' &&
-      tokenOut == '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7'
-    ) {
+    if (isNatativeToken(tokenIn) && isWavax(tokenOut)) {
       await wavaxContract.deposit({
         value: ethers.utils.parseEther(String(amountIn)),
       });
       return;
     }
-    if (
-      tokenOut == '0x0000000000000000000000000000000000000000' &&
-      tokenIn == '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7'
-    ) {
+    if (isNatativeToken(tokenOut) && isWavax(tokenIn)) {
       await wavaxContract.withdraw(ethers.utils.parseEther(String(amountIn)));
       return;
     }
 
     //approve for tokens
-    if (tokenIn != '0x0000000000000000000000000000000000000000') {
+    if (tokenIn != '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee') {
       const tokenContract = new ethers.Contract(tokenIn, ERC20.abi, signer);
       var approved_amount = await tokenContract.allowance(
         userAddress,
@@ -350,30 +472,69 @@ const SwapPage: NextPageWithLayout = () => {
       }
     }
 
-    //swap
-    var new_tokenIn =
-      tokenIn == '0x0000000000000000000000000000000000000000'
-        ? '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7'
-        : tokenIn;
-
-    const vixrouterContract = new ethers.Contract(
-      VixRouter.address,
-      VixRouter.abi,
-      signer
-    );
+    var new_tokenIn = addressForRoute(tokenIn);
+    var new_tokenOut = addressForRoute(tokenOut);
     var parsed_amountIn = ethers.utils.parseUnits(
       String(amountIn),
       getCoinDecimals(new_tokenIn)
     );
+
+    //multihop
+    var fee = swap_fee * 100000; //0.00045 -> 45
+    if (isNatativeToken(tokenIn))
+      await vixrouterContract.swapMultihopFromAvax(
+        new_tokenIn,
+        new_tokenOut,
+        parsed_amountIn,
+        branches,
+        address,
+        fee,
+        {
+          value: ethers.utils.parseEther(String(amountIn)),
+        }
+      );
+    else if (isNatativeToken(tokenOut))
+      await vixrouterContract.swapMultihopToAvax(
+        new_tokenIn,
+        new_tokenOut,
+        parsed_amountIn,
+        branches,
+        address,
+        fee
+      );
+    else
+      await vixrouterContract.swapMultihop(
+        new_tokenIn,
+        new_tokenOut,
+        parsed_amountIn,
+        branches,
+        address,
+        fee
+      );
+
+    return;
+
+    //findBestPath
+    let { adapters, path, amounts } = await vixrouterContract.findBestPath(
+      parsed_amountIn,
+      new_tokenIn,
+      new_tokenOut,
+      4
+    );
+    setAdapters(adapters);
+    setPath(path);
+    setAmounts(amounts);
+
+    //swap
     var parsed_amountOut = ethers.utils.parseEther('0');
     var _trade = [parsed_amountIn, parsed_amountOut, path, adapters];
     var _to = userAddress;
     var _fee = ethers.utils.parseEther('0');
-    if (tokenIn == '0x0000000000000000000000000000000000000000')
+    if (isNatativeToken(tokenIn))
       await vixrouterContract.swapNoSplitFromAVAX(_trade, _to, _fee, {
         value: ethers.utils.parseEther(String(amountIn)),
       });
-    else if (tokenOut == '0x0000000000000000000000000000000000000000') {
+    else if (isNatativeToken(tokenOut)) {
       await vixrouterContract.swapNoSplitToAVAX(_trade, _to, _fee);
     } else await vixrouterContract.swapNoSplit(_trade, _to, _fee);
   };
@@ -401,25 +562,26 @@ const SwapPage: NextPageWithLayout = () => {
         title="Apexswap - Trade"
         description="Apexswap - Avalanche DEX"
       />
-      {/* Expert Mode */}
-      <div className="mb-12 grid grid-cols-1 gap-16 xl:grid-cols-3">
-        <div className="xl:col-span-1"></div>
-        <div className="flex flex-row items-center xl:col-span-2 ">
-          <div
-            className="flex flex-row items-center rounded-[6px] px-2 outline outline-1 outline-offset-[4px] outline-[#0D0C52]"
-            style={{ marginLeft: '14px' }}
-          >
-            <span className="" style={{fontFamily: 'Poppins', fontSize: '14px'}}>
+
+      <div
+        className={`${
+          isExpertMode ? 'grid xl:grid-cols-3' : 'flex justify-center'
+        } mt-12 grid-cols-1 gap-16 xl:place-items-start `}
+      >
+        {/* Swap box */}
+        <div className="mx-auto flex flex-col gap-3 rounded-[1px] outline outline-1 outline-offset-[16px] outline-[#0D0C52] xl:col-span-1">
+          <div className="mx-auto flex w-1/2 flex-row items-center rounded-[6px] px-2 outline outline-1 outline-offset-[4px] outline-[#0D0C52]">
+            <span className="primary-font-family font-size-14">
               Expert Mode
             </span>
             <Switch
               className="ml-2 grid grid-cols-1 place-items-center rounded-full border-2 border-[#FEB58D]"
-              checked={swch1}
-              onChange={() => setSwch1(!swch1)}
+              checked={isExpertMode}
+              onChange={() => setIsExpertMode(!isExpertMode)}
             >
               <div
                 className={cn(
-                  swch1
+                  isExpertMode
                     ? 'bg-brand dark:bg-transparent'
                     : 'bg-gray-200 dark:bg-transparent',
                   'relative inline-flex h-[12px] w-[28px] items-center rounded-full transition-colors duration-300'
@@ -427,7 +589,7 @@ const SwapPage: NextPageWithLayout = () => {
               >
                 <span
                   className={cn(
-                    swch1
+                    isExpertMode
                       ? 'bg-white ltr:translate-x-4 rtl:-translate-x-4 dark:bg-[#FEB58D]'
                       : 'bg-white ltr:translate-x-0.5 rtl:-translate-x-0.5 dark:bg-[#FEB58D]',
                     'inline-block h-[10px] w-[10px] transform rounded-full bg-white duration-200'
@@ -435,13 +597,9 @@ const SwapPage: NextPageWithLayout = () => {
                 />
               </div>
             </Switch>
+            {/* <div className="myImg">hi</div> */}
           </div>
-        </div>
-      </div>
 
-      <div className="grid grid-cols-1 gap-16 xl:grid-cols-3 xl:place-items-center">
-        {/* Swap box */}
-        <div className="xl:col-span-1">
           <TradeContainer>
             <div className=" border-b border-b-[#5841D8]/20 xs:mb-2 xs:mt-1">
               <div className="mb-4 border-b border-b-[#5841D8]/20 px-8">
@@ -453,25 +611,23 @@ const SwapPage: NextPageWithLayout = () => {
                 >
                   <li className="" role="presentation">
                     <button
-                      className="inline-block rounded-t-lg py-4 text-gray-300 focus:border-b-3 focus:border-b-[#FEB58D] dark:hover:text-gray-200 dark:focus:text-white"
-                      style={{ fontFamily: 'Poppins', fontSize: '14px' }}
+                      className="primary-font-family font-size-14 inline-block rounded-t-lg py-4 text-gray-300 focus:border-b-3 focus:border-b-[#FEB58D] dark:hover:text-gray-200 dark:focus:text-white"
                       id="profile-tab"
                       data-tabs-target="#profile"
                       type="button"
                       role="tab"
                       aria-controls="profile"
                       aria-selected="false"
-                      autoFocus
+                      // autoFocus={true}
                       onClick={() => setTabIndex(1)}
                     >
                       Instant Swap
                     </button>
                   </li>
-                  <li className="" role="presentation">
+                  {/* <li className="" role="presentation">
                     <a href="/limit">
                       <button
-                        className="inline-block rounded-t-lg py-4 text-gray-300 focus:border-b-3 focus:border-b-[#FEB58D] dark:hover:text-gray-200 dark:focus:text-white"
-                        style={{ fontFamily: 'Poppins', fontSize: '14px' }}
+                        className="inline-block rounded-t-lg py-4 text-gray-300 focus:border-b-3 focus:border-b-[#FEB58D] dark:hover:text-gray-200 dark:focus:text-white primary-font-family font-size-14"
                         id="dashboard-tab"
                         data-tabs-target="#dashboard"
                         type="button"
@@ -483,7 +639,7 @@ const SwapPage: NextPageWithLayout = () => {
                         Limit Order
                       </button>
                     </a>
-                  </li>
+                  </li> */}
                 </ul>
               </div>
 
@@ -500,7 +656,7 @@ const SwapPage: NextPageWithLayout = () => {
                   {/* <div> */}
                   <CoinInput
                     label={'From'}
-                    isInbox={true}
+                    isInbox={side == 'SELL'}
                     usdPrice={tokenInPrice}
                     defaultValue={amountIn}
                     showvalue={amountIn}
@@ -510,10 +666,11 @@ const SwapPage: NextPageWithLayout = () => {
                       setTokenInIndex(tokenIndex);
                     }}
                     onchangeAmount={(value) => {
+                      setSide('SELL');
                       clearOutput();
                       setAmountIn(Number(value));
                     }}
-                    tokenInBalance={tokenInBalance}
+                    tokenBalance={tokenInBalance}
                     onToggleTokens={toggleCoin}
                   />
                   <div className="absolute top-1/2 left-1/2 z-[1] my-2 -mt-4 -ml-4 grid grid-cols-1 place-items-center">
@@ -528,13 +685,14 @@ const SwapPage: NextPageWithLayout = () => {
                       }}
                     >
                       <SwapIcon
-                        className="h-auto w-3"
+                        className="h-auto w-3 font-bold"
                         style={{ color: '#FEB58D' }}
                       />
                     </Button>
                   </div>
                   <CoinInput
                     label={'To(Estimated)'}
+                    isInbox={side == 'BUY'}
                     usdPrice={tokenOutPrice}
                     defaultValue={amountOut}
                     showvalue={amountOut}
@@ -544,6 +702,12 @@ const SwapPage: NextPageWithLayout = () => {
                       clearOutput();
                       setTokenOutIndex(tokenIndex);
                     }}
+                    onchangeAmount={(value) => {
+                      setSide('BUY');
+                      clearOutput();
+                      setAmountOut(Number(value));
+                    }}
+                    tokenBalance={tokenOutBalance}
                   />
                   {/* </div> */}
                 </div>
@@ -593,6 +757,7 @@ const SwapPage: NextPageWithLayout = () => {
                   </div>
                   <CoinInput
                     label={'To(Estimated)'}
+                    isInbox={true}
                     usdPrice={tokenOutPrice}
                     defaultValue={amountOut}
                     showvalue={amountOut}
@@ -613,46 +778,57 @@ const SwapPage: NextPageWithLayout = () => {
               <div className="my-4 flex flex-row justify-between text-[#FEB58D]">
                 <div className="grid grid-cols-1 place-items-center">
                   <div className="flex items-center font-medium">
-                    <span className="mr-2">Slippage Tolerance</span>
-                    <Gear
+                    <span className="primary-font-family font-size-10 mr-2">
+                      Slippage Tolerance
+                    </span>
+                    <div
                       className="mr-1 h-auto w-4"
                       onClick={() => {
                         openModal('SETTINGS');
                       }}
                       style={{ cursor: 'pointer' }}
-                    />
+                    >
+                      <Gear />
+                    </div>
                   </div>
                 </div>
                 <div className="flex flex-row">
-                  <span>0.5%</span>
-                  {/* <LoopIcon
-                    className="h-auto w-4"
-                    style={{ cursor: 'pointer' }}
-                    onClick={() => {
-                      clearOutput();
-                      query();
-                    }}
-                  /> */}
+                  <span className="primary-font-family font-size-10">
+                    {tolerance}
+                  </span>
                 </div>
               </div>
             </div>
             <div className="flex flex-col gap-4 xs:gap-[18px]">
               <TransactionInfo
-                label={'Savings'}
-                value={`~$${Number(tokenOutPrice * amountOut * 0.02).toFixed(
+                label={'Minimum Received'}
+                value={`${Number(amountOut * (1 - swap_fee)).toFixed(
                   3
-                )}`}
+                )} ${getCoinName(tokenOut)}`}
               />
               {/* <TransactionInfo label={'Min. Received'} value={`${amountOut ? Number(amountOut * 0.99).toFixed(2) : 0} ${coinslist[tokenOutIndex].code}`} /> */}
-              <TransactionInfo
-                label={'Price'}
-                value={`${(amountOut / amountIn).toFixed(2)} ${
-                  coinslist[tokenOutIndex]?.code
-                }/${coinslist[tokenInIndex]?.code}`}
-              />
+              <div
+                className={cn(
+                  'flex items-center justify-between dark:text-gray-300'
+                )}
+              >
+                <span className="primary-font-family font-size-10 font-medium">
+                  {'Price Impact'}
+                </span>
+                <span className="primary-font-family font-size-10 text-[#EB5757]">
+                  {`${Number(
+                    (1 - smartroute.destUSD / smartroute.srcUSD) * 100
+                  ).toFixed(4)}%`}
+                </span>
+              </div>
               {/* <TransactionInfo label={'TxSpeed'} value={txSpeed} />
               <TransactionInfo label={'Price Slippage'} value={tolerance} /> */}
-              <TransactionInfo label={'Network Fee'} value={'0.04$'} />
+              <TransactionInfo
+                label={'Liquidity Provider Fee'}
+                value={`${Number(amountIn * swap_fee).toFixed(5)} ${getCoinName(
+                  tokenIn
+                )}`}
+              />
               {/* <TransactionInfo label={'Best Dex'} value={getDexName(bestDex) + " : " + Number(bestAmountOut).toFixed(6) + " " + getCoinName(tokenOut)} /> */}
             </div>
             {/* <div className="mt-6 flex flex-row justify-between ">
@@ -671,55 +847,53 @@ const SwapPage: NextPageWithLayout = () => {
                 </div>
               </div>
             </div> */}
-            {/* {loading ? (
-              <Button
-                size="large"
-                shape="rounded"
-                fullWidth={true}
-                className="mt-3 uppercase dark:bg-gradient-to-r dark:from-[#475569] dark:to-[#334155] xs:mt-4 xs:tracking-widest"
-                disabled={true}
-              >
-                Loading ...
-              </Button>
-            ) : tokenInBalance >= amountIn ? (
-              <Button
-                size="large"
-                id=""
-                shape="rounded"
-                fullWidth={true}
-                className="mt-3 bg-gradient-to-r from-[#312e81] to-[#1e3a8a] uppercase  xs:mt-4 xs:tracking-widest"
-                onClick={() => {
-                  swap();
-                }}
-              >
-                SWAP
-              </Button>
-            ) : (
-              <Button
-                size="large"
-                shape="rounded"
-                fullWidth={true}
-                className="mt-3 uppercase dark:bg-gradient-to-r dark:from-[#475569] dark:to-[#334155] xs:mt-4 xs:tracking-widest"
-                disabled={true}
-              >
-                Insufficient Balance
-              </Button>
-            )} */}
+
+            {/* Button */}
             <div className="mt-5 grid grid-cols-1 place-items-center">
-              <Button
-                // id="MyElement"
-                size="mini"
-                shape="pill"
-                // fullWidth={true}
-                // className="bg-gradient-to-r from-[#312e81] to-[#1e3a8a] mt-1 uppercase xs:tracking-widest"
-                className="mt-1 py-1 px-3 w-[153px] h-[32px]"
-                style={{fontFamily: 'Poppins', fontSize: '14px', background: 'linear-gradient(270deg, #FF6060 0%, #F99820 100%)'}}
-                onClick={() => openModal('WALLET_CONNECT_VIEW')}
-              >
-                <span>Connect Wallet</span>
-              </Button>
+              {!address ? (
+                // <Button
+                //   size="mini"
+                //   shape="pill"
+                //   className="mt-1 h-[32px] w-[153px] py-1 px-3 primary-font-family font-size-14 bg-leanear-gradient"
+                //   onClick={() => openModal('WALLET_CONNECT_VIEW')}
+                // >
+                //   <span>Connect Wallet</span>
+                // </Button>
+
+                <div className="swap-wallet-connect">
+                  <ConnectButton />
+                </div>
+              ) : loading ? (
+                <Button
+                  size="mini"
+                  shape="pill"
+                  className="primary-font-family font-size-14 bg-leanear-gradient mt-1 h-[32px] w-[153px] py-1 px-3"
+                >
+                  <span>Loading ...</span>
+                </Button>
+              ) : tokenInBalance >= amountIn ? (
+                <Button
+                  size="mini"
+                  shape="pill"
+                  className="primary-font-family font-size-14 bg-leanear-gradient mt-1 h-[32px] w-[153px] py-1 px-3"
+                  onClick={() => {
+                    swap();
+                  }}
+                >
+                  <span>SWAP</span>
+                </Button>
+              ) : (
+                <Button
+                  size="mini"
+                  shape="pill"
+                  className="primary-font-family font-size-14 bg-leanear-gradient mt-1 h-[32px] w-[153px] py-1 px-3"
+                >
+                  <span>Insufficient Balance</span>
+                </Button>
+              )}
             </div>
             <br></br>
+            {/* Console */}
             {devenv ? (
               <div>
                 <br></br>
@@ -769,31 +943,142 @@ const SwapPage: NextPageWithLayout = () => {
         </div>
 
         {/* Rigth side */}
-        <div className="text-large rounded-[4px] text-center shadow-card outline outline-1 outline-offset-[16px] outline-[#0D0C52] xl:col-span-2 ">
-          {/* Market Data-Chart subPanel */}
-          <div className=" w-[709px] rounded-[10px] px-8 dark:bg-[#0D0C52]">
-            <div className="min-h-[50px] ">
-            <MarketData
-              token_address1={tokenIn}
-              token_address2={tokenOut}
-              token_index1={tokenInIndex}
-              token_index2={tokenOutIndex}
-              marketData={marketData}
-            />
+        {isExpertMode && (
+          <div className="text-large rounded-[4px] text-center shadow-card outline outline-1 outline-offset-[16px] outline-[#0D0C52] md:block xl:col-span-2 ">
+            {/* Market Data-Chart subPanel */}
+            <div className="hidden md:block md:min-w-[709px] md:max-w-[709px] md:rounded-[10px] md:px-8 md:dark:bg-[#0D0C52]">
+              <div className="min-h-[50px] ">
+                <MarketData
+                  token_address1={tokenIn}
+                  token_address2={tokenOut}
+                  token_index1={tokenInIndex}
+                  token_index2={tokenOutIndex}
+                  marketData={marketData}
+                />
+              </div>
             </div>
-          </div>
 
-          {/* Routing subPanel */}
-          <div className="mt-4 h-[114px] w-[709px] px-8 rounded-[10px] dark:bg-[#0D0C52]">
-            <div className="text-left py-4">
-              <span className="" style={{fontFamily: 'Poppins', fontSize:'14px', fontWeight: '600'}}>Routing</span>
-            </div>
-            <div className="flex justify-evenly">
-              {coinslist[tokenInIndex]?.icon3}
-              {coinslist[tokenOutIndex]?.icon3}
+            {/* Routing Medium subPanel */}
+            <div className="md:mt-4 md:block md:min-h-[114px] md:max-w-[709px] md:rounded-[10px] md:bg-[#0D0C52] md:pt-2 md:pb-6">
+              <div className="py-4 px-8 text-left">
+                <span className="primary-font-family font-size-14 font-weight-600">
+                  Routing
+                </span>
+              </div>
+              <div style={{ overflow: 'auto' }}>
+                <div
+                  className=" md:grid md:grid-cols-12 md:gap-2 "
+                  // style={{ display: 'table', width: '100%' }}
+                >
+                  <div
+                    className="coin-icon col-span-1 max-h-full sm:mx-auto md:flex md:items-start"
+                    // style={{ display: 'table-cell', minWidth: '50px' }}
+                  >
+                    <div className="mx-3">{coinslist[tokenInIndex]?.icon}</div>
+                  </div>
+
+                  <div className=" col-span-10 max-h-full md:my-1">
+                    {Array.isArray(rouTes)
+                      ? rouTes.map((element, index) => (
+                          <>
+                            {index == 0 && (
+                              <div className="col-span-1 flex justify-center md:hidden">
+                                <img
+                                  src="/down-arrow.svg"
+                                  className="md:hidden"
+                                  alt="Down Arrow"
+                                />
+                              </div>
+                            )}
+                            <div
+                              key={index}
+                              className="md:my-5 md:grid md:grid-cols-12 md:place-items-center"
+                            >
+                              <div className="col-span-1">
+                                <div className="grid h-10 max-h-full grid-cols-1 place-items-center gap-2 tracking-tighter text-gray-600 dark:text-blue-400 md:h-20">
+                                  <div className="flex flex-row">
+                                    <span className=" max-w-full ">
+                                      {element.percent}%
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                              <div
+                                className={`col-span-11 flex w-full items-center justify-center px-2 md:px-0 ${
+                                  routeSwaps[index].length > 1
+                                    ? 'justify-between'
+                                    : 'justify-center'
+                                }`}
+                              >
+                                {routeSwaps[index].map((ele, idx) => (
+                                  <>
+                                    <div
+                                      key={idx}
+                                      className={`route-box my-3 text-sm tracking-tighter text-gray-600 dark:text-blue-400 md:my-0 ${
+                                        routeSwaps[index].length == 1
+                                          ? 'one-route-box'
+                                          : ''
+                                      }`}
+                                    >
+                                      <div className="route-box-top flex items-center">
+                                        {getCoinIcon(ele.destToken)}
+                                        <p className="coin-code-name w-10 max-w-full px-2">
+                                          {getCoinCode(ele.destToken)}
+                                        </p>
+                                      </div>
+                                      {/* {item.dex.map((element, id) => ( */}
+                                      <div className="route-box-bottom flex flex-col">
+                                        {ele.swapExchanges.map((el, i) => (
+                                          <div
+                                            key={i}
+                                            className="swap-exchange"
+                                          >
+                                            <div className="swap-exchange-name flex max-w-full justify-between text-center">
+                                              {/* {getDexName(adapters[index])} */}
+                                              <p>{el.exchange}</p>
+                                              <p>{el.percent}%</p>
+                                            </div>
+                                          </div>
+                                        ))}
+                                      </div>
+                                      {/*  */}
+                                    </div>
+                                    {routeSwaps[index].length > 1 && (
+                                      <div className="col-span-1 hidden md:block">
+                                        <img
+                                          src="/right-arrow.svg"
+                                          alt="Right Arrow"
+                                        />
+                                      </div>
+                                    )}
+                                  </>
+                                ))}
+                              </div>
+                              {/* <div className="col-span-1"></div> */}
+                            </div>
+                            <div className="col-span-1 flex justify-center md:hidden">
+                              <img
+                                src="/down-arrow.svg"
+                                className="md:hidden"
+                                alt="Down Arrow"
+                              />
+                            </div>
+                          </>
+                        ))
+                      : null}
+                  </div>
+
+                  <div
+                    className="coin-icon col-span-1 max-h-full sm:mx-auto md:flex md:items-start"
+                    // style={{ display: 'table-cell', minWidth: '50px' }}
+                  >
+                    <div className="px-auto">{getCoinIcon(finalToken)}</div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </>
   );

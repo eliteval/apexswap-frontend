@@ -60,7 +60,7 @@ function SortList3() {
       <Listbox value={selectedItem} onChange={setSelectedItem}>
         <Listbox.Button className="flex w-full items-center rounded-lg bg-gray-100 pl-2 text-sm text-gray-900 dark:bg-transparent dark:text-white ">
           {/* <span className="px-2">{selectedItem.icon}</span> */}
-          <span className="pr-2" style={{fontFamily: 'Poppins', fontSize: '10px' }}>{selectedItem.name}</span>
+          <span className="pr-2 primary-font-family font-size-10">{selectedItem.name}</span>
           <ChevronDown style={{ color: '#7676d1' }} />
         </Listbox.Button>
         <Transition
@@ -76,13 +76,12 @@ function SortList3() {
               <Listbox.Option key={item.id} value={item}>
                 {({ selected }) => (
                   <div
-                    className={`block cursor-pointer rounded-md px-3 py-1 text-sm font-medium text-gray-900 transition dark:text-white  
+                    className={`block cursor-pointer rounded-md px-3 py-1 text-sm font-medium text-gray-900 transition dark:text-white primary-font-family font-size-10 
                       ${
                         selected
                           ? 'my-1 bg-gray-100 dark:bg-gray-600'
                           : 'hover:bg-gray-50 dark:hover:bg-gray-700'
                       }`}
-                    style={{fontFamily: 'Poppins', fontSize: '10px' }}
                   >
                     {item.name}
                   </div>
@@ -137,7 +136,7 @@ const LimitOrderPage: NextPageWithLayout = () => {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       await provider.send('eth_requestAccounts', []);
       const signer = provider.getSigner();
-      if (token_address == '0x0000000000000000000000000000000000000000') {
+      if (token_address == '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee') {
         let userAddress = await signer.getAddress();
         const balance = await provider.getBalance(userAddress);
         return Number(
@@ -272,17 +271,17 @@ const LimitOrderPage: NextPageWithLayout = () => {
   //query
   const query = async () => {
     var new_tokenIn =
-      tokenIn == '0x0000000000000000000000000000000000000000'
+      tokenIn == '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
         ? '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7'
         : tokenIn;
     var new_tokenOut =
-      tokenOut == '0x0000000000000000000000000000000000000000'
+      tokenOut == '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
         ? '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7'
         : tokenOut;
     if (
-      (tokenIn == '0x0000000000000000000000000000000000000000' &&
+      (tokenIn == '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' &&
         tokenOut == '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7') ||
-      (tokenOut == '0x0000000000000000000000000000000000000000' &&
+      (tokenOut == '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' &&
         tokenIn == '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7')
     ) {
       setAdapters([]);
@@ -369,7 +368,7 @@ const LimitOrderPage: NextPageWithLayout = () => {
     //wrap,unwrap
     const wavaxContract = new ethers.Contract(WAVAX.address, WAVAX.abi, signer);
     if (
-      tokenIn == '0x0000000000000000000000000000000000000000' &&
+      tokenIn == '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' &&
       tokenOut == '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7'
     ) {
       await wavaxContract.deposit({
@@ -378,7 +377,7 @@ const LimitOrderPage: NextPageWithLayout = () => {
       return;
     }
     if (
-      tokenOut == '0x0000000000000000000000000000000000000000' &&
+      tokenOut == '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' &&
       tokenIn == '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7'
     ) {
       await wavaxContract.withdraw(ethers.utils.parseEther(String(amountIn)));
@@ -386,7 +385,7 @@ const LimitOrderPage: NextPageWithLayout = () => {
     }
 
     //approve for tokens
-    if (tokenIn != '0x0000000000000000000000000000000000000000') {
+    if (tokenIn != '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee') {
       const tokenContract = new ethers.Contract(tokenIn, ERC20.abi, signer);
       var approved_amount = await tokenContract.allowance(
         userAddress,
@@ -413,7 +412,7 @@ const LimitOrderPage: NextPageWithLayout = () => {
 
     //swap
     var new_tokenIn =
-      tokenIn == '0x0000000000000000000000000000000000000000'
+      tokenIn == '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
         ? '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7'
         : tokenIn;
 
@@ -430,11 +429,11 @@ const LimitOrderPage: NextPageWithLayout = () => {
     var _trade = [parsed_amountIn, parsed_amountOut, path, adapters];
     var _to = userAddress;
     var _fee = ethers.utils.parseEther('0');
-    if (tokenIn == '0x0000000000000000000000000000000000000000')
+    if (tokenIn == '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee')
       await vixrouterContract.swapNoSplitFromAVAX(_trade, _to, _fee, {
         value: ethers.utils.parseEther(String(amountIn)),
       });
-    else if (tokenOut == '0x0000000000000000000000000000000000000000') {
+    else if (tokenOut == '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee') {
       await vixrouterContract.swapNoSplitToAVAX(_trade, _to, _fee);
     } else await vixrouterContract.swapNoSplit(_trade, _to, _fee);
   };
@@ -467,10 +466,9 @@ const LimitOrderPage: NextPageWithLayout = () => {
         <div className="xl:col-span-1"></div>
         <div className="flex flex-row items-center xl:col-span-2 ">
           <div
-            className="flex flex-row items-center rounded-[6px] px-2 outline outline-1 outline-offset-[4px] outline-[#0D0C52]"
-            style={{ marginLeft: '14px' }}
+            className="flex flex-row items-center rounded-[6px] px-2 outline outline-1 outline-offset-[4px] outline-[#0D0C52] margin-left-14"
           >
-            <span className="" style={{fontFamily: 'Poppins', fontSize: '14px'}}>
+            <span className="primary-font-family font-size-14">
               Expert Mode
             </span>
             <Switch
@@ -502,7 +500,7 @@ const LimitOrderPage: NextPageWithLayout = () => {
 
       <div className="grid grid-cols-1 gap-16 xl:grid-cols-3 xl:place-items-center">
         {/* Swap box */}
-        <div className="xl:col-span-1">
+        <div className="mx-auto xl:col-span-1">
           <TradeContainer>
             <div className=" border-b border-b-[#5841D8]/20 xs:mb-2 xs:mt-1">
               <div className="mb-4 border-b border-b-[#5841D8]/20 px-8">
@@ -515,15 +513,14 @@ const LimitOrderPage: NextPageWithLayout = () => {
                   <li className="" role="presentation">
                     <a href="/swap">
                       <button
-                        className="dark:hover:text-[#FEB58D]200 inline-block rounded-t-lg py-4 text-gray-300 focus:border-b-3 focus:border-b-[#FEB58D] dark:focus:text-white"
-                        style={{ fontFamily: 'Poppins', fontSize: '14px' }}
+                        className="dark:hover:text-[#FEB58D]200 inline-block rounded-t-lg py-4 text-gray-300 focus:border-b-3 focus:border-b-[#FEB58D] dark:focus:text-white primary-font-family font-size-14"
                         id="profile-tab"
                         data-tabs-target="#profile"
                         type="button"
                         role="tab"
                         aria-controls="profile"
                         aria-selected="false"
-                        autoFocus
+                        // autoFocus
                         onClick={() => setTabIndex(1)}
                       >
                         Instant Swap
@@ -533,8 +530,7 @@ const LimitOrderPage: NextPageWithLayout = () => {
                   <li className="" role="presentation">
                     {/* <a href="/limit"> */}
                     <button
-                      className="inline-block rounded-t-lg py-4 text-gray-300 focus:border-b-3 focus:border-b-[#FEB58D] dark:hover:text-gray-200 dark:focus:text-white"
-                      style={{ fontFamily: 'Poppins', fontSize: '14px' }}
+                      className="inline-block rounded-t-lg py-4 text-gray-300 focus:border-b-3 focus:border-b-[#FEB58D] dark:hover:text-gray-200 dark:focus:text-white primary-font-family font-size-14"
                       id="dashboard-tab"
                       data-tabs-target="#dashboard"
                       type="button"
@@ -670,7 +666,7 @@ const LimitOrderPage: NextPageWithLayout = () => {
               </div>
               <div className="my-4 flex flex-row justify-between gap-1">
                 <div className="flex flex-col items-start gap-2 rounded-[10px] border py-1 px-2 dark:border-[#5841D8]/50 dark:bg-[#1B0D6B]">
-                  <span className="" style={{fontFamily: 'Poppins', fontSize: '8px' }}>
+                  <span className="primary-font-family font-size-8">
                     Order Price
                   </span>
                   <div className="flex flex-row justify-between items-center">
@@ -681,14 +677,14 @@ const LimitOrderPage: NextPageWithLayout = () => {
                         'mr-4 h-[17px] w-[85px] rounded-[10px] border-0 px-4 text-right outline-none dark:bg-[#0D0C52] dark:focus:ring-0'
                       )}
                     />
-                    <div className="flex flex-row" style={{fontFamily: 'Poppins', fontSize: '12px' }}>
+                    <div className="flex flex-row primary-font-family font-size-12">
                       <span>USDC</span>
                       <div className="mt-1 ml-1"><ArrowsRightLeft /></div>                      
                     </div>
                   </div>
                 </div>
                 <div className="flex flex-col items-end gap-2 rounded-[10px] border py-1 px-2 dark:border-[#5841D8]/50 dark:bg-[#1B0D6B]">
-                  <span className="" style={{fontFamily: 'Poppins', fontSize: '8px' }}>
+                  <span className="primary-font-family font-size-8">
                     Expires in
                   </span>
                   <SortList3 />
@@ -750,8 +746,8 @@ const LimitOrderPage: NextPageWithLayout = () => {
                 shape="pill"
                 // fullWidth={true}
                 // className="bg-gradient-to-r from-[#312e81] to-[#1e3a8a] mt-1 uppercase xs:tracking-widest"
-                className="mt-1 py-1 px-3 w-[153px] h-[32px]"
-                style={{fontFamily: 'Poppins', fontSize: '14px', background: 'linear-gradient(270deg, #FF6060 0%, #F99820 100%)'}}
+                className="mt-1 py-1 px-3 w-[153px] h-[32px] primary-font-family font-size-14 bg-leanear-gradient"
+                style={{ }}
                 onClick={() => openModal('WALLET_CONNECT_VIEW')}
               >
                 <span>Connect Wallet</span>
@@ -809,7 +805,7 @@ const LimitOrderPage: NextPageWithLayout = () => {
         {/* Rigth side */}
         <div className="text-large rounded-[4px] text-center shadow-card outline outline-1 outline-offset-[16px] outline-[#0D0C52] xl:col-span-2 ">
           {/* Market Data-Chart subPanel */}
-          <div className="w-[709px] rounded-[10px] px-8 dark:bg-[#0D0C52]">
+          <div className="max-w-[709px] md:min-w-[709px] sm:min-h-[520px] rounded-[10px] px-8 dark:bg-[#0D0C52]">
             <div className="min-h-[50px] ">
               <MarketData
                 token_address1={tokenIn}
@@ -822,18 +818,17 @@ const LimitOrderPage: NextPageWithLayout = () => {
           </div>
 
           {/* Open Orders subPanel */}
-          <div className="mt-4 min-h-[114px] w-[709px] rounded-[10px] px-8 pt-2 pb-6 dark:bg-[#0D0C52]">
+          <div className="mt-4 min-h-[114px] max-w-[709px] rounded-[10px] px-8 pt-2 pb-6 dark:bg-[#0D0C52]">
             <div
-              className="mx-4 inline-flex justify-between gap-12 rounded-md shadow-sm"
+              className="mx-4 inline-flex gap-4 md:gap-12 rounded-md shadow-sm"
               role="group"
             >
               <button
                 type="button"
                 className={cn(
-                  'bg-transparent pt-4 pb-2 text-sm text-[#BCBCBC] font-medium focus:z-10 focus:ring-gray-500 dark:hover:text-[#FEB58D]',
+                  'bg-transparent pt-4 pb-2 text-sm text-[#BCBCBC] font-medium focus:z-10 focus:ring-gray-500 dark:hover:text-[#FEB58D] primary-font-family font-size-14',
                   tableIndex === 1 ? 'dark:text-[#FEB58D]' : ''
                 )}
-                style={{ fontFamily: 'Poppins', fontSize: '14px' }}
                 onClick={() => {
                   setTableIndex(1);
                 }}
@@ -843,10 +838,9 @@ const LimitOrderPage: NextPageWithLayout = () => {
               <button
                 type="button"
                 className={cn(
-                  'bg-transparent pt-4 pb-2 text-sm text-[#BCBCBC] font-medium focus:z-10 focus:ring-gray-500 dark:hover:text-[#FEB58D]',
+                  'bg-transparent pt-4 pb-2 text-sm text-[#BCBCBC] font-medium focus:z-10 focus:ring-gray-500 dark:hover:text-[#FEB58D] primary-font-family font-size-14',
                   tableIndex === 2 ? 'dark:text-[#FEB58D]' : ''
                 )}
-                style={{ fontFamily: 'Poppins', fontSize: '14px' }}
                 onClick={() => {
                   setTableIndex(2);
                 }}
@@ -856,10 +850,9 @@ const LimitOrderPage: NextPageWithLayout = () => {
               <button
                 type="button"
                 className={cn(
-                  'bg-transparent pt-4 pb-2 text-sm text-[#BCBCBC] font-medium focus:z-10 focus:ring-gray-500 dark:hover:text-[#FEB58D]',
+                  'bg-transparent pt-4 pb-2 text-sm text-[#BCBCBC] font-medium focus:z-10 focus:ring-gray-500 dark:hover:text-[#FEB58D] primary-font-family font-size-14',
                   tableIndex === 3 ? 'dark:text-[#FEB58D]' : ''
                 )}
-                style={{ fontFamily: 'Poppins', fontSize: '14px' }}
                 onClick={() => {
                   setTableIndex(3);
                 }}
@@ -869,10 +862,9 @@ const LimitOrderPage: NextPageWithLayout = () => {
               <button
                 type="button"
                 className={cn(
-                  'bg-transparent pt-4 pb-2 text-sm text-[#BCBCBC] font-medium focus:z-10 focus:ring-gray-500 dark:hover:text-[#FEB58D]',
+                  'bg-transparent pt-4 pb-2 text-sm text-[#BCBCBC] font-medium focus:z-10 focus:ring-gray-500 dark:hover:text-[#FEB58D] primary-font-family font-size-14',
                   tableIndex === 4 ? 'dark:text-[#FEB58D]' : ''
                 )}
-                style={{ fontFamily: 'Poppins', fontSize: '14px' }}
                 onClick={() => {
                   setTableIndex(4);
                 }}
@@ -884,8 +876,7 @@ const LimitOrderPage: NextPageWithLayout = () => {
               <div className="border-b border-b-[#5841D8]/20 py-0.5">
                 <div className="flex justify-between">
                   <div
-                    className="flex flex-col justify-between"
-                    style={{ fontFamily: 'Poppins', fontSize: '12px' }}
+                    className="flex flex-col justify-between primary-font-family font-size-12"
                   >
                     <span className="min-w-[110px] py-1 pr-2 text-left text-[#5841D8]">
                       Symbol
@@ -898,8 +889,7 @@ const LimitOrderPage: NextPageWithLayout = () => {
                   {openOrdersHeader.map((item, index) => (
                     <div key={index} className="flex flex-col justify-between">
                       <span
-                        className="p-1 text-[#5841D8]"
-                        style={{ fontFamily: 'Poppins', fontSize: '12px' }}
+                        className="p-1 text-[#5841D8] primary-font-family font-size-12"
                       >
                         {item}
                       </span>
@@ -907,10 +897,9 @@ const LimitOrderPage: NextPageWithLayout = () => {
                         <span
                           key={index}
                           className={cn(
-                            'p-1',
+                            'p-1 primary-font-family font-size-12',
                             index === 0 ? 'text-[#EB5757]' : 'text-white'
                           )}
-                          style={{ fontFamily: 'Poppins', fontSize: '12px' }}
                         >
                           {openOrdersData[index]}
                         </span>
@@ -925,8 +914,7 @@ const LimitOrderPage: NextPageWithLayout = () => {
                         >
                           <span
                             key={index}
-                            className="text-[#6FCF97]"
-                            style={{ fontFamily: 'Poppins', fontSize: '12px' }}
+                            className="text-[#6FCF97] primary-font-family font-size-12"
                           >
                             {openOrdersData[index]}
                           </span>
@@ -936,8 +924,7 @@ const LimitOrderPage: NextPageWithLayout = () => {
                   ))}
                   <div className="flex flex-col justify-between">
                     <span
-                      className="py-1 pl-2 text-[#5841D8]"
-                      style={{ fontFamily: 'Poppins', fontSize: '12px' }}
+                      className="py-1 pl-2 text-[#5841D8] primary-font-family font-size-12"
                     ></span>
                     <span
                       className="pt-2 pb-1 text-[#EB5757] cursor-pointer"
@@ -946,14 +933,13 @@ const LimitOrderPage: NextPageWithLayout = () => {
                   </div>
                 </div>
                 {/* <div className="flex justify-between"> */}
-                {/* <span className="min-w-[110px] py-1 pr-2 text-[#5841D8]" style={{fontFamily: 'Poppins', fontSize: '12px'}}></span> */}
+                {/* <span className="min-w-[110px] py-1 pr-2 text-[#5841D8] primary-font-family font-size-12"></span> */}
                 {/* </div> */}
               </div>
               <div className="border-b border-b-[#5841D8]/20 py-0.5">
                 <div className="flex justify-between">
                   <div
-                    className="flex flex-col justify-between"
-                    style={{ fontFamily: 'Poppins', fontSize: '12px' }}
+                    className="flex flex-col justify-between primary-font-family font-size-12"
                   >
                     <span className="min-w-[110px] py-1 pr-2 text-left text-[#5841D8]">
                       Symbol
@@ -966,8 +952,7 @@ const LimitOrderPage: NextPageWithLayout = () => {
                   {openOrdersHeader.map((item, index) => (
                     <div key={index} className="flex flex-col justify-between">
                       <span
-                        className="p-1 text-[#5841D8]"
-                        style={{ fontFamily: 'Poppins', fontSize: '12px' }}
+                        className="p-1 text-[#5841D8] primary-font-family font-size-12"
                       >
                         {item}
                       </span>
@@ -975,10 +960,9 @@ const LimitOrderPage: NextPageWithLayout = () => {
                         <span
                           key={index}
                           className={cn(
-                            'p-1',
+                            'p-1 primary-font-family font-size-12',
                             index === 0 ? 'text-[#EB5757]' : 'text-white'
                           )}
-                          style={{ fontFamily: 'Poppins', fontSize: '12px' }}
                         >
                           {openOrdersData[index]}
                         </span>
@@ -993,8 +977,7 @@ const LimitOrderPage: NextPageWithLayout = () => {
                         >
                           <span
                             key={index}
-                            className="text-[#6FCF97]"
-                            style={{ fontFamily: 'Poppins', fontSize: '12px' }}
+                            className="text-[#6FCF97] primary-font-family font-size-12"
                           >
                             {openOrdersData[index]}
                           </span>
@@ -1004,8 +987,7 @@ const LimitOrderPage: NextPageWithLayout = () => {
                   ))}
                   <div className="flex flex-col justify-between">
                     <span
-                      className="py-1 pl-2 text-[#5841D8]"
-                      style={{ fontFamily: 'Poppins', fontSize: '12px' }}
+                      className="py-1 pl-2 text-[#5841D8] primary-font-family font-size-12"
                     ></span>
                     <span
                       className="pt-2 pb-1 text-[#EB5757] cursor-pointer"
@@ -1014,14 +996,13 @@ const LimitOrderPage: NextPageWithLayout = () => {
                   </div>
                 </div>
                 {/* <div className="flex justify-between"> */}
-                {/* <span className="min-w-[110px] py-1 pr-2 text-[#5841D8]" style={{fontFamily: 'Poppins', fontSize: '12px'}}></span> */}
+                {/* <span className="min-w-[110px] py-1 pr-2 text-[#5841D8] primary-font-family font-size-10"></span> */}
                 {/* </div> */}
               </div>
               <div className="border-b border-b-[#5841D8]/20 py-0.5">
                 <div className="flex justify-between">
                   <div
-                    className="flex flex-col justify-between"
-                    style={{ fontFamily: 'Poppins', fontSize: '12px' }}
+                    className="flex flex-col justify-between primary-font-family font-size-12"
                   >
                     <span className="min-w-[110px] py-1 pr-2 text-left text-[#5841D8]">
                       Symbol
@@ -1034,8 +1015,7 @@ const LimitOrderPage: NextPageWithLayout = () => {
                   {openOrdersHeader.map((item, index) => (
                     <div key={index} className="flex flex-col justify-between">
                       <span
-                        className="p-1 text-[#5841D8]"
-                        style={{ fontFamily: 'Poppins', fontSize: '12px' }}
+                        className="p-1 text-[#5841D8] primary-font-family font-size-12"
                       >
                         {item}
                       </span>
@@ -1043,10 +1023,9 @@ const LimitOrderPage: NextPageWithLayout = () => {
                         <span
                           key={index}
                           className={cn(
-                            'p-1',
+                            'p-1 primary-font-family font-size-12',
                             index === 0 ? 'text-[#EB5757]' : 'text-white'
                           )}
-                          style={{ fontFamily: 'Poppins', fontSize: '12px' }}
                         >
                           {openOrdersData[index]}
                         </span>
@@ -1061,8 +1040,7 @@ const LimitOrderPage: NextPageWithLayout = () => {
                         >
                           <span
                             key={index}
-                            className="text-[#6FCF97]"
-                            style={{ fontFamily: 'Poppins', fontSize: '12px' }}
+                            className="text-[#6FCF97] primary-font-family font-size-12"
                           >
                             {openOrdersData[index]}
                           </span>
@@ -1072,8 +1050,7 @@ const LimitOrderPage: NextPageWithLayout = () => {
                   ))}
                   <div className="flex flex-col justify-between">
                     <span
-                      className="py-1 pl-2 text-[#5841D8]"
-                      style={{ fontFamily: 'Poppins', fontSize: '12px' }}
+                      className="py-1 pl-2 text-[#5841D8] primary-font-family font-size-12"
                     ></span>
                     <span
                       className="pt-2 pb-1 text-[#EB5757] cursor-pointer"
@@ -1082,14 +1059,13 @@ const LimitOrderPage: NextPageWithLayout = () => {
                   </div>
                 </div>
                 {/* <div className="flex justify-between"> */}
-                {/* <span className="min-w-[110px] py-1 pr-2 text-[#5841D8]" style={{fontFamily: 'Poppins', fontSize: '12px'}}></span> */}
+                {/* <span className="min-w-[110px] py-1 pr-2 text-[#5841D8] primary-font-family font-size-10"></span> */}
                 {/* </div> */}
               </div>
               <div className="border-b border-b-[#5841D8]/20 py-0.5">
                 <div className="flex justify-between">
                   <div
-                    className="flex flex-col justify-between"
-                    style={{ fontFamily: 'Poppins', fontSize: '12px' }}
+                    className="flex flex-col justify-between primary-font-family font-size-12"
                   >
                     <span className="min-w-[110px] py-1 pr-2 text-left text-[#5841D8]">
                       Symbol
@@ -1102,8 +1078,7 @@ const LimitOrderPage: NextPageWithLayout = () => {
                   {openOrdersHeader.map((item, index) => (
                     <div key={index} className="flex flex-col justify-between">
                       <span
-                        className="p-1 text-[#5841D8]"
-                        style={{ fontFamily: 'Poppins', fontSize: '12px' }}
+                        className="p-1 text-[#5841D8] primary-font-family font-size-12"
                       >
                         {item}
                       </span>
@@ -1111,10 +1086,9 @@ const LimitOrderPage: NextPageWithLayout = () => {
                         <span
                           key={index}
                           className={cn(
-                            'p-1',
+                            'p-1 primary-font-family font-size-12',
                             index === 0 ? 'text-[#EB5757]' : 'text-white'
                           )}
-                          style={{ fontFamily: 'Poppins', fontSize: '12px' }}
                         >
                           {openOrdersData[index]}
                         </span>
@@ -1129,8 +1103,7 @@ const LimitOrderPage: NextPageWithLayout = () => {
                         >
                           <span
                             key={index}
-                            className="text-[#6FCF97]"
-                            style={{ fontFamily: 'Poppins', fontSize: '12px' }}
+                            className="text-[#6FCF97] primary-font-family font-size-12"
                           >
                             {openOrdersData[index]}
                           </span>
@@ -1140,8 +1113,7 @@ const LimitOrderPage: NextPageWithLayout = () => {
                   ))}
                   <div className="flex flex-col justify-between">
                     <span
-                      className="py-1 pl-2 text-[#5841D8]"
-                      style={{ fontFamily: 'Poppins', fontSize: '12px' }}
+                      className="py-1 pl-2 text-[#5841D8] primary-font-family font-size-12"
                     ></span>
                     <span
                       className="pt-2 pb-1 text-[#EB5757] cursor-pointer"
@@ -1150,7 +1122,7 @@ const LimitOrderPage: NextPageWithLayout = () => {
                   </div>
                 </div>
                 {/* <div className="flex justify-between"> */}
-                {/* <span className="min-w-[110px] py-1 pr-2 text-[#5841D8]" style={{fontFamily: 'Poppins', fontSize: '12px'}}></span> */}
+                {/* <span className="min-w-[110px] py-1 pr-2 text-[#5841D8] primary-font-family font-size-10"></span> */}
                 {/* </div> */}
               </div>
             </div>

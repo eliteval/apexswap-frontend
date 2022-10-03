@@ -3,6 +3,7 @@ import { HookContext } from '@/lib/hooks/use-hook';
 import CurrencySwapIcons from '@/components/ui/currency-swap-icons';
 import cn from 'classnames';
 import PairPriceChart from '@/components/swap/pair-price-chart';
+import { AdvancedRealTimeChart } from 'react-ts-tradingview-widgets';
 import CurrencySwapIcons3 from '@/components/ui/currency-swap-icons3';
 import Button from '@/components/ui/button';
 import { ChartBar } from '@/components/icons/chart-bar-mini';
@@ -18,23 +19,31 @@ import { ArrowsRightLeft } from '@/components/icons/arrows-right-left';
 
 export default function MarketData({ ...props }) {
   const [hours, setHours] = useState('24');
-  const [chartType, setChartType] = useState('chart1');
-  var { marketData, token_address1, token_address2, token_index1, token_index2 } = props;
-  const { getCoinIcon, getCoinCode } = useContext(HookContext);
+  let [barChart, setBarChart] = useState(false);
+  var {
+    marketData,
+    token_address1,
+    token_address2,
+    token_index1,
+    token_index2,
+  } = props;
+  const { coinslist, getCoinIcon, getCoinCode } = useContext(HookContext);
   // marketdataAtom = atom({hours: hours})
 
   return (
     <>
-      <div className="border-b border-b-[#5841D8]/20 md:flex md:flex-row md:justify-between">
-        <div className=" flex items-end">
+      <div className="border-b border-b-[#5841D8]/20 pt-4 md:pt-0 md:flex md:flex-row md:justify-between">
+        <div className=" flex md:items-end md:mt-0">
           {/* {getCoinIcon(token_address1)} */}
           {/* <span className="ml-4 text-base">{getCoinCode(token_address1)}/{getCoinCode(token_address2)}</span> */}
           {/* <CurrencySwapIcons
             from={getCoinCode(token_address1)}
             to={getCoinCode(token_address2)}
           /> */}
-          <CurrencySwapIcons3 from={ token_index1} to={ token_index2} />
-          <div className="mb-4 ml-2"><ArrowsRightLeft /></div>          
+          <CurrencySwapIcons3 from={token_index1} to={token_index2} />
+          <div className="mt-1 md:mb-4 ml-1 md:ml-2">
+            <ArrowsRightLeft />
+          </div>
           {/* {marketData.currentPrice && <span className="ml-4 text-left text-lg font-semibold">
             $ {marketData.currentPrice}
           </span>}
@@ -43,12 +52,17 @@ export default function MarketData({ ...props }) {
           </div> */}
         </div>
         <div className="flex items-baseline">
-          <div className="mr-3 mt-8 inline-flex rounded-md shadow-sm" role="group">
+          <div
+            className="mr-3 md:mt-8 inline-flex rounded-md shadow-sm"
+            role="group"
+          >
             <button
               type="button"
               className={cn(
                 'bg-transparent py-1 px-2 text-sm font-medium ',
-                hours === '1' ? 'border-b border-b-[#FEB58D] text-[#FAFAFA]' : 'text-[#BCBCBC]/50'
+                hours === '1'
+                  ? 'border-b border-b-[#FEB58D] text-[#FAFAFA]'
+                  : 'text-[#BCBCBC]/50'
               )}
               onClick={() => {
                 setHours('1');
@@ -56,18 +70,20 @@ export default function MarketData({ ...props }) {
             >
               1H
             </button>
-            <button
+            {/* <button
               type="button"
               className={cn(
                 'bg-transparent py-1 px-2 text-sm font-medium ',
-                hours === '4' ? 'border-b border-b-[#FEB58D] text-[#FAFAFA]' : 'text-[#BCBCBC]/50'
+                hours === '4'
+                  ? 'border-b border-b-[#FEB58D] text-[#FAFAFA]'
+                  : 'text-[#BCBCBC]/50'
               )}
               onClick={() => {
                 setHours('4');
               }}
             >
               4H
-            </button>
+            </button> */}
             <button
               type="button"
               className={cn(
@@ -110,7 +126,7 @@ export default function MarketData({ ...props }) {
             >
               1M
             </button>
-            <button
+            {/* <button
               type="button"
               className={cn(
                 'bg-transparent py-1 px-2 text-sm font-medium ',
@@ -123,7 +139,7 @@ export default function MarketData({ ...props }) {
               }}
             >
               6M
-            </button>
+            </button> */}
           </div>
           <Button
             // id="MyElement"
@@ -131,11 +147,14 @@ export default function MarketData({ ...props }) {
             shape="circle"
             // fullWidth={true}
             // className="bg-gradient-to-r from-[#312e81] to-[#1e3a8a] mt-1 uppercase xs:tracking-widest"
-            className={cn("mt-1 mr-3 bg-transparent border  rounded-full ",
-              chartType==='chart1'?'border-[#FEB58D] text-[#FEB58D]':'border-[#BCBCBC]/50 text-[#BCBCBC]/50'
+            className={cn(
+              'mt-1 mr-3 rounded-full border  bg-transparent ',
+              !barChart
+                ? 'border-[#FEB58D] text-[#FEB58D]'
+                : 'border-[#BCBCBC]/50 text-[#BCBCBC]/50'
             )}
-            style={{width: '18px', height: '18px'}}
-            onClick={() => setChartType('chart1')}
+            style={{ width: '18px', height: '18px' }}
+            onClick={() => setBarChart(false)}
           >
             <TrendingUp />
           </Button>
@@ -145,11 +164,14 @@ export default function MarketData({ ...props }) {
             shape="circle"
             // fullWidth={true}
             // className="bg-gradient-to-r from-[#312e81] to-[#1e3a8a] mt-1 uppercase xs:tracking-widest"
-            className={cn("mt-1 bg-transparent border rounded-full ",
-              chartType==='chart2'?'border-[#FEB58D] text-[#FEB58D]':'border-[#BCBCBC]/50 text-[#BCBCBC]/50'
+            className={cn(
+              'mt-1 rounded-full border bg-transparent ',
+              barChart
+                ? 'border-[#FEB58D] text-[#FEB58D]'
+                : 'border-[#BCBCBC]/50 text-[#BCBCBC]/50'
             )}
-            style={{width: '18px', height: '18px'}}
-            onClick={() => setChartType('chart2')}
+            style={{ width: '18px', height: '18px' }}
+            onClick={() => setBarChart(true)}
           >
             <ChartBar />
           </Button>
@@ -228,33 +250,63 @@ export default function MarketData({ ...props }) {
           </div>
         </div> */}
       </div>
-      <div className="grid grid-cols-1 divide-x divide-[#374151] lg:grid-cols-3">
-        <div className="grid grid-cols-1 divide-y divide-[#374151] lg:col-span-3">
+      <div className="grid grid-cols-1 divide-x divide-[#374151] ">
+        {/* <div className="grid grid-cols-1 divide-y divide-[#374151] lg:col-span-3"> */}
           <div className="mb-8 ">
-            <div className="text-left py-4">
-              <span className="" style={{fontFamily: 'Poppins', fontSize:'36px', fontWeight: '600'}}>{marketData?.currentPrice}</span>
+            <div className="py-4 text-left">
+              <span
+                className="primary-font-family font-size-36 font-weight-600"
+              >
+                {marketData?.currentPrice}
+              </span>
               <div className="flex flex-row">
-                <span className={cn('mr-2 ', 
-                    marketData?.price_change_p1>0?'text-[#6FCF97]':'text-[#EB5757]'
-                  )} 
-                  style={{fontFamily: 'Poppins', fontSize:'12px'}}
+                <span
+                  className={cn(
+                    'mr-2 primary-font-family font-size-12',
+                    marketData?.price_change_p1 > 0
+                      ? 'text-[#6FCF97]'
+                      : 'text-[#EB5757]'
+                  )}
                 >
-                  {marketData?.price_change_p1>0?<span>+</span>:<span>-</span>}
+                  {marketData?.price_change_p1 > 0 ? (
+                    <span>+</span>
+                  ) : (
+                    <span></span>
+                  )}
                   <span>{marketData?.price_change_p1}%</span>
                 </span>
-                <span className="text-[#E0E0E0]" style={{fontFamily: 'Poppins', fontSize:'12px'}}>Past {hours} hours</span>
+                <span
+                  className="text-[#E0E0E0] primary-font-family font-size-12"
+                >
+                  Past {hours} hours
+                </span>
               </div>
             </div>
-            <PairPriceChart
-              tokenIn={token_address1}
-              tokenOut={token_address2}
-              hours={hours}
-            />
+            {!barChart ? (
+              <PairPriceChart
+                tokenIn={token_address1}
+                tokenOut={token_address2}
+                hours={hours}
+              />
+            ) : (
+              <div className="mx-auto">
+                <AdvancedRealTimeChart 
+                  symbol={`${coinslist[token_index1].tradingviewcode}USD`}
+                  // autosize
+                  interval="60"
+                  width="100%"
+                  // height="97%"
+                  hide_top_toolbar
+                  hide_legend
+                  container_id="tradingview_a4bd2"
+                />
+              </div>
+            )}
           </div>
           {/* <div>
             <Orders />
           </div> */}
-        </div>
+        {/* </div> */}
 
         {/* Market Trades */}
         {/* <div className="lg:col-span-1 ">

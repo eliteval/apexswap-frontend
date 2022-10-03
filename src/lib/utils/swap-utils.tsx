@@ -10,3 +10,14 @@ export const getDexName = (address: any) => {
         return "Unknown";
     }
 }
+
+export const getDexAddress = (name: any) => {
+    const index = dexList.findIndex(
+        (item) => item.dex.toLowerCase() === name.toLowerCase()
+    );
+    if (index !== -1) {
+        return dexList[index].address;
+    } else {
+        return "Unknown";
+    }
+}

@@ -10,14 +10,15 @@ import { ChevronForward } from '@/components/icons/chevron-forward';
 import { PowerIcon } from '@/components/icons/power';
 import { useModal } from '@/components/modal-views/context';
 import { useContext } from 'react';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 export default function WalletConnect() {
   const { openModal } = useModal();
-  const { address, disconnectWallet, balance, chainId, swtichNetwork } = useContext(WalletContext);
+  const { address, disconnectWallet, balance, chainId, swtichNetwork } =
+    useContext(WalletContext);
   return (
     <>
-      {address ? (
-        <div className="flex items-center gap-3 sm:gap-6 lg:gap-3">
+      {/* <div className="flex items-center gap-3 sm:gap-6 lg:gap-3">
           <div className="relative">
             {chainId == 43114 ? <Menu>
               <Menu.Button className="block h-10 w-[130px] text-sm overflow-hidden rounded-full border-2 border-solid border-white bg-gradient-to-r from-[#c62828] to-[#c62828] shadow-main transition-all hover:-translate-y-0.5 hover:shadow-large dark:border-gray-700">
@@ -89,47 +90,43 @@ export default function WalletConnect() {
             </Menu>
           </div>
 
-        </div>
-      ) : (
-        <>
+        </div> */}
+
+      <Button
+        size="mini"
+        shape="circle"
+        className="primary-font-family fs-14 mt-1 rounded-full border-2 border-[#0D0C52] bg-transparent"
+      >
+        <Globe />
+      </Button>
+      <Button
+        size="mini"
+        shape="circle"
+        className="primary-font-family fs-14 mt-1 rounded-full border-2 border-[#0D0C52] bg-transparent"
+      >
+        <Gear2 />
+      </Button>
+
+      {/* {!address ?
         <Button
-          // id="MyElement"
-          size="mini"
-          shape="circle"
-          // fullWidth={true}
-          // className="bg-gradient-to-r from-[#312e81] to-[#1e3a8a] mt-1 uppercase xs:tracking-widest"
-          className="mt-1 bg-transparent border-2 border-[#0D0C52] rounded-full"
-          style={{fontFamily: 'Poppins', fontSize:'14px'}}
-          onClick={() => openModal('WALLET_CONNECT_VIEW')}
-        >
-          <Globe />
-        </Button>
-        <Button
-          // id="MyElement"
-          size="mini"
-          shape="circle"
-          // fullWidth={true}
-          // className="bg-gradient-to-r from-[#312e81] to-[#1e3a8a] mt-1 uppercase xs:tracking-widest"
-          className="mt-1 bg-transparent border-2 border-[#0D0C52] rounded-full"
-          style={{fontFamily: 'Poppins', fontSize:'14px'}}
-          onClick={() => openModal('WALLET_CONNECT_VIEW')}
-        >
-          <Gear2 />
-        </Button>
-        <Button
-          // id="MyElement"
           size="mini"
           shape="pill"
-          // fullWidth={true}
-          // className="bg-gradient-to-r from-[#312e81] to-[#1e3a8a] mt-1 uppercase xs:tracking-widest"
-          className="mt-1 py-1 px-3 bg-transparent border-2 border-[#FEB58D] rounded-full"
-          style={{fontFamily: 'Poppins', fontSize:'14px'}}
+          className="mt-1 py-1 px-5 bg-transparent border-2 border-[#FEB58D] rounded-full primary-font-family fs-14"
           onClick={() => openModal('WALLET_CONNECT_VIEW')}
         >
           <span>Connect Wallet</span>
-        </Button>
-        </>
-      )}
+        </Button> : <Button
+          size="mini"
+          shape="pill"
+          className="mt-1 py-1 px-5 bg-transparent border-2 border-[#FEB58D] rounded-full primary-font-family fs-14"
+          onClick={disconnectWallet}
+        >
+          <span>{address.slice(0, 5)}{'...'}{address.slice(address.length - 4)}</span>        
+        </Button>} */}
+
+      <div className="header-wallet-connect">
+        <ConnectButton />
+      </div>
     </>
   );
 }

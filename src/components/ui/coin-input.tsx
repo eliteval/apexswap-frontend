@@ -9,8 +9,8 @@ import { useLockBodyScroll } from '@/lib/hooks/use-lock-body-scroll';
 import { HookContext } from '@/lib/hooks/use-hook';
 
 // dynamic import
-const CoinSelectView = dynamic(() =>
-  import('@/components/ui/coin-select-view')
+const CoinSelectView = dynamic(
+  () => import('@/components/ui/coin-select-view')
 );
 
 interface CoinInputTypes extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -21,7 +21,7 @@ interface CoinInputTypes extends React.InputHTMLAttributes<HTMLInputElement> {
   defaultValue?: number;
   coinIndex?: number;
   showvalue?: number;
-  tokenInBalance?: number;
+  tokenBalance?: number;
   // className?: string;
   onChangeTokenIndex?: (param: number) => void;
   onchangeAmount?: (param: string) => void;
@@ -35,7 +35,7 @@ export default function CoinInput({
   isInbox = false,
   onToggleTokens,
   showvalue,
-  tokenInBalance,
+  tokenBalance,
   onChangeTokenIndex,
   onchangeAmount,
   data,
@@ -45,7 +45,7 @@ export default function CoinInput({
   // className,
   ...rest
 }: CoinInputTypes) {
-  const { coinslist, getCoinDecimals, getCoinName, } = useContext(HookContext);
+  const { coinslist, getCoinDecimals, getCoinName } = useContext(HookContext);
 
   let [value, setValue] = useState(defaultValue);
   let [selectedCoin, setSelectedCoin] = useState(coinslist[coinIndex]);
@@ -64,30 +64,64 @@ export default function CoinInput({
   };
   function handleSelectedCoin(coin: CoinTypes) {
     setSelectedCoin(coin);
-    var coinIndex = coinslist.findIndex((element) => element.address == coin.address)
+    var coinIndex = coinslist.findIndex(
+      (element) => element.address == coin.address
+    );
     onChangeTokenIndex(coinIndex);
+    setVisibleCoinList(false);
+  }
+
+  const handleCloseCoinDialog = () => {
     setVisibleCoinList(false);
   }
   return (
     <>
       <div>
-        <div className=" block px-4 min-h-[70px] rounded-t-[10px]  transition-colors duration-200 dark:bg-[#4910BA]">
-          <div className="mt-0.5 mb-0.5 min-h-[10px] flex flex-row justify-between">
-            <span className="mt-2 mb-0.5 min-h-[10px] block text-xs text-gray-600 dark:text-white">{label} </span>
-            {isInbox ? <div className="mt-2 mb-0.5 min-h-[10px] block text-xs text-gray-600 text-right dark:text-white border-b border-b-white" style={{ cursor: "pointer" }}
-              onClick={() => { setValue(tokenInBalance); onchangeAmount(tokenInBalance); }}
-            >
-              Max
-            </div> : <></>}
-
+        <div className=" block min-h-[70px] rounded-t-[10px] px-4  transition-colors duration-200 dark:bg-[#4910BA]">
+          <div className="mt-0.5 mb-0.5 flex min-h-[10px] flex-row justify-between">
+            <span className="mt-2 mb-0.5 block min-h-[10px] text-xs text-gray-600 dark:text-white">
+              {label}{' '}
+            </span>
+            {isInbox ? (
+              <div className="flex flex-row gap-1">
+                <div
+                  className="mt-2 mb-0.5 block min-h-[10px] border-b border-b-white text-right text-xs text-gray-600 dark:text-white"
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => {
+                    setValue(tokenBalance / 2);
+                    onchangeAmount(tokenBalance / 2);
+                  }}
+                >
+                  50%
+                </div>
+                <div
+                  className="mt-2 mb-0.5 block min-h-[10px] border-b border-b-white text-right text-xs text-gray-600 dark:text-white"
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => {
+                    setValue(tokenBalance);
+                    onchangeAmount(tokenBalance);
+                  }}
+                >
+                  Max
+                </div>
+              </div>
+            ) : (
+              <></>
+            )}
           </div>
-          <div className="min-h-[60px] flex flex-row justify-between items-center">
+          <div className="flex min-h-[60px] flex-row items-center justify-between">
             <button
               onClick={() => setVisibleCoinList(true)}
-              className="min-w-[80px] flex items-center font-medium outline-none dark:text-gray-100"
+              className="flex min-w-[80px] items-center font-medium outline-none dark:text-gray-100"
             >
-              {onToggleTokens ? coinslist[coinIndex]?.icon2 : selectedCoin?.icon2}{' '}
-              <span className="ltr:ml-2 rtl:mr-2">{onToggleTokens ? coinslist[coinIndex]?.code : selectedCoin?.code}</span>
+              {onToggleTokens
+                ? coinslist[coinIndex]?.icon2
+                : selectedCoin?.icon2}{' '}
+              <span className="ltr:ml-2 rtl:mr-2">
+                {onToggleTokens
+                  ? coinslist[coinIndex]?.code
+                  : selectedCoin?.code}
+              </span>
               <ChevronDown className="ltr:ml-1.5 rtl:mr-1.5" />
             </button>
             <input
@@ -95,23 +129,32 @@ export default function CoinInput({
               value={isInbox ? value : showvalue?.toFixed(6)}
               placeholder="0.0"
               inputMode="decimal"
-              disabled={!isInbox}
+              // disabled={!isInbox}
               onChange={handleOnChange}
-              className={cn('w-1/2 h-[23px] px-4 dark:bg-[#000B2F]/10 rounded-[10px] border-0 text-right outline-none dark:focus:ring-0',
-                isInbox
-                  ? ''
-                  : 'cursor-not-allowed bg-gray-100 text-gray-400'
+              className={cn(
+                'h-[23px] w-1/2 rounded-[10px] border-0 px-4 text-right outline-none dark:bg-[#000B2F]/10 dark:focus:ring-0',
+                // isInbox ? '' : ' bg-gray-100 text-gray-400'
               )}
-              // style={{ padding: '0px' }}
+            // style={{ padding: '0px' }}
             />
           </div>
         </div>
-        <div className="block px-4 min-h-[28px] rounded-b-[10px] dark:bg-[#FFFFFF] py-auto">
+        <div className="py-auto block min-h-[28px] rounded-b-[10px] px-4 dark:bg-[#FFFFFF]">
           <div className="mb-1 flex flex-row justify-between">
-            <span className="mt-1 text-black" style={{fontFamily: 'Poppins', fontSize: '10px', fontWeight: '500'}}>Balance: ---</span>
-            <div className="mt-1 text-black font-xs text-right" style={{fontFamily: 'Poppins', fontSize: '10px', fontWeight: '500'}}>
+            <span
+              className="mt-1 text-black primary-font-family font-size-10 font-weight-500"
+            >
+              Balance: {tokenBalance?.toFixed(6)}
+            </span>
+            <div
+              className="font-xs mt-1 text-right text-black primary-font-family font-size-10 font-weight-500"
+            >
               {/* = ${showvalue ? Number(showvalue * usdPrice).toFixed(6) : usdPrice ? Number(value) * usdPrice : '0.00'} */}
-              50% -100%
+              {isInbox && tokenBalance > 0
+                ? `${Number((value / tokenBalance) * 100).toFixed(3)}%`
+                : isInbox
+                  ? '---'
+                  : ''}
             </div>
           </div>
         </div>
@@ -143,6 +186,7 @@ export default function CoinInput({
             >
               <CoinSelectView
                 onSelect={(selectedCoin) => handleSelectedCoin(selectedCoin)}
+                onClose={handleCloseCoinDialog}
               />
             </motion.div>
           </motion.div>

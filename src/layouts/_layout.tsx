@@ -1,6 +1,7 @@
 import { useWindowScroll } from '@/lib/hooks/use-window-scroll';
 import Logo from '@/components/ui/logo';
-import BgImg from '@/components/icons/bgImg';
+// import BgImg from '@/components/icons/bgImg';
+import BgImg from '@/assets/images/background-image.png';
 import Button from '@/components/ui/button';
 import { FlashIcon } from '@/components/icons/flash';
 import { SearchFrom } from '@/components/search/view';
@@ -47,15 +48,14 @@ function HeaderRightArea() {
         <WalletConnect />
       </div>
 
-      <div className="flex items-center lg:hidden">
-        {/* <NotificationButton /> */}
+      {/* <div className="flex items-center lg:hidden">
         <Hamburger
           isOpen={isOpen}
           onClick={() => openDrawer('DRAWER_MENU')}
           color="white"
           className="shadow-main ltr:ml-3.5 rtl:mr-3.5 dark:border dark:border-solid dark:border-gray-700 dark:bg-light-dark dark:text-white ltr:sm:ml-5 rtl:sm:mr-5"
         />
-      </div>
+      </div> */}
     </div>
   );
 }
@@ -104,9 +104,9 @@ export default function Layout({
 }: React.PropsWithChildren<LayoutProps>) {
   return (
     // <div className="min-w-fit w-full min-h-screen bg-light-100 dark:bg-gradient-to-r dark:from-[#0f0f0e] dark:via-stone-900 dark:to-[#041112] flex flex-col">
-    <div className="min-w-fit w-full min-h-screen bg-light-100 bg-[#7F30FF] flex flex-col" style={{backgroundImage: BgImg}}>
+    <div className="min-w-fit w-full min-h-screen bg-light-100 bg-[#0D0C52]  flex flex-col main-bg" style={{backgroundImage: `url(${BgImg.src})`}}>
       <Header />
-      <main className="mx-auto min-w-fit mb-12 pt-16 px-10 sm:pt-24 " >
+      <main className="mx-auto min-w-fit pb-32 pt-16 px-10 sm:pt-24 " >
         {children}
       </main>
     </div>

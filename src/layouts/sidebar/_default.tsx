@@ -112,22 +112,22 @@ export const menuItems = [
         name: 'Market',
         href: routes.swap,
       },
-      {
-        name: 'Limit',
-        href: routes.limit,
-      },
+      // {
+      //   name: 'Limit',
+      //   href: routes.limit,
+      // },
     ],
   },
-  {
-    name: 'Liquidity',
-    icon: <FarmIcon />,
-    href: routes.liquidity,
-  },
-  {
-    name: 'Bridge',
-    icon: <ExchangeIcon />,
-    href: routes.bridge,
-  },
+  // {
+  //   name: 'Liquidity',
+  //   icon: <FarmIcon />,
+  //   href: routes.liquidity,
+  // },
+  // {
+  //   name: 'Bridge',
+  //   icon: <ExchangeIcon />,
+  //   href: routes.bridge,
+  // },
   // {
   //   name: 'Farm',
   //   icon: <FarmIcon />,

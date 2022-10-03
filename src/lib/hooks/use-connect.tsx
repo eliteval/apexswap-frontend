@@ -31,7 +31,7 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
         console.log(error, 'Catch error Account is not connected');
       }
     }
-    checkConnection();
+    // checkConnection();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -39,7 +39,7 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
     try {
       const signer = provider.getSigner();
       const { chainId } = await provider.getNetwork();
-      setChainID(chainId)
+      setChainID(chainId);
       if (signer) {
         const web3Address = await signer.getAddress();
         setAddress(web3Address);
@@ -95,26 +95,26 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
   const swtichNetwork = async () => {
     try {
       await window.ethereum.request({
-        method: "wallet_switchEthereumChain",
-        params: [{ chainId: "0xa86a" }],
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: '0xa86a' }],
       });
     } catch (switchError) {
       // This error code indicates that the chain has not been added to MetaMask.
       if (switchError.code === 4902) {
         try {
           await window.ethereum.request({
-            method: "wallet_addEthereumChain",
+            method: 'wallet_addEthereumChain',
             params: [
               {
-                chainId: "0xa86a",
-                chainName: "Avalanche C-Chain",
+                chainId: '0xa86a',
+                chainName: 'Avalanche C-Chain',
                 nativeCurrency: {
-                  name: "AVAX",
-                  symbol: "AVAX",
+                  name: 'AVAX',
+                  symbol: 'AVAX',
                   decimals: 18,
                 },
-                rpcUrls: ["https://api.avax.network/ext/bc/C/rpc"] /* ... */,
-                blockExplorerUrls: ["https://snowtrace.io"],
+                rpcUrls: ['https://api.avax.network/ext/bc/C/rpc'] /* ... */,
+                blockExplorerUrls: ['https://snowtrace.io'],
               },
             ],
           });
@@ -143,9 +143,9 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
     connection.on('chainChanged', async (accounts: string[]) => {
       if (accounts?.length) {
         const provider = new ethers.providers.Web3Provider(connection);
-        await provider.send("eth_requestAccounts", []);
-        const { chainId } = await provider.getNetwork()
-        setChainID(chainId)
+        await provider.send('eth_requestAccounts', []);
+        const { chainId } = await provider.getNetwork();
+        setChainID(chainId);
       } else {
         disconnectWallet();
       }
@@ -162,7 +162,7 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
         error,
         connectToWallet,
         disconnectWallet,
-        swtichNetwork
+        swtichNetwork,
       }}
     >
       {children}

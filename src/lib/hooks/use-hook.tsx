@@ -28,6 +28,24 @@ export const HookProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const isNatativeToken = (address: string) => {
+    if (address == '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee') return true;
+    else return false;
+  }
+  const isWavax = (address: string) => {
+    if (address == '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7') return true;
+    else return false;
+  }
+
+  const addressForRoute = (address: string) => {
+    var new_token =
+      address == '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
+        ? '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7'
+        : address;
+
+    return new_token
+  }
+
   const getCoinName = (address: string) => {
     const index = coinslist.findIndex(
       (item) => item.address.toLowerCase() === address.toLowerCase()
@@ -46,7 +64,7 @@ export const HookProvider = ({ children }: { children: ReactNode }) => {
     if (index !== -1) {
       return coinslist[index].icon;
     } else {
-      return <img src="/assets/coins/unknown.png"  width='24px' height='24px' />;
+      return <img src="/assets/coins/unknown.png" width='24px' height='24px' />;
     }
   }
 
@@ -80,7 +98,10 @@ export const HookProvider = ({ children }: { children: ReactNode }) => {
         getCoinDecimals,
         getCoinIcon,
         getCoinCode,
-        addCoinToList
+        addCoinToList,
+        isNatativeToken,
+        isWavax,
+        addressForRoute
       }}
     >
       {children}

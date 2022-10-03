@@ -1,13 +1,19 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 @layer base {
   :root {
     --color-brand: 17 24 39;
+    --primary-font-family: 'Poppins', sans-serif;
+    --secondary-font-family: 'Inter', sans-serif;
   }
   html,
   body {
     @apply antialiased bg-body font-body dark:bg-dark dark:text-white;
+    font-family: var(--primary-font-family);
   }
   .dynamic-html h6 {
     @apply font-medium uppercase;
@@ -65,6 +71,59 @@ a {
 * {
   box-sizing: border-box;
 } */
+
+/*==================================================
+                Default
+==================================================*/
+/* Margin */
+.margin-left-14 {
+  margin-left: 14px !important;
+}
+/* Background */
+.bg-leanear-gradient {
+  background: linear-gradient(270deg, #FF6060 0%, #F99820 100%) !important;
+}
+/* Font Family */
+.primary-font-family {
+  font-family: var(--primary-font-family) !important;
+}
+
+/* Fontn Size */
+.fs-8,
+.font-size-8 {
+  font-size: 8px !important;
+}
+.fs-10,
+.font-size-10 {
+  font-size: 10px !important;
+}
+.fs-12,
+.font-size-12 {
+  font-size: 12px !important;
+}
+.fs-14,
+.font-size-14 {
+  font-size: 14px !important;
+}
+.fs-36,
+.font-size-36 {
+  font-size: 36px !important;
+}
+/* Font Weight */
+.fw-500,
+.font-weight-500 {
+  font-weight: 500 !important;
+}
+.fw-600,
+.font-weight-600 {
+  font-weight: 600 !important;
+}
+
+/* Cursor */
+.cp,
+.cursor-pointer {
+  cursor: pointer !important;
+}
 
 /*================================================================
 Styles for Swiper slider
@@ -159,6 +218,13 @@ Styles for Swiper slider
   border-image-slice: 1;
   width: 100%;
 }
+.myImg{
+  background-image: url("/assets/background-image.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: relative;
+}
 .background{
   background-image: linear-gradient(to right, #F9C72D, #F05A2A, #F1573F, #F147A3, #2EEDE0);
 }
@@ -207,3 +273,232 @@ td {
 /* input::placeholder {
   color: white;
 } */
+
+
+/* Swap */
+.main-bg {
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+.coin-icon {
+  position: relative;
+}
+
+.coin-icon::before {
+  content: '';
+    position: absolute;
+    top: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 21px;
+    height: 21px;
+    background: #8877F1;
+    border: 1px solid #181E2E;
+    border-radius: 50%;
+}
+
+.coin-icon::after {
+  content: '';
+    position: absolute;
+    top: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1px;
+    height: 100%;
+    border: 1.5px solid #8877F1;
+}
+
+.route-box {
+  width: 209px;
+  border: 2px solid #8877F1;
+  border-radius: 20px;
+  position: relative;
+}
+.route-box::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: -30px;
+  transform: translateY(-50%);
+  width: 30px;
+  height: 1px;
+  background-color: rgba(136, 119, 241, 0.5);
+}
+.route-box::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: -30px;
+  transform: translateY(-50%);
+  width: 30px;
+  height: 1px;
+  background-color: rgba(136, 119, 241, 0.5);
+}
+.route-box:first-child::before {
+  display: none;
+}
+.one-route-box::before {
+  display: block !important;
+  left: -100px;
+  width: 100px;
+}
+.one-route-box::after {
+  right: -100px;
+  width: 100px;
+}
+.route-box-top {
+  padding: 16px 12px 7px;
+}
+.coin-code-name {
+  font-family: var(--secondary-font-family);
+  font-style: normal;
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 24px;
+  color: #FFFFFF;
+}
+.route-box-bottom {
+  padding: 8px 10px 16px 11px;
+  background: #232256;
+  border-radius: 0px 0px 20px 20px;
+}
+.swap-exchange {
+  margin-top: 8px;
+}
+.swap-exchange:first-child {
+  margin-top: 0px;
+}
+.swap-exchange-name p {
+  font-family: var(--secondary-font-family);
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 17px;
+  color: #8877F1;
+}
+
+/* Coin Search dialog */
+.coin-dialog {
+  background: #0D131F; 
+  border-radius: 20px;
+  overflow: hidden;
+}
+.coin-dialog-header {
+  background: #181E2E;
+  border-radius: 20px 20px 0px 0px;
+  position: relative;
+}
+.close-btn {
+  position: absolute;
+  top: 13px;
+  right: 20px;
+  width: 30px;
+  height: 30px;
+  background: url('/close.svg');
+  transition: all 0.3s;
+}
+.close-btn:hover {
+  background: url('/close-hover.svg');
+}
+.coin-dialog-header::after
+.coin-dialog-header-title {
+  font-family: var(--secondary-font-family);
+  font-style: normal;
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 22px;
+  color: #FAFAFA;
+}
+.coin-search-container {
+  padding: 24px;
+}
+.search-icon {
+  color: rgba(136, 119, 241, 0.45);
+}
+.coin-search-input {
+  background: #181E2E;
+  border: 1px solid rgba(136, 119, 241, 0.2);
+  border-radius: 10px;
+  color: rgba(136, 119, 241, 0.45) !important;
+  transition: all 0.3s;
+}
+
+/* ::-webkit-input-placeholder,
+:-moz-placeholder,
+::-moz-placeholder,
+:-ms-input-placeholder,
+::-ms-input-placeholder,
+::placeholder {
+  color: rgba(136, 119, 241, 0.45) !important;
+} */
+
+.coin-search-input:focus,
+.coin-search-input:active {
+  border-color:#8877F1;
+  outline: 0;
+  outline-offset: 0;
+  box-shadow: none;
+}
+
+.coin-divider {
+  border: 1px solid rgba(136, 119, 241, 0.2)
+}
+.coin-list-item {
+  transition: all 0.3s;
+}
+.coin-list-item:hover,
+.coin-list-item:focus {
+  background-color: #181E2E !important;
+}
+
+/* Header Wallet Connect */
+.header-wallet-connect button,
+.swap-wallet-connect button {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: 1px solid #FEB58D !important;
+  border-radius: 30px !important;
+
+  font-family: var(--primary-font-family) !important;
+  font-style: normal;
+  font-weight: 500 !important;
+  font-size: 14px !important;
+  line-height: 24px !important;
+  color: #FFFFFF !important;
+}
+
+.swap-wallet-connect button {
+  background: linear-gradient(270deg, #FF6060 0%, #F99820 100%) !important;
+}
+
+@media only screen and (max-width: 500px) {
+  .main-bg {
+    background-position: -900px center;
+  }
+
+  .coin-icon::before {
+    display: none;
+  }
+  
+  .coin-icon::after {
+   display: none;
+  }
+
+  .route-box {
+    width: 140px;
+  }
+  .route-box::before {
+    display: none
+  }
+  .route-box::after {
+    display: none;
+  }
+  .one-route-box::before {
+    display: none !important;
+  }
+
+  .swap-exchange-name p {
+    font-size: 12px;
+  }
+}
