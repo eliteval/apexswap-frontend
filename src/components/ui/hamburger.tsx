@@ -5,7 +5,12 @@ interface HamburgerProps extends ButtonProps {
 
 export default function Hamburger({ isOpen, ...props }: HamburgerProps) {
   return (
-    <Button aria-label="Hamburger" shape="circle" {...props}>
+    <Button
+      aria-label="Hamburger"
+      shape="circle"
+      {...props}
+      style={{ backgroundColor: 'rgba(0,0,0,0)' }}
+    >
       <svg
         className="sm:w-auo h-auto w-6"
         width="30"

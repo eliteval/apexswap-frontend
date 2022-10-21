@@ -59,7 +59,7 @@ export const coinList = [
   },
   {
     code: 'WAVAX',
-    name: 'Wrapped AvAX',
+    name: 'Wrapped AVAX',
     address: '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7',
     icon: <Image src="/assets/coins/wavax.png" width="24px" height="24px" />,
     icon1: <Image src="/assets/coins/wavax.png" width="14px" height="14px" />,
@@ -176,6 +176,16 @@ export const coinList = [
     icon2: <Image src="/assets/coins/apex.png" width="45px" height="45px" />,
     icon3: <Image src="/assets/coins/apex.png" width="35px" height="35px" />,
     coinGeckoCoinsId: 'Apex',
+    decimals: 18,
+  },
+  {
+    name: 'FTM',
+    code: 'FTM',
+    address: '0xeDD5C740e3C9Efc666CEF509Da20EbE35501Cd16',
+    icon: <Image src="/assets/coins/FTM.png" width="24px" height="24px" />,
+    icon1: <Image src="/assets/coins/FTM.png" width="14px" height="14px" />,
+    icon2: <Image src="/assets/coins/FTM.png" width="45px" height="45px" />,
+    icon3: <Image src="/assets/coins/FTM.png" width="35px" height="35px" />,
     decimals: 18,
   },
   {

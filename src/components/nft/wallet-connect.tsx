@@ -92,7 +92,7 @@ export default function WalletConnect() {
 
         </div> */}
 
-      <Button
+      {/* <Button
         size="mini"
         shape="circle"
         className="primary-font-family fs-14 mt-1 rounded-full border-2 border-[#0D0C52] bg-transparent"
@@ -105,7 +105,7 @@ export default function WalletConnect() {
         className="primary-font-family fs-14 mt-1 rounded-full border-2 border-[#0D0C52] bg-transparent"
       >
         <Gear2 />
-      </Button>
+      </Button> */}
 
       {/* {!address ?
         <Button
@@ -125,7 +125,7 @@ export default function WalletConnect() {
         </Button>} */}
 
       <div className="header-wallet-connect">
-        <ConnectButton />
+        <ConnectButton chainStatus={'none'} accountStatus="address" />
       </div>
     </>
   );

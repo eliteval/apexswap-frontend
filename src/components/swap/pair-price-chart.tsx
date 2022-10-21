@@ -128,10 +128,10 @@ export default function PairPriceChart({
 
         const from = xHourAgo(xhours);
         const response1 = await axios.get(
-          `https://api.coingecko.com/api/v3/coins/avalanche/contract/${new_tokenIn.toLowerCase()}/market_chart/range?vs_currency=usd&from=${from}&to=${to}`
+          `https://pro-api.coingecko.com/api/v3/coins/avalanche/contract/${new_tokenIn.toLowerCase()}/market_chart/range?vs_currency=usd&from=${from}&to=${to}&x_cg_pro_api_key=CG-z6rw2MXcBssib265pRX4DhLq`
         );
         const response2 = await axios.get(
-          `https://api.coingecko.com/api/v3/coins/avalanche/contract/${new_tokenOut.toLowerCase()}/market_chart/range?vs_currency=usd&from=${from}&to=${to}`
+          `https://pro-api.coingecko.com/api/v3/coins/avalanche/contract/${new_tokenOut.toLowerCase()}/market_chart/range?vs_currency=usd&from=${from}&to=${to}&x_cg_pro_api_key=CG-z6rw2MXcBssib265pRX4DhLq`
         );
         setTimePrices1(response1?.data.prices);
         setTimePrices2(response2?.data.prices);
@@ -158,9 +158,7 @@ export default function PairPriceChart({
       var dateString =
         // date.getFullYear() +
         // '-' +
-        (Number(date.getMonth()) + 1) +
-        '-' +
-        date.getDate();
+        Number(date.getMonth()) + 1 + '-' + date.getDate();
       // Hours part from the timestamp
       var hours = date.getHours();
       // Minutes part from the timestamp
@@ -178,9 +176,7 @@ export default function PairPriceChart({
       var dateString =
         // date.getFullYear() +
         // '-' +
-        (Number(date.getMonth()) + 1) +
-        '-' +
-        date.getDate();
+        Number(date.getMonth()) + 1 + '-' + date.getDate();
       // Hours part from the timestamp
       var hours = date.getHours();
       // Minutes part from the timestamp
@@ -254,8 +250,8 @@ export default function PairPriceChart({
 
       {/* Chart */}
       <Line options={options} data={data} />
-      <div className="md:mx-4 inline-flex gap-1 rounded-md shadow-sm md:gap-16">
-        {/* <div className="hover:text-[#FEB58D] text-sm" style={{ cursor: 'pointer' }}>2022-09-26 09:26</div> */}
+      {/* <div className="md:mx-4 inline-flex gap-1 rounded-md shadow-sm md:gap-16">
+        { <div className="hover:text-[#FEB58D] text-sm" style={{ cursor: 'pointer' }}>2022-09-26 09:26</div>}
         {times.map((ele, index) => (
           <>
             <div
@@ -266,7 +262,7 @@ export default function PairPriceChart({
             </div>
           </>
         ))}
-      </div>
+      </div> */}
     </>
   );
 }

@@ -86,7 +86,7 @@ function CustomApp({ Component, pageProps }: AppPropsWithLayout) {
   //could remove this if you don't need to page level layout
   return (
     <WagmiConfig client={wagmiClient}>
-      <RainbowKitProvider chains={chains}>
+      <RainbowKitProvider chains={chains} initialChain={avalancheChain}>
         <>
           <Head>
             {/* maximum-scale 1 meta tag need to prevent ios input focus auto zooming */}

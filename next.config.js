@@ -18,4 +18,14 @@ module.exports = withPWA({
       ignoreDuringBuilds: true,
     },
   }),
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/swap',
+        // destination: 'https://legacy.apexswap.io/',
+        permanent: false,
+      },
+    ];
+  },
 });

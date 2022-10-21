@@ -1,28 +1,7 @@
 {
   "contractName": "VixRouter",
-  "address": "0xd3196E19b7cB4DD5B71442700b79eE7776B03B1e",
+  "address": "0x47c3AF65c59528878851219fEc3308Fc072C0dB7",
   "abi": [
-    {
-      "inputs": [
-        {
-          "internalType": "address[]",
-          "name": "_adapters",
-          "type": "address[]"
-        },
-        {
-          "internalType": "address[]",
-          "name": "_trustedTokens",
-          "type": "address[]"
-        },
-        {
-          "internalType": "address",
-          "name": "_feeClaimer",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "constructor"
-    },
     {
       "anonymous": false,
       "inputs": [
@@ -312,340 +291,6 @@
       "type": "event"
     },
     {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "name": "ADAPTERS",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "AVAX",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "FEE_CLAIMER",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "FEE_DENOMINATOR",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "MIN_FEE",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "NAME",
-      "outputs": [
-        {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "name": "TRUSTED_TOKENS",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "WAVAX",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "adaptersCount",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "_amountIn",
-          "type": "uint256"
-        },
-        {
-          "internalType": "address",
-          "name": "_tokenIn",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "_tokenOut",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_maxSteps",
-          "type": "uint256"
-        }
-      ],
-      "name": "findBestPath",
-      "outputs": [
-        {
-          "components": [
-            {
-              "internalType": "uint256[]",
-              "name": "amounts",
-              "type": "uint256[]"
-            },
-            {
-              "internalType": "address[]",
-              "name": "adapters",
-              "type": "address[]"
-            },
-            {
-              "internalType": "address[]",
-              "name": "path",
-              "type": "address[]"
-            }
-          ],
-          "internalType": "struct ApexRouter.FormattedOffer",
-          "name": "",
-          "type": "tuple"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "owner",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "_amountIn",
-          "type": "uint256"
-        },
-        {
-          "internalType": "address",
-          "name": "_tokenIn",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "_tokenOut",
-          "type": "address"
-        },
-        {
-          "internalType": "uint8",
-          "name": "_index",
-          "type": "uint8"
-        }
-      ],
-      "name": "queryAdapter",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "_amountIn",
-          "type": "uint256"
-        },
-        {
-          "internalType": "address",
-          "name": "_tokenIn",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "_tokenOut",
-          "type": "address"
-        },
-        {
-          "internalType": "uint8[]",
-          "name": "_options",
-          "type": "uint8[]"
-        }
-      ],
-      "name": "queryNoSplit",
-      "outputs": [
-        {
-          "components": [
-            {
-              "internalType": "address",
-              "name": "adapter",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "tokenIn",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "tokenOut",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "amountOut",
-              "type": "uint256"
-            }
-          ],
-          "internalType": "struct ApexRouter.Query",
-          "name": "",
-          "type": "tuple"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "_amountIn",
-          "type": "uint256"
-        },
-        {
-          "internalType": "address",
-          "name": "_tokenIn",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "_tokenOut",
-          "type": "address"
-        }
-      ],
-      "name": "queryNoSplit",
-      "outputs": [
-        {
-          "components": [
-            {
-              "internalType": "address",
-              "name": "adapter",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "tokenIn",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "tokenOut",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "amountOut",
-              "type": "uint256"
-            }
-          ],
-          "internalType": "struct ApexRouter.Query",
-          "name": "",
-          "type": "tuple"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
       "inputs": [],
       "name": "renounceOwnership",
       "outputs": [],
@@ -719,6 +364,11 @@
         {
           "internalType": "uint256",
           "name": "amountin",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amountout",
           "type": "uint256"
         },
         {
@@ -831,6 +481,11 @@
           "type": "uint256"
         },
         {
+          "internalType": "uint256",
+          "name": "amountout",
+          "type": "uint256"
+        },
+        {
           "components": [
             {
               "internalType": "uint256",
@@ -937,6 +592,11 @@
         {
           "internalType": "uint256",
           "name": "amountin",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amountout",
           "type": "uint256"
         },
         {
@@ -1300,6 +960,409 @@
       "inputs": [
         {
           "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "stateMutability": "payable",
+      "type": "receive"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address[]",
+          "name": "_adapters",
+          "type": "address[]"
+        },
+        {
+          "internalType": "address[]",
+          "name": "_trustedTokens",
+          "type": "address[]"
+        },
+        {
+          "internalType": "address",
+          "name": "_feeClaimer",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "ADAPTERS",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "adaptersCount",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "AVAX",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "FEE_CLAIMER",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "FEE_DENOMINATOR",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_amountIn",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "_tokenIn",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_tokenOut",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_maxSteps",
+          "type": "uint256"
+        }
+      ],
+      "name": "findBestPath",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256[]",
+              "name": "amounts",
+              "type": "uint256[]"
+            },
+            {
+              "internalType": "address[]",
+              "name": "adapters",
+              "type": "address[]"
+            },
+            {
+              "internalType": "address[]",
+              "name": "path",
+              "type": "address[]"
+            }
+          ],
+          "internalType": "struct ApexRouter.FormattedOffer",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "amountIn",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "tokenIn",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "tokenOut",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "steps",
+          "type": "uint256"
+        }
+      ],
+      "name": "getAmountOut",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "token",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "end",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "steps",
+          "type": "uint256"
+        }
+      ],
+      "name": "getBestOne",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "bestprofit",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "MIN_FEE",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "NAME",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_amountIn",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "_tokenIn",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_tokenOut",
+          "type": "address"
+        },
+        {
+          "internalType": "uint8",
+          "name": "_index",
+          "type": "uint8"
+        }
+      ],
+      "name": "queryAdapter",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_amountIn",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "_tokenIn",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_tokenOut",
+          "type": "address"
+        },
+        {
+          "internalType": "uint8[]",
+          "name": "_options",
+          "type": "uint8[]"
+        }
+      ],
+      "name": "queryNoSplit",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "adapter",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "tokenIn",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "tokenOut",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amountOut",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct ApexRouter.Query",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_amountIn",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "_tokenIn",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_tokenOut",
+          "type": "address"
+        }
+      ],
+      "name": "queryNoSplit",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "adapter",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "tokenIn",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "tokenOut",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amountOut",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct ApexRouter.Query",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
           "name": "adapter",
           "type": "address"
         },
@@ -1333,14 +1396,20 @@
     {
       "inputs": [
         {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "TRUSTED_TOKENS",
+      "outputs": [
+        {
           "internalType": "address",
-          "name": "newOwner",
+          "name": "",
           "type": "address"
         }
       ],
-      "name": "transferOwnership",
-      "outputs": [],
-      "stateMutability": "nonpayable",
+      "stateMutability": "view",
       "type": "function"
     },
     {
@@ -1357,8 +1426,17 @@
       "type": "function"
     },
     {
-      "stateMutability": "payable",
-      "type": "receive"
+      "inputs": [],
+      "name": "WAVAX",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
     }
   ]
 }

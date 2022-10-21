@@ -13,6 +13,7 @@ import { useDrawer } from '@/components/drawer-views/context';
 import Hamburger from '@/components/ui/hamburger';
 import { MenuItems } from '@/layouts/_layout-menu';
 import WalletConnect from '@/components/nft/wallet-connect';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 function NotificationButton() {
   return (
@@ -48,14 +49,17 @@ function HeaderRightArea() {
         <WalletConnect />
       </div>
 
-      {/* <div className="flex items-center lg:hidden">
+      <div className="flex items-center lg:hidden">
+        <div className="header-wallet-connect">
+          <ConnectButton chainStatus={'none'} accountStatus="address" />
+        </div>
         <Hamburger
           isOpen={isOpen}
           onClick={() => openDrawer('DRAWER_MENU')}
           color="white"
           className="shadow-main ltr:ml-3.5 rtl:mr-3.5 dark:border dark:border-solid dark:border-gray-700 dark:bg-light-dark dark:text-white ltr:sm:ml-5 rtl:sm:mr-5"
         />
-      </div> */}
+      </div>
     </div>
   );
 }
@@ -69,11 +73,11 @@ export function Header() {
   return (
     <nav
       className={`fixed top-0 z-30  flex w-full items-center justify-between px-4 transition-all duration-300 ltr:right-0 rtl:left-0 sm:px-6 lg:px-8 xl:px-10 3xl:px-12 ${
-            // myBox
+        // myBox
         // isMounted && windowScroll.y > 10
-           'h-12 backdrop-blur dark:bg-opacity-100 sm:h-16'
-            // ' shadow-card'
-          // : 'h-12 bg-body dark:bg-dark sm:h-20'
+        'h-12 backdrop-blur dark:bg-opacity-100 sm:h-16'
+        // ' shadow-card'
+        // : 'h-12 bg-body dark:bg-dark sm:h-20'
       }`}
     >
       {/* <div className="w-80 2xl:w-[368px]"></div> */}
@@ -83,7 +87,7 @@ export function Header() {
             isOpen={isOpen}
             onClick={() => openDrawer('DRAWER_MENU')}
             color="white"
-            className="shadow-main dark:border dark:border-solid dark:border-gray-700 dark:bg-red-dark dark:text-white"
+            className="dark:bg-red-dark shadow-main dark:border dark:border-solid dark:border-gray-700 dark:text-white"
           />
         </div>
         <Logo />
@@ -104,9 +108,12 @@ export default function Layout({
 }: React.PropsWithChildren<LayoutProps>) {
   return (
     // <div className="min-w-fit w-full min-h-screen bg-light-100 dark:bg-gradient-to-r dark:from-[#0f0f0e] dark:via-stone-900 dark:to-[#041112] flex flex-col">
-    <div className="min-w-fit w-full min-h-screen bg-light-100 bg-[#0D0C52]  flex flex-col main-bg" style={{backgroundImage: `url(${BgImg.src})`}}>
+    <div
+      className="bg-light-100 main-bg flex min-h-screen w-full  min-w-fit flex-col bg-[#0D0C52]"
+      style={{ backgroundImage: `url(${BgImg.src})` }}
+    >
       <Header />
-      <main className="mx-auto min-w-fit pb-32 pt-16 px-10 sm:pt-24 " >
+      <main className="mx-auto min-w-fit px-10 pb-32 pt-16 sm:pt-24 ">
         {children}
       </main>
     </div>

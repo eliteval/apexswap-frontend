@@ -25,10 +25,19 @@ import { ethers } from 'ethers';
 import ERC20 from '@/abi/ERC20.json';
 import WAVAX from '@/abi/WAVAX.json';
 import VixRouter from '@/abi/VixRouter.json';
+import Orderpool from '@/abi/Orderpool.json';
 import { getDexName, getDexAddress } from '@/lib/utils/swap-utils';
 import { HookContext } from '@/lib/hooks/use-hook';
 import { WalletContext } from '@/lib/hooks/use-connect';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import {
+  useAccount,
+  useBalance,
+  useContract,
+  useSigner,
+  useNetwork,
+  useSwitchNetwork,
+} from 'wagmi';
 
 // Create your atoms and derivatives
 var routingAtom, toSettingsAtom;
@@ -49,9 +58,17 @@ const SwapPage: NextPageWithLayout = () => {
     isNatativeToken,
     isWavax,
     addressForRoute,
+    isDevenv
   } = useContext(HookContext);
-  const { address, disconnectWallet, balance, chainId, swtichNetwork } =
-    useContext(WalletContext);
+  // const { address, disconnectWallet, balance, chainId, swtichNetwork } =
+  //   useContext(WalletContext);
+  const { address } = useAccount();
+  const { data: signer } = useSigner();
+  const { chain } = useNetwork();
+  const { chains, error, isLoading, pendingChainId, switchNetwork } =
+    useSwitchNetwork();
+
+  const [isAddress, setIsAddress] = useState(false);
 
   const [marketData, setMarketData] = useState({});
   const swap_fee = 0.00045;
@@ -77,67 +94,75 @@ const SwapPage: NextPageWithLayout = () => {
   const [path, setPath] = useState([]);
   const [amounts, setAmounts] = useState([]);
 
-  const [bestDex, setBestDex] = useState('');
-  const [bestAmountOut, setBestAmountOut] = useState(0);
-
   const [tabIndex, setTabIndex] = useState(1);
-  let [swch1, setSwch1] = useState(false);
-  const [toggleCoin, setToggleCoin] = useState(false);
 
   const [smartroute, setSmartroute] = useState({});
   const [branches, setBranches] = useState([]);
   const [rouTes, setRouTes] = useState([]);
-  const [routeSwaps, setRouteSwaps] = useState([]);
-  const [finalToken, setFinalToken] = useState('');
+  const [routeSwaps, setRouteSwaps] = useState([1, 2, 3]);
+  const [isPS, setIsPS] = useState(true);
 
-  const [devenv] = useState(false);
   let [isExpertMode, setIsExpertMode] = useState(false);
+
+  const RPC_URL = 'https://api.avax.network/ext/bc/C/rpc';
   const getBalance = async (token_address: string) => {
-    if (!address) return 0;
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    await provider.send('eth_requestAccounts', []);
-    const signer = provider.getSigner();
+    const provider = new ethers.providers.JsonRpcProvider(RPC_URL);
     if (isNatativeToken(token_address)) {
-      let userAddress = await signer.getAddress();
-      console.log('userAddress1 => ', userAddress);
-      const balance = await provider.getBalance(userAddress);
+      const balance = await provider.getBalance(address);
       return Number(
         ethers.utils.formatUnits(balance, getCoinDecimals(token_address))
       );
     } else {
-      let userAddress = await signer.getAddress();
-
       const tokenContract = new ethers.Contract(
         token_address,
         ERC20.abi,
-        signer
+        provider
       );
-      var balance = await tokenContract.balanceOf(userAddress);
+      var balance = await tokenContract.balanceOf(address);
       return Number(
         ethers.utils.formatUnits(balance, getCoinDecimals(token_address))
       );
     }
   };
-  //set tokenin, tokeninbalance
+  //set tokenin, tokenout, and balances
+  const tokenInBalanceData = useBalance({
+    addressOrName: address,
+    chainId: 43114,
+    token: isNatativeToken(tokenIn) ? '' : tokenIn,
+    watch: true,
+  });
   useEffect(() => {
-    (async () => {
-      var tokenin_address = coinslist[tokenInIndex].address;
-      setTokenIn(tokenin_address);
-      var balance = await getBalance(tokenin_address);
-      setTokenInBalance(balance);
-    })();
+    setTokenInBalance(Number(tokenInBalanceData.data?.formatted));
+  }, [tokenInBalanceData]);
+
+  const tokenOutBalanceData = useBalance({
+    addressOrName: address,
+    chainId: 43114,
+    token: isNatativeToken(tokenOut) ? '' : tokenOut,
+    watch: true,
+  });
+  useEffect(() => {
+    setTokenOutBalance(Number(tokenOutBalanceData.data?.formatted));
+  }, [tokenOutBalanceData]);
+
+  useEffect(() => {
+    var tokenin_address = coinslist[tokenInIndex].address;
+    setTokenIn(tokenin_address);
   }, [tokenInIndex]);
 
-  //set tokenout
   useEffect(() => {
-    setTokenOut(coinslist[tokenOutIndex].address);
-    (async () => {
-      var tokenout_address = coinslist[tokenOutIndex].address;
-      setTokenOut(tokenout_address);
-      var balance = await getBalance(tokenout_address);
-      setTokenOutBalance(balance);
-    })();
+    var tokenout_address = coinslist[tokenOutIndex].address;
+    setTokenOut(tokenout_address);
   }, [tokenOutIndex]);
+
+  //change network
+  useEffect(() => {
+    if (chain) {
+      if (chain?.id != 43114) {
+        switchNetwork?.(43114);
+      }
+    }
+  }, [chain, switchNetwork]);
 
   // marketdata, tokenIn Price
   useEffect(() => {
@@ -216,7 +241,7 @@ const SwapPage: NextPageWithLayout = () => {
   //Setting
   const { settingsAtom } = useTextAtom();
   const [txSpeed, setTxSpeed] = useState('Standard');
-  const [tolerance, setTolerance] = useState('0.1%');
+  const [tolerance, setTolerance] = useState(1);
   toSettingsAtom = atom({ speed: txSpeed, tol: tolerance });
 
   useEffect(() => {
@@ -231,7 +256,7 @@ const SwapPage: NextPageWithLayout = () => {
   }, [settingsAtom?.init.tolerance]);
   //~Setting
 
-  //query
+  //timer
   const [seconds, setSeconds] = useState(0);
   useEffect(() => {
     const interval = setInterval(() => {
@@ -240,14 +265,13 @@ const SwapPage: NextPageWithLayout = () => {
     return () => clearInterval(interval);
   }, []);
   useEffect(() => {
-    if (seconds % 5 == 0) query();
+    (async () => {
+      if (seconds % 30 == 0) {
+        console.log('seconds', seconds);
+        await refresh();
+      }
+    })();
   }, [seconds]);
-
-  useEffect(() => {
-    if (tokenIn && tokenOut && amountIn) {
-      query();
-    }
-  }, [tokenIn, tokenOut, amountIn]);
 
   //~qqqqqqqqqqq~~~ calculate branch
   useEffect(() => {
@@ -275,156 +299,215 @@ const SwapPage: NextPageWithLayout = () => {
     setBranches(branches);
   }, [smartroute]);
 
-  //query
-  const query = async () => {
-    var new_tokenIn = addressForRoute(tokenIn);
-    var new_tokenOut = addressForRoute(tokenOut);
-    console.log(tokenIn, new_tokenIn, tokenOut, new_tokenOut);
-    if (
-      (isNatativeToken(tokenIn) && isWavax(tokenOut)) ||
-      (isNatativeToken(tokenOut) && isWavax(tokenIn))
-    ) {
-      setAdapters([]);
-      setPath([]);
-      setAmounts([]);
-      setAmountOut(amountIn);
-      return;
-    }
+  //refresh
+  useEffect(() => {
+    (async () => {
+      await refresh();
+    })();
+  }, [tokenIn, tokenOut, amountIn, amountOut]);
 
-    const getSmartRoute = async () => {
-      try {
-        var amount =
-          side == 'SELL'
-            ? ethers.utils
+  const refresh = async () => {
+    const queryPS = async () => {
+      var new_tokenIn = addressForRoute(tokenIn);
+      var new_tokenOut = addressForRoute(tokenOut);
+      console.log(
+        '>>>>>>>> queryPS',
+        amountIn,
+        getCoinName(new_tokenIn),
+        '->',
+        getCoinName(new_tokenOut)
+      );
+      if (
+        (isNatativeToken(tokenIn) && isWavax(tokenOut)) ||
+        (isNatativeToken(tokenOut) && isWavax(tokenIn))
+      ) {
+        setAdapters([]);
+        setPath([]);
+        setAmounts([]);
+        setAmountOut(amountIn);
+        return;
+      }
+
+      const getSmartRoute = async () => {
+        try {
+          var amount =
+            side == 'SELL'
+              ? ethers.utils
                 .parseUnits(String(amountIn), getCoinDecimals(new_tokenIn))
                 .toString()
-            : ethers.utils
+              : ethers.utils
                 .parseUnits(String(amountOut), getCoinDecimals(new_tokenOut))
                 .toString();
 
-        var payload = {
-          srcToken: new_tokenIn,
-          destToken: new_tokenOut,
-          amount: amount,
-          side: side,
-          network: 43114,
-        };
-        console.log(payload);
-        const params = new URLSearchParams(payload);
+          var payload = {
+            srcToken: new_tokenIn,
+            destToken: new_tokenOut,
+            amount: amount,
+            srcDecimals: getCoinDecimals(tokenIn),
+            destDecimals: getCoinDecimals(tokenOut),
+            side: side,
+            network: 43114,
+            excludeDirectContractMethods: 'false',
+            otherExchangePrices: 'true',
+            userAddress: '0x0000000000000000000000000000000000000000',
+          };
+          const params = new URLSearchParams(payload);
+          let res = await axios.post(
+            `https://apiv1.apexswap.io/getRate?${params}`
+            // `https://api.paraswap.io/prices?${params}`
+          );
 
-        let res = await axios.post(
-          `http://198.211.100.213:8000/getRate?${params}`
+          let data = res.data;
+          // let data = res.data.priceRoute;
+          setSmartroute(data);
+          console.log('smartRoute => ', data);
+
+          if (side == 'SELL') {
+            let destAmount = data.destAmount;
+            destAmount = Number(
+              ethers.utils.formatUnits(
+                destAmount,
+                getCoinDecimals(new_tokenOut)
+              )
+            );
+            setAmountOut(destAmount);
+          } else {
+            let srcAmount = data.srcAmount;
+            srcAmount = Number(
+              ethers.utils.formatUnits(srcAmount, getCoinDecimals(new_tokenIn))
+            );
+            setAmountIn(srcAmount);
+          }
+
+          let routes = data.bestRoute;
+          setRouTes(routes);
+
+          let swaps = [];
+          let route_swaps = [];
+          for (let i = 0; i < routes.length; i++) {
+            for (let j = 0; j < routes[i].swaps.length; j++) {
+              let swap = {
+                destToken: routes[i].swaps[j].destToken,
+                swapExchanges: routes[i].swaps[j].swapExchanges,
+              };
+              swaps.push(swap);
+            }
+            route_swaps.push(swaps);
+            swaps = [];
+          }
+          setRouteSwaps(route_swaps);
+          setLoading(false);
+          return true;
+        } catch (e) {
+          console.log(
+            'queryPS',
+            e.message,
+            amountIn,
+            getCoinName(new_tokenIn),
+            '->',
+            getCoinName(new_tokenOut)
+          );
+          setSmartroute({});
+          setLoading(false);
+          return false;
+        }
+      };
+      var xxx = await getSmartRoute();
+      return xxx;
+    };
+
+    const queryRouter = async () => {
+      try {
+        var new_tokenIn = addressForRoute(tokenIn);
+        var new_tokenOut = addressForRoute(tokenOut);
+        console.log(
+          '>>>>>>>> queryRouter',
+          amountIn,
+          getCoinName(new_tokenIn),
+          '->',
+          getCoinName(new_tokenOut)
         );
 
-        let data = res.data;
-        setSmartroute(data);
-        console.log('smartRoute => ', data);
+        const provider = new ethers.providers.JsonRpcProvider(RPC_URL);
 
-        if (side == 'SELL') {
-          let destAmount = data.destAmount;
-          destAmount = Number(
-            ethers.utils.formatUnits(destAmount, getCoinDecimals(new_tokenOut))
-          );
-          console.log(destAmount);
-          setAmountOut(destAmount);
-        } else {
-          let srcAmount = data.srcAmount;
-          srcAmount = Number(
-            ethers.utils.formatUnits(srcAmount, getCoinDecimals(new_tokenIn))
-          );
-          console.log(srcAmount);
-          setAmountIn(srcAmount);
-        }
+        const vixrouterContract = new ethers.Contract(
+          VixRouter.address,
+          VixRouter.abi,
+          provider
+        );
+        var parsed_amountIn = ethers.utils.parseUnits(
+          String(amountIn),
+          getCoinDecimals(new_tokenIn)
+        );
 
-        let routes = data.bestRoute;
-        setRouTes(routes);
-        if (data.destToken) {
-          setFinalToken(data.destToken);
-        }
-        let swaps = [];
-        let route_swaps = [];
-        for (let i = 0; i < routes.length; i++) {
-          for (let j = 0; j < routes[i].swaps.length; j++) {
-            let swap = {
-              destToken: routes[i].swaps[j].destToken,
-              swapExchanges: routes[i].swaps[j].swapExchanges,
-            };
-            swaps.push(swap);
-          }
-          route_swaps.push(swaps);
-          swaps = [];
-        }
-        setRouteSwaps(route_swaps);
+        //query one dex
+        // let { amountOut, adapter } = await vixrouterContract.queryNoSplit(
+        //   parsed_amountIn,
+        //   new_tokenIn,
+        //   new_tokenOut
+        // );
+        // amountOut = ethers.utils.formatUnits(
+        //   amountOut,
+        //   getCoinDecimals(new_tokenOut)
+        // );
+
+        //findbestpath
+        let { adapters, path, amounts } = await vixrouterContract.findBestPath(
+          parsed_amountIn,
+          new_tokenIn,
+          new_tokenOut,
+          2
+        );
+        setAdapters(adapters);
+        setPath(path);
+        setAmounts(amounts);
+        var final_amount = Number(
+          ethers.utils.formatUnits(
+            amounts[amounts.length - 1],
+            getCoinDecimals(new_tokenOut)
+          )
+        );
+        setAmountOut(final_amount);
+        console.log(final_amount);
+        setLoading(false);
+        return true;
       } catch (e) {
-        console.log(e);
-        setSmartroute({});
+        console.log(
+          'queryRouter error',
+          e.message,
+          amountIn,
+          getCoinName(new_tokenIn),
+          '->',
+          getCoinName(new_tokenOut)
+        );
+        setLoading(false);
+        return false;
       }
     };
-    await getSmartRoute();
-    return;
-  };
 
-  const route = path.slice(1);
-  // const percent = [100];
-  const coin_in = path[0];
-  const coin_out = path[path?.length - 1];
-
-  const queryOld = async () => {
-    try {
-      var new_tokenIn = addressForRoute(tokenIn);
-      var new_tokenOut = addressForRoute(tokenOut);
-      const provider = new ethers.providers.JsonRpcProvider(
-        'https://rpc.ankr.com/avalanche'
-      );
-
-      const vixrouterContract = new ethers.Contract(
-        VixRouter.address,
-        VixRouter.abi,
-        provider
-      );
-      var parsed_amountIn = ethers.utils.parseUnits(
-        String(amountIn),
-        getCoinDecimals(new_tokenIn)
-      );
-
-      //query one dex
-      let { amountOut, adapter } = await vixrouterContract.queryNoSplit(
-        parsed_amountIn,
-        new_tokenIn,
-        new_tokenOut
-      );
-      amountOut = ethers.utils.formatUnits(
-        amountOut,
-        getCoinDecimals(new_tokenOut)
-      );
-
-      //findbestpath
-      let { adapters, path, amounts } = await vixrouterContract.findBestPath(
-        parsed_amountIn,
-        new_tokenIn,
-        new_tokenOut,
-        2
-      );
-      setAdapters(adapters);
-      setPath(path);
-      setAmounts(amounts);
-      var final_amount = Number(
-        ethers.utils.formatUnits(
-          amounts[amounts.length - 1],
-          getCoinDecimals(new_tokenOut)
-        )
-      );
-      setAmountOut(final_amount);
-    } catch (e) {
-      console.log('query', e);
+    if (!tokenIn || !tokenOut) return;
+    setSeconds(1);
+    setLoading(true);
+    if (
+      tokenIn == '0x2E768E86F691AFe8a6F9277bBCD9c570Ab868FC0' ||
+      tokenOut == '0x2E768E86F691AFe8a6F9277bBCD9c570Ab868FC0'
+    ) {
+      await queryRouter();
+      setIsPS(false);
+    } else {
+      await queryPS();
+      setIsPS(true);
     }
   };
 
-  //swap
-  const swap = async () => {
+  //executeSwap
+  const executeSwap = async () => {
+    if (tokenInBalance == 0 || tokenInBalance < amountIn) {
+      return;
+    }
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     await provider.send('eth_requestAccounts', []);
-    const signer = provider.getSigner();
+    // const signer = provider.getSigner();
     let userAddress = await signer.getAddress();
 
     const vixrouterContract = new ethers.Contract(
@@ -458,7 +541,7 @@ const SwapPage: NextPageWithLayout = () => {
           ethers.utils.formatUnits(approved_amount, getCoinDecimals(tokenIn))
         ) < amountIn
       ) {
-        if (devenv)
+        if (isDevenv)
           var approving_amount = ethers.utils.parseUnits(
             '9999999',
             getCoinDecimals(tokenIn)
@@ -478,73 +561,102 @@ const SwapPage: NextPageWithLayout = () => {
       String(amountIn),
       getCoinDecimals(new_tokenIn)
     );
-
-    //multihop
-    var fee = swap_fee * 100000; //0.00045 -> 45
-    if (isNatativeToken(tokenIn))
-      await vixrouterContract.swapMultihopFromAvax(
-        new_tokenIn,
-        new_tokenOut,
-        parsed_amountIn,
-        branches,
-        address,
-        fee,
-        {
-          value: ethers.utils.parseEther(String(amountIn)),
-        }
-      );
-    else if (isNatativeToken(tokenOut))
-      await vixrouterContract.swapMultihopToAvax(
-        new_tokenIn,
-        new_tokenOut,
-        parsed_amountIn,
-        branches,
-        address,
-        fee
-      );
-    else
-      await vixrouterContract.swapMultihop(
-        new_tokenIn,
-        new_tokenOut,
-        parsed_amountIn,
-        branches,
-        address,
-        fee
-      );
-
-    return;
-
-    //findBestPath
-    let { adapters, path, amounts } = await vixrouterContract.findBestPath(
-      parsed_amountIn,
-      new_tokenIn,
-      new_tokenOut,
-      4
+    var expected_amountout = Number(
+      amountOut * (1 - Number(tolerance) / 100)
+    ).toFixed(getCoinDecimals(new_tokenOut));
+    var parsed_amountOut = ethers.utils.parseUnits(
+      String(expected_amountout),
+      getCoinDecimals(new_tokenOut)
     );
-    setAdapters(adapters);
-    setPath(path);
-    setAmounts(amounts);
+    console.log(parsed_amountOut, expected_amountout);
 
-    //swap
-    var parsed_amountOut = ethers.utils.parseEther('0');
-    var _trade = [parsed_amountIn, parsed_amountOut, path, adapters];
-    var _to = userAddress;
-    var _fee = ethers.utils.parseEther('0');
-    if (isNatativeToken(tokenIn))
-      await vixrouterContract.swapNoSplitFromAVAX(_trade, _to, _fee, {
-        value: ethers.utils.parseEther(String(amountIn)),
-      });
-    else if (isNatativeToken(tokenOut)) {
-      await vixrouterContract.swapNoSplitToAVAX(_trade, _to, _fee);
-    } else await vixrouterContract.swapNoSplit(_trade, _to, _fee);
+    if (isPS) {
+      //multihop
+      console.log(
+        '>>>>>>>swap PS: ',
+        amountIn,
+        getCoinName(new_tokenIn),
+        '->',
+        amountOut,
+        getCoinName(new_tokenOut)
+      );
+      var fee = swap_fee * 100000; //0.00045 -> 45
+      if (isNatativeToken(tokenIn)) {
+        await vixrouterContract.swapMultihopFromAvax(
+          new_tokenIn,
+          new_tokenOut,
+          parsed_amountIn,
+          parsed_amountOut,
+          branches,
+          address,
+          fee,
+          {
+            value: ethers.utils.parseEther(String(amountIn)),
+          }
+        );
+      } else if (isNatativeToken(tokenOut))
+        await vixrouterContract.swapMultihopToAvax(
+          new_tokenIn,
+          new_tokenOut,
+          parsed_amountIn,
+          parsed_amountOut,
+          branches,
+          address,
+          fee
+        );
+      else
+        await vixrouterContract.swapMultihop(
+          new_tokenIn,
+          new_tokenOut,
+          parsed_amountIn,
+          parsed_amountOut,
+          branches,
+          address,
+          fee
+        );
+      console.log('reached here');
+      return;
+    } else {
+      console.log(
+        '>>>>>>>swap Router: ',
+        amountIn,
+        getCoinName(new_tokenIn),
+        '->',
+        amountOut,
+        getCoinName(new_tokenOut)
+      );
+
+      //findBestPath
+      // let { adapters, path, amounts } = await vixrouterContract.findBestPath(
+      //   parsed_amountIn,
+      //   new_tokenIn,
+      //   new_tokenOut,
+      //   2
+      // );
+      // setAdapters(adapters);
+      // setPath(path);
+      // setAmounts(amounts);
+
+      //swap
+      var parsed_amountOut = ethers.utils.parseEther('0');
+      var _trade = [parsed_amountIn, parsed_amountOut, path, adapters];
+      var _to = userAddress;
+      var fee = swap_fee * 100000; //0.00045 -> 45
+      if (isNatativeToken(tokenIn))
+        await vixrouterContract.swapNoSplitFromAVAX(_trade, _to, fee, {
+          value: ethers.utils.parseEther(String(amountIn)),
+        });
+      else if (isNatativeToken(tokenOut)) {
+        await vixrouterContract.swapNoSplitToAVAX(_trade, _to, fee);
+      } else await vixrouterContract.swapNoSplit(_trade, _to, fee);
+    }
   };
 
   const toggleTokens = () => {
     clearOutput();
     var dish = tokenInIndex;
     setTokenInIndex(tokenOutIndex);
-    setTokenOutIndex(dish);
-    setToggleCoin(!toggleCoin);
+    setTokenOutIndex(dish);    
   };
 
   const clearOutput = async () => {
@@ -552,9 +664,50 @@ const SwapPage: NextPageWithLayout = () => {
     setAdapters([]);
     setPath([]);
     setAmounts([]);
+    setRouTes([]);
   };
 
   const { openModal } = useModal();
+
+  //styles
+  const [focusedInput, setFocusedInput] = useState(0); // 0 or 1
+
+  //test
+  const test = async () => {
+    try {
+      const provider = new ethers.providers.JsonRpcProvider(RPC_URL);
+
+      const orderpoolContract = new ethers.Contract(
+        Orderpool.address,
+        Orderpool.abi,
+        provider
+      );
+      var best = [0, 0]; //amountin, profit
+      for (var i = 0; i <= 300; i = i + 5) {
+        var parsed_amountIn = ethers.utils.parseUnits(String(i), 6);
+
+        //query one dex
+        let amountOut = await orderpoolContract.getBestAmountOut(
+          parsed_amountIn,
+          '0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664',
+          '0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664',
+          4
+        );
+        amountOut = Number(ethers.utils.formatUnits(amountOut, 6));
+        var profit = amountOut - i;
+        if (best[1] < profit) best = [i, profit];
+        console.log(i, '-----------', amountOut - i);
+      }
+      console.log('best -----------', best);
+    } catch (e) {
+      console.log('query', e);
+    }
+  };
+  useEffect(() => {
+    (async () => {
+      // await test();
+    })();
+  }, []);
 
   return (
     <>
@@ -562,11 +715,9 @@ const SwapPage: NextPageWithLayout = () => {
         title="Apexswap - Trade"
         description="Apexswap - Avalanche DEX"
       />
-
       <div
-        className={`${
-          isExpertMode ? 'grid xl:grid-cols-3' : 'flex justify-center'
-        } mt-12 grid-cols-1 gap-16 xl:place-items-start `}
+        className={`${isExpertMode ? 'grid xl:grid-cols-3' : 'flex justify-center'
+          } mt-12 grid-cols-1 gap-16 xl:place-items-start `}
       >
         {/* Swap box */}
         <div className="mx-auto flex flex-col gap-3 rounded-[1px] outline outline-1 outline-offset-[16px] outline-[#0D0C52] xl:col-span-1">
@@ -597,7 +748,6 @@ const SwapPage: NextPageWithLayout = () => {
                 />
               </div>
             </Switch>
-            {/* <div className="myImg">hi</div> */}
           </div>
 
           <TradeContainer>
@@ -618,7 +768,6 @@ const SwapPage: NextPageWithLayout = () => {
                       role="tab"
                       aria-controls="profile"
                       aria-selected="false"
-                      // autoFocus={true}
                       onClick={() => setTabIndex(1)}
                     >
                       Instant Swap
@@ -644,6 +793,7 @@ const SwapPage: NextPageWithLayout = () => {
               </div>
 
               <div id="myTabContent">
+                {/* Market order */}
                 <div
                   className={cn(
                     'relative flex flex-col gap-3',
@@ -653,16 +803,16 @@ const SwapPage: NextPageWithLayout = () => {
                   role="tabpanel"
                   aria-labelledby="profile-tab"
                 >
-                  {/* <div> */}
+                  {/* swap from */}
                   <CoinInput
                     label={'From'}
                     isInbox={side == 'SELL'}
+                    showmax={focusedInput == 0}
                     usdPrice={tokenInPrice}
                     defaultValue={amountIn}
                     showvalue={amountIn}
                     coinIndex={tokenInIndex}
                     onChangeTokenIndex={(tokenIndex) => {
-                      clearOutput();
                       setTokenInIndex(tokenIndex);
                     }}
                     onchangeAmount={(value) => {
@@ -670,8 +820,8 @@ const SwapPage: NextPageWithLayout = () => {
                       clearOutput();
                       setAmountIn(Number(value));
                     }}
+                    monFocus={() => setFocusedInput(0)}
                     tokenBalance={tokenInBalance}
-                    onToggleTokens={toggleCoin}
                   />
                   <div className="absolute top-1/2 left-1/2 z-[1] my-2 -mt-4 -ml-4 grid grid-cols-1 place-items-center">
                     <Button
@@ -690,91 +840,30 @@ const SwapPage: NextPageWithLayout = () => {
                       />
                     </Button>
                   </div>
+                  {/* swap to */}
                   <CoinInput
                     label={'To(Estimated)'}
                     isInbox={side == 'BUY'}
+                    showmax={focusedInput == 1}
+                    monFocus={() => setFocusedInput(1)}
                     usdPrice={tokenOutPrice}
                     defaultValue={amountOut}
                     showvalue={amountOut}
                     coinIndex={tokenOutIndex}
-                    onToggleTokens={toggleCoin}
                     onChangeTokenIndex={(tokenIndex) => {
-                      clearOutput();
                       setTokenOutIndex(tokenIndex);
                     }}
                     onchangeAmount={(value) => {
                       setSide('BUY');
-                      clearOutput();
+                      setAmountIn(0);
                       setAmountOut(Number(value));
                     }}
                     tokenBalance={tokenOutBalance}
                   />
-                  {/* </div> */}
-                </div>
-                <div
-                  className={cn(
-                    'relative flex flex-col gap-3',
-                    tabIndex === 2 ? '' : 'hidden'
-                  )}
-                  id="dashboard"
-                  role="tabpanel"
-                  aria-labelledby="dashboard-tab"
-                >
-                  <CoinInput
-                    label={'From'}
-                    isInbox={true}
-                    usdPrice={tokenInPrice}
-                    defaultValue={amountIn}
-                    showvalue={amountIn}
-                    coinIndex={tokenInIndex}
-                    onChangeTokenIndex={(tokenIndex) => {
-                      clearOutput();
-                      setTokenInIndex(tokenIndex);
-                    }}
-                    onchangeAmount={(value) => {
-                      clearOutput();
-                      setAmountIn(Number(value));
-                    }}
-                    tokenInBalance={tokenInBalance}
-                    onToggleTokens={toggleCoin}
-                  />
-                  <div className="absolute top-1/2 left-1/2 z-[1] my-2 -mt-4 -ml-4 grid grid-cols-1 place-items-center">
-                    <Button
-                      size="mini"
-                      color="warning"
-                      shape="circle"
-                      variant="transparent"
-                      className="uppercase xs:tracking-widest"
-                      onClick={() => {
-                        toggleTokens();
-                      }}
-                    >
-                      <SwapIcon
-                        className="h-auto w-3"
-                        style={{ color: 'yellow' }}
-                      />
-                    </Button>
-                  </div>
-                  <CoinInput
-                    label={'To(Estimated)'}
-                    isInbox={true}
-                    usdPrice={tokenOutPrice}
-                    defaultValue={amountOut}
-                    showvalue={amountOut}
-                    coinIndex={tokenOutIndex}
-                    onToggleTokens={toggleCoin}
-                    onChangeTokenIndex={(tokenIndex) => {
-                      clearOutput();
-                      setTokenOutIndex(tokenIndex);
-                    }}
-                  />
-                  {/* <div className="text-center border flex flex-row justify-between gap-2">
-                    <div className="border">Order Price</div>
-                    <div className="border text-right">Expires in</div>
-                  </div> */}
                 </div>
               </div>
 
+              {/* Settings */}
               <div className="my-4 flex flex-row justify-between text-[#FEB58D]">
                 <div className="grid grid-cols-1 place-items-center">
                   <div className="flex items-center font-medium">
@@ -794,11 +883,12 @@ const SwapPage: NextPageWithLayout = () => {
                 </div>
                 <div className="flex flex-row">
                   <span className="primary-font-family font-size-10">
-                    {tolerance}
+                    {tolerance} %
                   </span>
                 </div>
               </div>
             </div>
+
             <div className="flex flex-col gap-4 xs:gap-[18px]">
               <TransactionInfo
                 label={'Minimum Received'}
@@ -806,7 +896,6 @@ const SwapPage: NextPageWithLayout = () => {
                   3
                 )} ${getCoinName(tokenOut)}`}
               />
-              {/* <TransactionInfo label={'Min. Received'} value={`${amountOut ? Number(amountOut * 0.99).toFixed(2) : 0} ${coinslist[tokenOutIndex].code}`} /> */}
               <div
                 className={cn(
                   'flex items-center justify-between dark:text-gray-300'
@@ -817,114 +906,155 @@ const SwapPage: NextPageWithLayout = () => {
                 </span>
                 <span className="primary-font-family font-size-10 text-[#EB5757]">
                   {`${Number(
-                    (1 - smartroute.destUSD / smartroute.srcUSD) * 100
+                    Math.max(
+                      0,
+                      (1 - smartroute.destUSD / smartroute.srcUSD) * 100
+                    )
                   ).toFixed(4)}%`}
                 </span>
               </div>
-              {/* <TransactionInfo label={'TxSpeed'} value={txSpeed} />
-              <TransactionInfo label={'Price Slippage'} value={tolerance} /> */}
               <TransactionInfo
                 label={'Liquidity Provider Fee'}
                 value={`${Number(amountIn * swap_fee).toFixed(5)} ${getCoinName(
                   tokenIn
                 )}`}
               />
-              {/* <TransactionInfo label={'Best Dex'} value={getDexName(bestDex) + " : " + Number(bestAmountOut).toFixed(6) + " " + getCoinName(tokenOut)} /> */}
             </div>
-            {/* <div className="mt-6 flex flex-row justify-between ">
-              <div className="grid grid-cols-1 place-items-center">
-                <div className="text-sm">Route</div>
-              </div>
-              <div className="flex flex-row">
-                <div
-                  className="pr-5 text-sm"
-                  onClick={() => {
-                    if (adapters.length) openModal('ROUTING');
-                  }}
-                  style={{ cursor: 'pointer' }}
-                >
-                  {adapters.length} steps in the route
-                </div>
-              </div>
-            </div> */}
 
             {/* Button */}
             <div className="mt-5 grid grid-cols-1 place-items-center">
-              {!address ? (
-                // <Button
-                //   size="mini"
-                //   shape="pill"
-                //   className="mt-1 h-[32px] w-[153px] py-1 px-3 primary-font-family font-size-14 bg-leanear-gradient"
-                //   onClick={() => openModal('WALLET_CONNECT_VIEW')}
-                // >
-                //   <span>Connect Wallet</span>
-                // </Button>
-
+              {!isAddress ? (
                 <div className="swap-wallet-connect">
-                  <ConnectButton />
+                  <ConnectButton.Custom>
+                    {({
+                      account,
+                      chain,
+                      openAccountModal,
+                      openChainModal,
+                      openConnectModal,
+                      authenticationStatus,
+                      mounted,
+                    }) => {
+                      // Note: If your app doesn't use authentication, you
+                      // can remove all 'authenticationStatus' checks
+                      const ready =
+                        mounted && authenticationStatus !== 'loading';
+                      const connected =
+                        ready &&
+                        account &&
+                        chain &&
+                        (!authenticationStatus ||
+                          authenticationStatus === 'authenticated');
+
+                      if (connected) {
+                        setIsAddress(true);
+                      }
+
+                      return (
+                        <div
+                          {...(!ready && {
+                            'aria-hidden': true,
+                            style: {
+                              opacity: 0,
+                              pointerEvents: 'none',
+                              userSelect: 'none',
+                            },
+                          })}
+                        >
+                          {(() => {
+                            if (!connected) {
+                              return (
+                                <button
+                                  onClick={openConnectModal}
+                                  type="button"
+                                >
+                                  Connect Wallet
+                                </button>
+                              );
+                            }
+                          })()}
+                        </div>
+                      );
+                    }}
+                  </ConnectButton.Custom>
                 </div>
-              ) : loading ? (
+              ) : tokenInBalance == 0 || tokenInBalance < amountIn ? (
                 <Button
                   size="mini"
                   shape="pill"
-                  className="primary-font-family font-size-14 bg-leanear-gradient mt-1 h-[32px] w-[153px] py-1 px-3"
-                >
-                  <span>Loading ...</span>
-                </Button>
-              ) : tokenInBalance >= amountIn ? (
-                <Button
-                  size="mini"
-                  shape="pill"
-                  className="primary-font-family font-size-14 bg-leanear-gradient mt-1 h-[32px] w-[153px] py-1 px-3"
-                  onClick={() => {
-                    swap();
-                  }}
-                >
-                  <span>SWAP</span>
-                </Button>
-              ) : (
-                <Button
-                  size="mini"
-                  shape="pill"
-                  className="primary-font-family font-size-14 bg-leanear-gradient mt-1 h-[32px] w-[153px] py-1 px-3"
+                  className={`primary-font-family font-size-14 bg-leanear-gradient swap-balance disabled mt-1 h-[32px] w-[190px] py-1 px-3`}
                 >
                   <span>Insufficient Balance</span>
+                </Button>
+              ) : (
+                // ) : loading ? (
+                //   <Button
+                //     size="mini"
+                //     shape="pill"
+                //     className="primary-font-family font-size-14 bg-leanear-gradient mt-1 h-[32px] w-[153px] py-1 px-3"
+                //   >
+                //     <span>Loading ...</span>
+                //   </Button>
+                <Button
+                  size="mini"
+                  shape="pill"
+                  className={`primary-font-family font-size-14 bg-leanear-gradient swap-balance mt-1 h-[32px] w-[153px] py-1 px-3 ${tokenInBalance == 0 || tokenInBalance < amountIn
+                    ? 'disabled'
+                    : ''
+                    }`}
+                  onClick={() => {
+                    executeSwap();
+                  }}
+                >
+                  <span>
+                    {tokenInBalance == 0 || tokenInBalance < amountIn
+                      ? 'Insufficient Balance'
+                      : 'SWAP'}
+                  </span>
                 </Button>
               )}
             </div>
             <br></br>
+          </TradeContainer>
+        </div>
+
+        {/* Rigth side */}
+        {(isExpertMode || isDevenv) && (
+          <div className="text-large rounded-[4px] text-center shadow-card outline outline-1 outline-offset-[16px] outline-[#0D0C52] md:block xl:col-span-2 ">
             {/* Console */}
-            {devenv ? (
-              <div>
+            {isDevenv &&
+              <div className='bg-[#5841D8] text-left'>
                 <br></br>
+                <h6>tokenInIndex: {tokenInIndex}</h6>
+                <h6>tokenIn: {getCoinName(tokenIn)}</h6>
+                <h6>amountIn: {amountIn}</h6>
                 <hr></hr>
-                <h1>coinslist: {coinslist.length}</h1>
-                <h1>tokenInIndex: {tokenInIndex}</h1>
-                <h1>tokenIn: {tokenIn}</h1>
-                <h1>tokenInBalance: {tokenInBalance}</h1>
-                <h1>Amount: {amountIn}</h1>
-                <h1>Price: {tokenInPrice}</h1>
+                <h6>tokenOutIndex: {tokenOutIndex}</h6>
+                <h6>tokenOut: {getCoinName(tokenOut)}</h6>
+                <h6>amountOut: {amountOut}</h6>
                 <hr></hr>
-                <h1>tokenOutIndex: {tokenOutIndex}</h1>
-                <h1>tokenOut: {getCoinName(tokenOut)}</h1>
-                <h1>Amount: {amountOut}</h1>
-                <h1>Price: {tokenOutPrice}</h1>
+                <h6>seconds: {seconds}</h6>
+                <h6>side: {side}</h6>
+                <h6>focusedInput: {focusedInput}</h6>
+                <h6>tokenInBalance: {tokenInBalance}</h6>
+                <h6>Price: {tokenInPrice}</h6>
+                <h6>Price: {tokenOutPrice}</h6>
                 <hr></hr>
-                <h1>
+                <h6>
                   adapters:
                   {adapters.map((ele, i) => {
                     return (i ? ' ->' : '') + getDexName(ele);
                   })}
-                </h1>
-                <h1>
-                  Coin path:{' '}
+                </h6>
+                <h6>
+                  coinpath:{' '}
                   {path.map((ele, i) => {
                     return (i ? ' ->' : '') + getCoinName(ele);
                   })}
-                </h1>
-                <h1>
+                </h6>
+                <h6>
                   amounts:
-                  {amounts.length}:{' '}
+                  {' '}
                   {amounts.map((ele, index) => {
                     return (
                       ' ->' +
@@ -934,17 +1064,11 @@ const SwapPage: NextPageWithLayout = () => {
                       )
                     );
                   })}
-                </h1>
+                </h6>
               </div>
-            ) : (
-              <></>
-            )}
-          </TradeContainer>
-        </div>
+            }
+            {/* End Console */}
 
-        {/* Rigth side */}
-        {isExpertMode && (
-          <div className="text-large rounded-[4px] text-center shadow-card outline outline-1 outline-offset-[16px] outline-[#0D0C52] md:block xl:col-span-2 ">
             {/* Market Data-Chart subPanel */}
             <div className="hidden md:block md:min-w-[709px] md:max-w-[709px] md:rounded-[10px] md:px-8 md:dark:bg-[#0D0C52]">
               <div className="min-h-[50px] ">
@@ -966,20 +1090,14 @@ const SwapPage: NextPageWithLayout = () => {
                 </span>
               </div>
               <div style={{ overflow: 'auto' }}>
-                <div
-                  className=" md:grid md:grid-cols-12 md:gap-2 "
-                  // style={{ display: 'table', width: '100%' }}
-                >
-                  <div
-                    className="coin-icon col-span-1 max-h-full sm:mx-auto md:flex md:items-start"
-                    // style={{ display: 'table-cell', minWidth: '50px' }}
-                  >
-                    <div className="mx-3">{coinslist[tokenInIndex]?.icon}</div>
+                <div className=" md:grid md:grid-cols-12 md:gap-2 ">
+                  <div className="coin-icon col-span-1 max-h-full sm:mx-auto md:flex md:items-start">
+                    <div className="mx-3">{getCoinIcon(tokenIn)}</div>
                   </div>
-
-                  <div className=" col-span-10 max-h-full md:my-1">
-                    {Array.isArray(rouTes)
-                      ? rouTes.map((element, index) => (
+                  {isPS ? (
+                    <div className=" col-span-10 max-h-full md:my-1">
+                      {Array.isArray(rouTes)
+                        ? rouTes.map((element, index) => (
                           <>
                             {index == 0 && (
                               <div className="col-span-1 flex justify-center md:hidden">
@@ -1004,21 +1122,19 @@ const SwapPage: NextPageWithLayout = () => {
                                 </div>
                               </div>
                               <div
-                                className={`col-span-11 flex w-full items-center justify-center px-2 md:px-0 ${
-                                  routeSwaps[index].length > 1
-                                    ? 'justify-between'
-                                    : 'justify-center'
-                                }`}
+                                className={`col-span-11 flex w-full items-center justify-center px-2 md:px-0 ${routeSwaps[index].length > 1
+                                  ? 'justify-between'
+                                  : 'justify-center'
+                                  }`}
                               >
                                 {routeSwaps[index].map((ele, idx) => (
                                   <>
                                     <div
                                       key={idx}
-                                      className={`route-box my-3 text-sm tracking-tighter text-gray-600 dark:text-blue-400 md:my-0 ${
-                                        routeSwaps[index].length == 1
-                                          ? 'one-route-box'
-                                          : ''
-                                      }`}
+                                      className={`route-box my-3 text-sm tracking-tighter text-gray-600 dark:text-blue-400 md:my-0 ${routeSwaps[index].length == 1
+                                        ? 'one-route-box'
+                                        : ''
+                                        }`}
                                     >
                                       <div className="route-box-top flex items-center">
                                         {getCoinIcon(ele.destToken)}
@@ -1026,7 +1142,6 @@ const SwapPage: NextPageWithLayout = () => {
                                           {getCoinCode(ele.destToken)}
                                         </p>
                                       </div>
-                                      {/* {item.dex.map((element, id) => ( */}
                                       <div className="route-box-bottom flex flex-col">
                                         {ele.swapExchanges.map((el, i) => (
                                           <div
@@ -1034,14 +1149,12 @@ const SwapPage: NextPageWithLayout = () => {
                                             className="swap-exchange"
                                           >
                                             <div className="swap-exchange-name flex max-w-full justify-between text-center">
-                                              {/* {getDexName(adapters[index])} */}
                                               <p>{el.exchange}</p>
                                               <p>{el.percent}%</p>
                                             </div>
                                           </div>
                                         ))}
                                       </div>
-                                      {/*  */}
                                     </div>
                                     {routeSwaps[index].length > 1 && (
                                       <div className="col-span-1 hidden md:block">
@@ -1054,7 +1167,6 @@ const SwapPage: NextPageWithLayout = () => {
                                   </>
                                 ))}
                               </div>
-                              {/* <div className="col-span-1"></div> */}
                             </div>
                             <div className="col-span-1 flex justify-center md:hidden">
                               <img
@@ -1065,14 +1177,72 @@ const SwapPage: NextPageWithLayout = () => {
                             </div>
                           </>
                         ))
-                      : null}
-                  </div>
+                        : null}
+                    </div>
+                  ) : (
+                    <div className=" col-span-10 max-h-full md:my-1">
+                      <div className="col-span-1 flex justify-center md:hidden">
+                        <img
+                          src="/down-arrow.svg"
+                          className="md:hidden"
+                          alt="Down Arrow"
+                        />
+                      </div>
+                      <div className="md:my-5 md:grid md:grid-cols-12 md:place-items-center">
+                        <div className="col-span-1">
+                          <div className="grid h-10 max-h-full grid-cols-1 place-items-center gap-2 tracking-tighter text-gray-600 dark:text-blue-400 md:h-20">
+                            <div className="flex flex-row">
+                              <span className=" max-w-full ">100%</span>
+                            </div>
+                          </div>
+                        </div>
+                        <div
+                          className={`col-span-11 flex w-full items-center justify-center px-2 md:px-0 ${adapters.length > 1
+                            ? 'justify-between'
+                            : 'justify-center'
+                            }`}
+                        >
+                          {adapters.map((adapter, idx) => (
+                            <>
+                              <div
+                                key={idx}
+                                className={`route-box my-3 text-sm tracking-tighter text-gray-600 dark:text-blue-400 md:my-0 ${adapters.length == 1 ? 'one-route-box' : ''
+                                  }`}
+                              >
+                                <div className="route-box-top flex items-center">
+                                  {getCoinIcon(path[idx + 1])}
+                                  <p className="coin-code-name w-10 max-w-full px-2">
+                                    {getCoinCode(path[idx + 1])}
+                                  </p>
+                                </div>
+                                <div className="route-box-bottom flex flex-col">
+                                  <div className="swap-exchange">
+                                    <div className="swap-exchange-name flex max-w-full justify-between text-center">
+                                      <p>{getDexName(adapter)}</p>
+                                      <p>100%</p>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="col-span-1 hidden md:block">
+                                <img src="/right-arrow.svg" alt="Right Arrow" />
+                              </div>
+                            </>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="col-span-1 flex justify-center md:hidden">
+                        <img
+                          src="/down-arrow.svg"
+                          className="md:hidden"
+                          alt="Down Arrow"
+                        />
+                      </div>
+                    </div>
+                  )}
 
-                  <div
-                    className="coin-icon col-span-1 max-h-full sm:mx-auto md:flex md:items-start"
-                    // style={{ display: 'table-cell', minWidth: '50px' }}
-                  >
-                    <div className="px-auto">{getCoinIcon(finalToken)}</div>
+                  <div className="coin-icon col-span-1 max-h-full sm:mx-auto md:flex md:items-start">
+                    <div className="px-auto">{getCoinIcon(tokenOut)}</div>
                   </div>
                 </div>
               </div>

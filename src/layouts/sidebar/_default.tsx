@@ -57,11 +57,11 @@ export const menuItemsOld = [
     href: routes.liquidity,
   },
   {
-  //   name: 'Bridge',
-  //   icon: <PoolIcon />,
-  //   href: routes.bridge,
-  // },
-  // {
+    //   name: 'Bridge',
+    //   icon: <PoolIcon />,
+    //   href: routes.bridge,
+    // },
+    // {
     name: 'Explore NFTs',
     icon: <CompassIcon />,
     href: routes.search,
@@ -112,10 +112,17 @@ export const menuItems = [
         name: 'Market',
         href: routes.swap,
       },
-      // {
-      //   name: 'Limit',
-      //   href: routes.limit,
-      // },
+    ],
+  },
+  {
+    name: 'Other',
+    icon: <ExchangeIcon />,
+    href: routes.swap,
+    dropdownItems: [
+      {
+        name: 'Legacy',
+        href: 'https://legacy.apexswap.io',
+      },
     ],
   },
   // {
@@ -133,7 +140,7 @@ export const menuItems = [
   //   icon: <FarmIcon />,
   //   href: routes.farms,
   // },
-]
+];
 
 type SidebarProps = {
   className?: string;

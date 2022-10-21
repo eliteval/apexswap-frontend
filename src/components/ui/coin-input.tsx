@@ -7,6 +7,7 @@ import { ChevronDown } from '@/components/icons/chevron-down';
 import { useClickAway } from '@/lib/hooks/use-click-away';
 import { useLockBodyScroll } from '@/lib/hooks/use-lock-body-scroll';
 import { HookContext } from '@/lib/hooks/use-hook';
+import { coinList } from '@/data/static/coin-list';
 
 // dynamic import
 const CoinSelectView = dynamic(
@@ -16,7 +17,7 @@ const CoinSelectView = dynamic(
 interface CoinInputTypes extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
   isInbox?: boolean;
-  onToggleTokens?: boolean;
+  showmax?: boolean;
   usdPrice?: number;
   defaultValue?: number;
   coinIndex?: number;
@@ -25,6 +26,7 @@ interface CoinInputTypes extends React.InputHTMLAttributes<HTMLInputElement> {
   // className?: string;
   onChangeTokenIndex?: (param: number) => void;
   onchangeAmount?: (param: string) => void;
+  monFocus?: () => void;
   data?: object;
 }
 
@@ -33,11 +35,12 @@ const decimalPattern = /^[0-9]*[.,]?[0-9]*$/;
 export default function CoinInput({
   label,
   isInbox = false,
-  onToggleTokens,
+  showmax,
   showvalue,
   tokenBalance,
   onChangeTokenIndex,
   onchangeAmount,
+  monFocus,
   data,
   defaultValue = 0,
   coinIndex = 0,
@@ -45,21 +48,41 @@ export default function CoinInput({
   // className,
   ...rest
 }: CoinInputTypes) {
-  const { coinslist, getCoinDecimals, getCoinName } = useContext(HookContext);
+  const { coinslist, isNatativeToken, getCoinDecimals, getCoinName, isDevenv } =
+    useContext(HookContext);
 
-  let [value, setValue] = useState(defaultValue);
-  let [selectedCoin, setSelectedCoin] = useState(coinslist[coinIndex]);
-  let [visibleCoinList, setVisibleCoinList] = useState(false);
+  const [value, setValue] = useState(defaultValue);
+  const [selectedCoin, setSelectedCoin] = useState(coinslist[0]);
+  const [coindecimal, setCoinDecimal] = useState(6);
+  const [visibleCoinList, setVisibleCoinList] = useState(false);
   const modalContainerRef = useRef<HTMLDivElement>(null);
+
+  // useEffect(() => {
+  //   setValue(defaultValue)
+  // }, [defaultValue]);
+  useEffect(() => {
+    setSelectedCoin(coinList[coinIndex])
+  }, [coinIndex]);
+  useEffect(() => {
+    var decimal = getCoinDecimals(selectedCoin.address);
+    setCoinDecimal(decimal)
+  }, [selectedCoin]);
   useClickAway(modalContainerRef, () => {
     setVisibleCoinList(false);
   });
   useLockBodyScroll(visibleCoinList);
-  const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.value.match(decimalPattern)) {
-      setValue(event.target.value);
-      let param = { coin: selectedCoin.code, value: event.target.value };
-      onchangeAmount(event.target.value);
+  const handleOnChange = (value: string, decimal?: number) => {
+    value = value.replace(',', '.');
+    if (String(value).match(decimalPattern)) {
+      if (typeof decimal !== 'undefined') {
+        onchangeAmount(Number(value).toFixed(decimal));
+        setValue(Number(value).toFixed(decimal));
+      }
+      else {
+        onchangeAmount(Number(value));
+        setValue(value);
+      }
+
     }
   };
   function handleSelectedCoin(coin: CoinTypes) {
@@ -73,54 +96,34 @@ export default function CoinInput({
 
   const handleCloseCoinDialog = () => {
     setVisibleCoinList(false);
-  }
+  };
+
+  const handleFocus = () => {
+    monFocus();
+  };
   return (
     <>
       <div>
         <div className=" block min-h-[70px] rounded-t-[10px] px-4  transition-colors duration-200 dark:bg-[#4910BA]">
+          {isDevenv && <div className="mt-0.5 mb-0.5 min-h-[10px] flex justify-between bg-[#6910BA]">
+            <h6>{coinIndex}</h6>
+            <h6>{getCoinName(selectedCoin.address)}({coindecimal})</h6>
+            <h6>{value}</h6>
+          </div>}
+
           <div className="mt-0.5 mb-0.5 flex min-h-[10px] flex-row justify-between">
             <span className="mt-2 mb-0.5 block min-h-[10px] text-xs text-gray-600 dark:text-white">
               {label}{' '}
             </span>
-            {isInbox ? (
-              <div className="flex flex-row gap-1">
-                <div
-                  className="mt-2 mb-0.5 block min-h-[10px] border-b border-b-white text-right text-xs text-gray-600 dark:text-white"
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => {
-                    setValue(tokenBalance / 2);
-                    onchangeAmount(tokenBalance / 2);
-                  }}
-                >
-                  50%
-                </div>
-                <div
-                  className="mt-2 mb-0.5 block min-h-[10px] border-b border-b-white text-right text-xs text-gray-600 dark:text-white"
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => {
-                    setValue(tokenBalance);
-                    onchangeAmount(tokenBalance);
-                  }}
-                >
-                  Max
-                </div>
-              </div>
-            ) : (
-              <></>
-            )}
           </div>
           <div className="flex min-h-[60px] flex-row items-center justify-between">
             <button
               onClick={() => setVisibleCoinList(true)}
               className="flex min-w-[80px] items-center font-medium outline-none dark:text-gray-100"
             >
-              {onToggleTokens
-                ? coinslist[coinIndex]?.icon2
-                : selectedCoin?.icon2}{' '}
+              {coinslist[coinIndex]?.icon2}{' '}
               <span className="ltr:ml-2 rtl:mr-2">
-                {onToggleTokens
-                  ? coinslist[coinIndex]?.code
-                  : selectedCoin?.code}
+                {coinslist[coinIndex]?.code}
               </span>
               <ChevronDown className="ltr:ml-1.5 rtl:mr-1.5" />
             </button>
@@ -129,32 +132,51 @@ export default function CoinInput({
               value={isInbox ? value : showvalue?.toFixed(6)}
               placeholder="0.0"
               inputMode="decimal"
-              // disabled={!isInbox}
-              onChange={handleOnChange}
+              onChange={(e) => handleOnChange(e.target.value)}
+              onClick={() => handleFocus()}
               className={cn(
-                'h-[23px] w-1/2 rounded-[10px] border-0 px-4 text-right outline-none dark:bg-[#000B2F]/10 dark:focus:ring-0',
-                // isInbox ? '' : ' bg-gray-100 text-gray-400'
+                'h-[23px] w-1/2 rounded-[10px] border-0 px-4 text-right outline-none dark:bg-[#000B2F]/10 dark:focus:ring-0'
               )}
-            // style={{ padding: '0px' }}
+              style={{ height: '40px' }}
             />
           </div>
         </div>
         <div className="py-auto block min-h-[28px] rounded-b-[10px] px-4 dark:bg-[#FFFFFF]">
-          <div className="mb-1 flex flex-row justify-between">
-            <span
-              className="mt-1 text-black primary-font-family font-size-10 font-weight-500"
-            >
+          <div className="flex flex-row items-center justify-between">
+            <span className="primary-font-family font-size-10 font-weight-500 mt-1 text-black">
               Balance: {tokenBalance?.toFixed(6)}
             </span>
-            <div
-              className="font-xs mt-1 text-right text-black primary-font-family font-size-10 font-weight-500"
-            >
-              {/* = ${showvalue ? Number(showvalue * usdPrice).toFixed(6) : usdPrice ? Number(value) * usdPrice : '0.00'} */}
-              {isInbox && tokenBalance > 0
-                ? `${Number((value / tokenBalance) * 100).toFixed(3)}%`
-                : isInbox
-                  ? '---'
-                  : ''}
+            <div className="font-xs primary-font-family font-size-10 font-weight-500 text-right text-black">
+              {showmax ? (
+                <div className="h-100 flex flex-row items-center gap-1">
+                  <div
+                    className="mr-2 block min-h-[10px] border-b border-b-dark text-right text-xs text-gray-600 dark:text-dark"
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => {
+                      handleOnChange(String(Number(tokenBalance) / 2), 6);
+                    }}
+                  >
+                    50%
+                  </div>
+                  <div
+                    className="block min-h-[10px] border-b border-b-dark text-right text-xs text-gray-600 dark:text-dark"
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => {
+                      if (isNatativeToken(selectedCoin.address)) {
+                        handleOnChange(
+                          String((Number(tokenBalance) - 0.01).toFixed(6))
+                        );
+                      }
+
+                      else handleOnChange(String(Number(tokenBalance)));
+                    }}
+                  >
+                    Max
+                  </div>
+                </div>
+              ) : (
+                <></>
+              )}
             </div>
           </div>
         </div>

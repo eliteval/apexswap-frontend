@@ -60,7 +60,7 @@ export function MenuItem({ name, icon, href, dropdownItems }: MenuItemProps) {
 
             {isChildrenActive && (
               <motion.span
-                className="absolute bottom-0 left-0 right-0 h-full w-full rounded-lg bg-brand shadow-large"
+                className="absolute bottom-0 left-0 right-0 h-full w-full rounded-lg bg-orange-500 shadow-large"
                 layoutId="menu-item-active-indicator"
               />
             )}
@@ -98,7 +98,7 @@ export function MenuItem({ name, icon, href, dropdownItems }: MenuItemProps) {
 
           {href === pathname && (
             <motion.span
-              className="absolute bottom-0 left-0 right-0 h-full w-full rounded-lg bg-brand shadow-large"
+              className="absolute bottom-0 left-0 right-0 h-full w-full rounded-lg bg-orange-500 shadow-large"
               layoutId="menu-item-active-indicator"
             />
           )}

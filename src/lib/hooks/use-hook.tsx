@@ -3,14 +3,19 @@ import { ethers } from 'ethers';
 import Image from '@/components/ui/image';
 import { coinList } from '@/data/static/coin-list';
 import ERC20 from "@/abi/ERC20.json";
+import { resourceUsage } from 'process';
 
 
 export const HookContext = createContext<any>({});
 
 export const HookProvider = ({ children }: { children: ReactNode }) => {
   const [coinslist, setCoinsList] = useState<[] | undefined>(coinList);
+  const [isDevenv, setIsDevEnv] = useState<boolean>(false);
 
   useEffect(() => {
+    if (typeof window !== "undefined" && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"))
+      setIsDevEnv(true)
+    else setIsDevEnv(false)
   }, []);
 
   const addCoinToList = async (coin: string) => {
@@ -101,7 +106,8 @@ export const HookProvider = ({ children }: { children: ReactNode }) => {
         addCoinToList,
         isNatativeToken,
         isWavax,
-        addressForRoute
+        addressForRoute,
+        isDevenv
       }}
     >
       {children}

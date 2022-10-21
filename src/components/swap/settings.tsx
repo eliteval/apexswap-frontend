@@ -9,17 +9,20 @@ import { useSettingsAtom } from '@/pages/swap';
 // Create your atoms and derivatives
 var settingsAtom;
 export function useTextAtom() {
-  return {settingsAtom};
-};
+  return { settingsAtom };
+}
 
 export default function Settings({ ...props }) {
   let [txSpeed, setTxSpeed] = useState('');
-  let [tolerance, setTolerance] = useState('');
+  let [tolerance, setTolerance] = useState(0);
   let [toleranceValue, setToleranceValue] = useState('');
   // let [swch1, setSwch1] = useState(false);
   // let [swch2, setSwch2] = useState(false);
   // let [swch3, setSwch3] = useState(false);
-  settingsAtom = atom({ txSpeed: txSpeed, tolerance: toleranceValue !==''? toleranceValue:tolerance });
+  settingsAtom = atom({
+    txSpeed: txSpeed,
+    tolerance: toleranceValue !== '' ? toleranceValue : tolerance,
+  });
   const { toSettingsAtom } = useSettingsAtom();
   useEffect(() => {
     if (toSettingsAtom?.init.speed) {
@@ -32,57 +35,63 @@ export default function Settings({ ...props }) {
     }
   }, [toSettingsAtom?.init.tol]);
   const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.value!=='') {
-      setToleranceValue(event.target.value+'%');
+    if (event.target.value !== '') {
+      setToleranceValue(event.target.value);
       console.log('toleranceValue => ', toleranceValue);
-      setTolerance('');
+      setTolerance(0);
     }
   };
 
   return (
     <div
-      className="relative z-50 mx-auto w-[440px] max-w-full rounded-lg bg-white px-9 py-16 dark:bg-light-dark"
+      className="relative z-50 mx-auto w-[440px] max-w-full rounded-lg bg-white bg-[#0D0C52] px-9 pt-6 pb-16"
       {...props}
     >
-      <h2 className="mb-4 text-center text-2xl font-medium uppercase text-gray-900 dark:text-white">
+      <h4 className="mb-7 text-center text-2xl text-gray-900 dark:text-white">
         Settings
-      </h2>
-      <p className="flex items-center gap-2 text-sm leading-loose tracking-tight text-gray-600 dark:text-gray-400">
+      </h4>
+      <p className="primary-font-famil flex items-center gap-2 text-sm leading-loose tracking-tight text-white dark:text-white">
         Default Transaction Speed(GWEI) <InfoIcon className="h-3 w-3" />
       </p>
       <div className="grid grid-cols-3 gap-2">
         <Button
-          color="gray"
-          className={cn('mb-5 max-h-8 w-full font-normal text-gray-600 hover:text-gray-900 dark:text-gray-200 dark:hover:text-white lg:mt-6',
-            txSpeed !== 'Standard'? 'dark:bg-gray-600' : 'dark:bg-gradient-to-r dark:from-cyan-400 dark:to-blue-500'
+          className={cn(
+            'mb-5 max-h-8 w-full font-normal text-gray-600 hover:text-gray-900 dark:text-gray-200 dark:hover:text-white xs:mt-2 lg:mt-5',
+            txSpeed !== 'Standard'
+              ? 'border border-[#5841D8] bg-[#1B0D6B]'
+              : 'bg-leanear-gradient'
           )}
-          onClick={()=>{setTxSpeed('Standard')}}
+          onClick={() => {
+            setTxSpeed('Standard');
+          }}
         >
-          <span className="flex items-center gap-2">
-            Standard
-          </span>
+          <span className="flex items-center gap-2">Standard</span>
         </Button>
         <Button
-          color="gray"
-          className={cn('mb-5 max-h-8 w-full font-normal text-gray-600 hover:text-gray-900 dark:text-gray-200 dark:hover:text-white lg:mt-6',
-            txSpeed !== 'Fast'? 'dark:bg-gray-600' : 'dark:bg-gradient-to-r dark:from-cyan-400 dark:to-blue-500'
+          className={cn(
+            'mb-5 max-h-8 w-full font-normal text-gray-600 hover:text-gray-900 dark:text-gray-200 dark:hover:text-white xs:mt-2 lg:mt-5',
+            txSpeed !== 'Fast'
+              ? 'border border-[#5841D8] bg-[#1B0D6B]'
+              : 'bg-leanear-gradient'
           )}
-          onClick={()=>{setTxSpeed('Fast')}}
+          onClick={() => {
+            setTxSpeed('Fast');
+          }}
         >
-          <span className="flex items-center gap-2">
-            Fast
-          </span>
+          <span className="flex items-center gap-2">Fast</span>
         </Button>
         <Button
-          color="gray"
-          className={cn('mb-5 max-h-8 w-full font-normal text-gray-600 hover:text-gray-900 dark:text-gray-200 dark:hover:text-white lg:mt-6',
-            txSpeed !== 'Instant'? 'dark:bg-gray-600' : 'dark:bg-gradient-to-r dark:from-cyan-400 dark:to-blue-500'
+          className={cn(
+            'mb-5 max-h-8 w-full font-normal text-gray-600 hover:text-gray-900 dark:text-gray-200 dark:hover:text-white xs:mt-2 lg:mt-5',
+            txSpeed !== 'Instant'
+              ? 'border border-[#5841D8] bg-[#1B0D6B]'
+              : 'bg-leanear-gradient'
           )}
-          onClick={()=>{setTxSpeed('Instant')}}
+          onClick={() => {
+            setTxSpeed('Instant');
+          }}
         >
-          <span className="flex items-center gap-2">
-            Instant
-          </span>
+          <span className="flex items-center gap-2">Instant</span>
         </Button>
       </div>
       <p className="flex items-center gap-2 text-center text-sm leading-loose tracking-tight text-gray-600 dark:text-gray-400">
@@ -90,42 +99,50 @@ export default function Settings({ ...props }) {
       </p>
       <div className="grid grid-cols-4 gap-2">
         <Button
-          color="gray"
-          className={cn('mb-5 max-h-8 w-full font-normal text-gray-600 hover:text-gray-900 dark:text-gray-200 dark:hover:text-white lg:mt-6',
-            tolerance !== '0.1%'? 'dark:bg-gray-600' : 'dark:bg-gradient-to-r dark:from-cyan-400 dark:to-blue-500'
+          className={cn(
+            'mb-5 max-h-8 w-full font-normal text-gray-600 hover:text-gray-900 dark:text-gray-200 dark:hover:text-white xs:mt-2 lg:mt-5',
+            tolerance !== 0.1
+              ? 'border border-[#5841D8] bg-[#1B0D6B]'
+              : 'bg-leanear-gradient'
           )}
-          onClick={()=>{setTolerance('0.1%')}}
+          onClick={() => {
+            setTolerance(0.1);
+          }}
         >
-          <span className="flex items-center gap-2">
-            0.1%
-          </span>
+          <span className="flex items-center gap-2">0.1%</span>
         </Button>
         <Button
-          color="gray"
-          className={cn('mb-5 max-h-8 w-full font-normal text-gray-600 hover:text-gray-900 dark:text-gray-200 dark:hover:text-white lg:mt-6',
-            tolerance !== '0.5%'? 'dark:bg-gray-600' : 'dark:bg-gradient-to-r dark:from-cyan-400 dark:to-blue-500'
+          className={cn(
+            'mb-5 max-h-8 w-full font-normal text-gray-600 hover:text-gray-900 dark:text-gray-200 dark:hover:text-white xs:mt-2 lg:mt-5',
+            tolerance !== 0.5
+              ? 'border border-[#5841D8] bg-[#1B0D6B]'
+              : 'bg-leanear-gradient'
           )}
-          onClick={()=>{setTolerance('0.5%')}}
+          onClick={() => {
+            setTolerance(0.5);
+          }}
         >
-          <span className="flex items-center gap-2">
-            0.5%
-          </span>
+          <span className="flex items-center gap-2">0.5%</span>
         </Button>
         <Button
-          color="gray"
-          className={cn('mb-5 max-h-8 w-full font-normal text-gray-600 hover:text-gray-900 dark:text-gray-200 dark:hover:text-white lg:mt-6',
-            tolerance !== '1.0%'? 'dark:bg-gray-600' : 'dark:bg-gradient-to-r dark:from-cyan-400 dark:to-blue-500'
+          className={cn(
+            'mb-5 max-h-8 w-full font-normal text-gray-600 hover:text-gray-900 dark:text-gray-200 dark:hover:text-white xs:mt-2 lg:mt-5',
+            tolerance !== 1
+              ? 'border border-[#5841D8] bg-[#1B0D6B]'
+              : 'bg-leanear-gradient'
           )}
-          onClick={()=>{setTolerance('1.0%')}}
+          onClick={() => {
+            setTolerance(1);
+          }}
         >
-          <span className="flex items-center gap-2">
-            1.0%
-          </span>
+          <span className="flex items-center gap-2">1.0%</span>
         </Button>
         <div>
           <input
-            className="mb-5 max-h-8 w-full rounded-full border border-gray-200 py-1 text-sm text-gray-900 placeholder:text-gray-600 focus:border-gray-900 focus:outline-none ltr:pr-2 ltr:pl-1 rtl:pl-1 rtl:pr-1 dark:border-gray-600 dark:bg-light-dark dark:text-white dark:placeholder:text-gray-400 dark:focus:border-gray-500 sm:ltr:pl-2 sm:rtl:pr-4 xl:ltr:pl-3 xl:rtl:pr-6 md:h-9 md:px-2 lg:mt-6"
-            placeholder={"     " + "%"}
+            className="mb-5 max-h-8 w-full rounded-full border border-[#5841D8] py-1 text-sm text-gray-900 placeholder:text-gray-600
+             focus:outline-none ltr:pr-2 ltr:pl-1 rtl:pl-1 rtl:pr-1 dark:border-gray-600 dark:bg-[#0D0C52] 
+             dark:text-white dark:placeholder:text-gray-400 dark:focus:border-gray-500 xs:mt-2 sm:ltr:pl-2 sm:rtl:pr-4 md:h-9 md:px-2 lg:mt-5 xl:ltr:pl-3 xl:rtl:pr-6"
+            placeholder={'     ' + '%'}
             // value={toleranceValue}
             onChange={handleOnChange}
             autoComplete="off"
@@ -199,7 +216,6 @@ export default function Settings({ ...props }) {
           </div>
         </Switch>
       </p> */}
-
     </div>
   );
 }
