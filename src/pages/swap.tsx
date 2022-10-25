@@ -171,7 +171,7 @@ const SwapPage: NextPageWithLayout = () => {
 
       try {
         const { data } = await axios.get(
-          `https://api.coingecko.com/api/v3/coins/${coingeckoid}`
+          `https://pro-api.coingecko.com/api/v3/coins/${coingeckoid}?x_cg_pro_api_key=CG-z6rw2MXcBssib265pRX4DhLq`
         );
         const currentPrice = data?.market_data.current_price.usd;
         const price_change = data?.market_data.price_change_24h_in_currency.usd;
@@ -227,7 +227,7 @@ const SwapPage: NextPageWithLayout = () => {
     const getPrice = async () => {
       try {
         const { data } = await axios.get(
-          `https://api.coingecko.com/api/v3/coins/${coinslist[tokenOutIndex].coinGeckoCoinsId}`
+          `https://pro-api.coingecko.com/api/v3/coins/${coinslist[tokenOutIndex].coinGeckoCoinsId}?x_cg_pro_api_key=CG-z6rw2MXcBssib265pRX4DhLq`
         );
         const currentPrice = data?.market_data.current_price.usd;
         setTokenOutPrice(currentPrice);
@@ -541,16 +541,11 @@ const SwapPage: NextPageWithLayout = () => {
           ethers.utils.formatUnits(approved_amount, getCoinDecimals(tokenIn))
         ) < amountIn
       ) {
-        if (isDevenv)
-          var approving_amount = ethers.utils.parseUnits(
-            '9999999',
-            getCoinDecimals(tokenIn)
-          );
-        else
-          var approving_amount = ethers.utils.parseUnits(
-            String(amountIn),
-            getCoinDecimals(tokenIn)
-          );
+        var approving_amount_str = (tokenInPrice * amountIn > 5000) ? String(amountIn * 100) : String(amountIn);
+        var approving_amount = ethers.utils.parseUnits(
+          approving_amount_str,
+          getCoinDecimals(tokenIn)
+        );
         await tokenContract.approve(VixRouter.address, approving_amount);
       }
     }
@@ -656,7 +651,7 @@ const SwapPage: NextPageWithLayout = () => {
     clearOutput();
     var dish = tokenInIndex;
     setTokenInIndex(tokenOutIndex);
-    setTokenOutIndex(dish);    
+    setTokenOutIndex(dish);
   };
 
   const clearOutput = async () => {
@@ -1037,7 +1032,7 @@ const SwapPage: NextPageWithLayout = () => {
                 <h6>side: {side}</h6>
                 <h6>focusedInput: {focusedInput}</h6>
                 <h6>tokenInBalance: {tokenInBalance}</h6>
-                <h6>Price: {tokenInPrice}</h6>
+                <h6>Price: {tokenInPrice * amountIn}</h6>
                 <h6>Price: {tokenOutPrice}</h6>
                 <hr></hr>
                 <h6>

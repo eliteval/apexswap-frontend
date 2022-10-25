@@ -1,4 +1,11 @@
+****** frontend **********
 npm run build;
 npm run start
 
 pm2 start npm --name "swap-product:3000" -- start 
+
+
+****** API **********
+node index.js
+
+pm2 start index.js --name "swap-api:3000"
