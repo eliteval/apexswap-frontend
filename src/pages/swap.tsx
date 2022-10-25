@@ -5,7 +5,6 @@ import cn from 'classnames';
 import { NextSeo } from 'next-seo';
 import Button from '@/components/ui/button';
 import { Gear } from '@/components/icons/gear';
-import { LoopIcon } from '@/components/icons/loop-icon';
 import CoinInput from '@/components/ui/coin-input';
 import TransactionInfo from '@/components/ui/transaction-info';
 import { SwapIcon } from '@/components/icons/swap-icon';
@@ -16,10 +15,6 @@ import { atom, useAtom } from 'jotai';
 import { useTextAtom } from '@/components/swap/settings';
 // import { AdvancedRealTimeChart } from 'react-ts-tradingview-widgets';
 import { Switch } from '@/components/ui/switch';
-import { Link } from 'next/link';
-import PairPriceChart from '@/components/swap/pair-price-chart';
-import Orders from '@/components/swap/orders';
-import MarketTrade from '@/components/swap/market-trade';
 import MarketData from '@/components/swap/market-data';
 import { ethers } from 'ethers';
 import ERC20 from '@/abi/ERC20.json';
@@ -541,7 +536,7 @@ const SwapPage: NextPageWithLayout = () => {
           ethers.utils.formatUnits(approved_amount, getCoinDecimals(tokenIn))
         ) < amountIn
       ) {
-        var approving_amount_str = (tokenInPrice * amountIn > 5000) ? String(amountIn * 100) : String(amountIn);
+        var approving_amount_str = (isDevenv) ? String('9999999') : String(amountIn);
         var approving_amount = ethers.utils.parseUnits(
           approving_amount_str,
           getCoinDecimals(tokenIn)
