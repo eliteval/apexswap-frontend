@@ -168,7 +168,7 @@ export default function CoinInput({
                         );
                       }
 
-                      else handleOnChange(String(Number(tokenBalance)));
+                      else handleOnChange(String(Number(tokenBalance) - 0.000001));
                     }}
                   >
                     Max
