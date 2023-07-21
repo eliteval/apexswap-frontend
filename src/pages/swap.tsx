@@ -97,7 +97,7 @@ const SwapPage: NextPageWithLayout = () => {
   const [routeSwaps, setRouteSwaps] = useState([1, 2, 3]);
   const [isPS, setIsPS] = useState(true);
 
-  let [isExpertMode, setIsExpertMode] = useState(false);
+  let [isExpertMode, setIsExpertMode] = useState(true);
 
   const RPC_URL = 'https://api.avax.network/ext/bc/C/rpc';
   const getBalance = async (token_address: string) => {
