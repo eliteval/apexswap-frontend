@@ -348,8 +348,8 @@ const SwapPage: NextPageWithLayout = () => {
           };
           const params = new URLSearchParams(payload);
           let res = await axios.post(
-            `https://apiv1.apexswap.io/getRate?${params}`
-            // `https://api.paraswap.io/prices?${params}`
+            // `https://apiv1.apexswap.io/getRate?${params}`
+            `https://api.paraswap.io/prices?${params}`
           );
 
           let data = res.data;
