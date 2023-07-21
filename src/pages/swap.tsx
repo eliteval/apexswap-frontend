@@ -487,7 +487,6 @@ const SwapPage: NextPageWithLayout = () => {
       // if token is Apex
       // tokenIn == '0x2E768E86F691AFe8a6F9277bBCD9c570Ab868FC0' ||
       // tokenOut == '0x2E768E86F691AFe8a6F9277bBCD9c570Ab868FC0'
-
       1==1
     ) {
       await queryRouter();

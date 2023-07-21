@@ -114,17 +114,17 @@ export const menuItems = [
       },
     ],
   },
-  {
-    name: 'Other',
-    icon: <ExchangeIcon />,
-    href: routes.swap,
-    dropdownItems: [
-      {
-        name: 'Legacy',
-        href: 'https://legacy.apexswap.io',
-      },
-    ],
-  },
+  // {
+  //   name: 'Other',
+  //   icon: <ExchangeIcon />,
+  //   href: routes.swap,
+  //   dropdownItems: [
+  //     {
+  //       name: 'Legacy',
+  //       href: 'https://legacy.apexswap.io',
+  //     },
+  //   ],
+  // },
   // {
   //   name: 'Liquidity',
   //   icon: <FarmIcon />,
